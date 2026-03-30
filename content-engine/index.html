@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ContentEngine — CTA Landing Pages</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #0a0a14; color: #e2e8f0; font-family: 'Inter', sans-serif; min-height: 100vh; -webkit-font-smoothing: antialiased; }
+    a { color: #0a84ff; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    ::selection { background: rgba(10,132,255,0.3); }
+
+    .container { max-width: 960px; margin: 0 auto; padding: 48px 24px; }
+
+    /* Header */
+    .header { margin-bottom: 40px; }
+    .header h1 { font-size: 28px; font-weight: 700; color: #fff; letter-spacing: -0.02em; margin-bottom: 8px; }
+    .header p { font-size: 15px; color: #64748b; line-height: 1.6; }
+
+    /* Stats bar */
+    .stats { display: flex; gap: 24px; margin-bottom: 32px; flex-wrap: wrap; }
+    .stat { background: #12121e; border: 1px solid #1e293b; border-radius: 10px; padding: 16px 20px; flex: 1; min-width: 120px; }
+    .stat-num { font-size: 24px; font-weight: 700; color: #fff; }
+    .stat-label { font-size: 11px; color: #64748b; text-transform: uppercase; letter-spacing: 0.08em; margin-top: 4px; }
+
+    /* Filters */
+    .filters { display: flex; gap: 8px; margin-bottom: 24px; flex-wrap: wrap; }
+    .filter-btn { padding: 6px 16px; border-radius: 100px; border: 1px solid #1e293b; background: transparent; color: #94a3b8; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.15s; font-family: inherit; }
+    .filter-btn:hover { border-color: #334155; color: #e2e8f0; }
+    .filter-btn.active { background: rgba(10,132,255,0.12); border-color: #0a84ff; color: #0a84ff; }
+
+    /* Table */
+    .table-wrap { background: #12121e; border: 1px solid #1e293b; border-radius: 12px; overflow: hidden; }
+    table { width: 100%; border-collapse: collapse; }
+    th { text-align: left; padding: 12px 16px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: #475569; background: #0f0f1a; border-bottom: 1px solid #1e293b; }
+    td { padding: 14px 16px; border-bottom: 1px solid #1a1a2e; font-size: 14px; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(255,255,255,0.02); }
+
+    /* Brand badges */
+    .brand { font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 4px; white-space: nowrap; }
+    .brand-clawlancing { background: rgba(233,69,96,0.12); color: #e94560; }
+    .brand-agents-assemble { background: rgba(10,132,255,0.12); color: #0a84ff; }
+    .brand-humans-need-not-apply { background: rgba(175,82,222,0.12); color: #af52de; }
+    .brand-last-week-to-404 { background: rgba(94,92,230,0.12); color: #5e5ce6; }
+    .brand-founder { background: rgba(255,159,10,0.12); color: #ff9f0a; }
+
+    /* Keyword pill */
+    .keyword { font-family: 'SF Mono', 'Fira Code', monospace; font-size: 14px; font-weight: 600; padding: 4px 12px; border-radius: 6px; background: rgba(233,69,96,0.08); color: #e2e8f0; }
+
+    /* Status */
+    .status { font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 4px; }
+    .status-active { background: rgba(34,197,94,0.12); color: #22c55e; }
+    .status-expired { background: rgba(100,116,139,0.12); color: #64748b; }
+    .status-draft { background: rgba(245,158,11,0.12); color: #f59e0b; }
+
+    /* Link */
+    .page-link { font-size: 13px; color: #0a84ff; display: inline-flex; align-items: center; gap: 4px; }
+    .page-link:hover { color: #5ac8fa; }
+
+    /* Mobile */
+    @media (max-width: 640px) {
+      .hide-mobile { display: none; }
+      td, th { padding: 10px 12px; }
+      .stats { gap: 12px; }
+    }
+
+    /* Empty state */
+    .empty { text-align: center; padding: 48px 24px; color: #475569; }
+
+    /* Footer */
+    .footer { margin-top: 48px; text-align: center; font-size: 12px; color: #334155; }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <div class="header">
+      <h1>ContentEngine</h1>
+      <p>CTA landing pages — all content breakdowns across our 5 brands. Each page is shared with users who comment the CTA keyword on our social media posts.</p>
+    </div>
+
+    <div class="stats" id="stats"></div>
+
+    <div class="filters" id="filters">
+      <button class="filter-btn active" data-filter="all">All</button>
+      <button class="filter-btn" data-filter="clawlancing">Clawlancing</button>
+      <button class="filter-btn" data-filter="agents-assemble">Agents Assemble</button>
+      <button class="filter-btn" data-filter="humans-need-not-apply">HNNA</button>
+      <button class="filter-btn" data-filter="last-week-to-404">LW To 404</button>
+      <button class="filter-btn" data-filter="founder">Founder</button>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Topic</th>
+            <th>Brand</th>
+            <th>Keyword</th>
+            <th class="hide-mobile">Status</th>
+            <th>Page</th>
+          </tr>
+        </thead>
+        <tbody id="table-body"></tbody>
+      </table>
+      <div class="empty" id="empty" style="display:none;">No pages yet. Pages are created automatically when content packs are generated.</div>
+    </div>
+
+    <div class="footer">
+      ContentEngine · 5 Brands · 8 Platforms · youraiadventure.com
+    </div>
+
+  </div>
+
+  <script>
+    // Page data — auto-generated by ContentEngine pipeline
+    const PAGES = [
+      {
+        topic: "NVIDIA GTC 2026 — Jensen Huang Keynote",
+        brand: "clawlancing",
+        brandLabel: "Clawlancing",
+        keyword: "Nvidia",
+        status: "active",
+        url: "/clawlancing/nvidia-gtc-2026-jensen-huang-keynote-breakdown/",
+        date: "2026-03-30"
+      },
+      {
+        topic: "Claude Code Agent Squad — How 6 AI Agents Work Together",
+        brand: "agents-assemble",
+        brandLabel: "Agents Assemble",
+        keyword: "Agents",
+        status: "active",
+        url: "/agents-assemble/claude-code-agent-squad-how-6-ai-agents-work-together-breakdown/",
+        date: "2026-03-30"
+      },
+      {
+        topic: "DeepMind Published an AGI Framework — Here Are the Levels",
+        brand: "humans-need-not-apply",
+        brandLabel: "HNNA",
+        keyword: "Agi",
+        status: "active",
+        url: "/humans-need-not-apply/deepmind-published-an-agi-framework-here-are-the-levels-breakdown/",
+        date: "2026-03-30"
+      },
+      {
+        topic: "Grok Got Sued and Honestly We Saw This Coming",
+        brand: "last-week-to-404",
+        brandLabel: "LW To 404",
+        keyword: "Grok",
+        status: "active",
+        url: "/last-week-to-404/grok-got-sued-and-honestly-we-saw-this-coming-breakdown/",
+        date: "2026-03-30"
+      },
+      {
+        topic: "Anthropic Said No to the Pentagon — What That Tells Us About Values",
+        brand: "founder",
+        brandLabel: "Founder",
+        keyword: "Values",
+        status: "active",
+        url: "/founder/anthropic-said-no-to-the-pentagon-what-that-tells-us-about-v-breakdown/",
+        date: "2026-03-30"
+      }
+    ];
+
+    // Stats
+    const statsEl = document.getElementById('stats');
+    const total = PAGES.length;
+    const active = PAGES.filter(p => p.status === 'active').length;
+    const brands = new Set(PAGES.map(p => p.brand)).size;
+    statsEl.innerHTML = `
+      <div class="stat"><div class="stat-num">${total}</div><div class="stat-label">Total Pages</div></div>
+      <div class="stat"><div class="stat-num">${active}</div><div class="stat-label">Active</div></div>
+      <div class="stat"><div class="stat-num">${brands}</div><div class="stat-label">Brands</div></div>
+      <div class="stat"><div class="stat-num">${PAGES.length > 0 ? PAGES[0].date : '—'}</div><div class="stat-label">Last Updated</div></div>
+    `;
+
+    // Render table
+    function render(filter) {
+      const tbody = document.getElementById('table-body');
+      const empty = document.getElementById('empty');
+      const filtered = filter === 'all' ? PAGES : PAGES.filter(p => p.brand === filter);
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = '';
+        empty.style.display = 'block';
+        return;
+      }
+      empty.style.display = 'none';
+
+      tbody.innerHTML = filtered.map(p => `
+        <tr>
+          <td style="font-weight:500;color:#fff;max-width:320px;">${p.topic}</td>
+          <td><span class="brand brand-${p.brand}">${p.brandLabel}</span></td>
+          <td><span class="keyword">${p.keyword}</span></td>
+          <td class="hide-mobile"><span class="status status-${p.status}">${p.status}</span></td>
+          <td><a href="${p.url}" class="page-link">Open →</a></td>
+        </tr>
+      `).join('');
+    }
+
+    // Filter buttons
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        render(btn.dataset.filter);
+      });
+    });
+
+    render('all');
+  </script>
+</body>
+</html>
