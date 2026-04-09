@@ -1,0 +1,1572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Build Offline AI Agents With Gemma 4 — The Step-by-Step Guide for Agent Builders</title>
+  <meta name="twitter:image" content="">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="How to Build Offline AI Agents With Gemma 4 — The Step-by-Step Guide for Agent Builders">
+    <meta property="og:description" content="A hands-on walkthrough covering environment setup, tool definitions, memory configuration, the orchestration loop, testing, and deployment.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://example.com/tutorials/build-ai-agent-30-minutes">
+    <meta property="og:image" content="https://example.com/images/ai-agent-tutorial-og.jpg">
+    <meta property="og:site_name" content="AgentsAssemble">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="How to Build Offline AI Agents With Gemma 4 — The Step-by-Step Guide for Agent Builders">
+    <meta name="twitter:description" content="A hands-on walkthrough covering environment setup, tool definitions, memory configuration, the orchestration loop, testing, and deployment.">
+
+    <!-- SEO Schema -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        "headline": "How to Build Offline AI Agents With Gemma 4 — The Step-by-Step Guide for Agent Builders",
+        "description": "A hands-on walkthrough covering environment setup, tool definitions, memory configuration, the orchestration loop, testing, and deployment.",
+        "author": {
+            "@type": "Organization",
+            "name": "AgentsAssemble"
+        },
+        "datePublished": "2026-04-09",
+        "dateModified": "2026-04-09",
+        "publisher": {
+            "@type": "Organization",
+            "name": "AgentsAssemble"
+        },
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https://example.com/tutorials/build-ai-agent-30-minutes"
+        },
+        "about": {
+            "@type": "HowTo",
+            "name": "How to Build Offline AI Agents With Gemma 4 — The Step-by-Step Guide for Agent Builders",
+            "totalTime": "PT30M",
+            "step": [
+                {"@type": "HowToStep", "name": "Environment Setup", "position": 1},
+                {"@type": "HowToStep", "name": "Define Your Tools", "position": 2},
+                {"@type": "HowToStep", "name": "Configure Memory", "position": 3},
+                {"@type": "HowToStep", "name": "Build the Orchestration Loop", "position": 4},
+                {"@type": "HowToStep", "name": "Testing", "position": 5},
+                {"@type": "HowToStep", "name": "Deploy", "position": 6}
+            ]
+        }
+    }
+    </script>
+
+    <!-- Fonts: Instrument Serif (headings) + Sora (body) + DM Mono (code/labels) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --font-heading: 'Instrument Serif', serif;
+            --font-body: 'Sora', sans-serif;
+            --font-mono: 'DM Mono', monospace;
+            --text-primary: #111827;
+            --text-secondary: #4b5563;
+            --text-muted: #9ca3af;
+            --bg-primary: #ffffff;
+            --bg-card: #ffffff;
+            --bg-code: #111827;
+            --border: #e5e7eb;
+            --border-light: #f3f4f6;
+            --accent: #2563eb;
+            --accent-light: #dbeafe;
+            --accent-dark: #1d4ed8;
+            --success: #059669;
+            --warning: #d97706;
+            --info: #0284c7;
+            --progress-bg: #e5e7eb;
+            --progress-fill: #2563eb;
+        }
+
+        html { font-size: 17px; scroll-behavior: smooth; }
+
+        body {
+            font-family: var(--font-body);
+            color: var(--text-primary);
+            background: var(--bg-primary);
+            line-height: 1.7;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* TOPBAR */
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border);
+        }
+        .topbar-inner {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+        .topbar-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.8rem 0;
+        }
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .back-link:hover { color: var(--accent); }
+        .back-link svg { width: 14px; height: 14px; }
+        .topbar-title {
+            font-family: var(--font-body);
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: none;
+        }
+        @media (min-width: 640px) {
+            .topbar-title { display: block; }
+        }
+        .topbar-step-label {
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+        }
+
+        /* PROGRESS BAR */
+        .progress-bar-container {
+            padding: 0 0 0.6rem;
+        }
+        .progress-steps {
+            display: flex;
+            gap: 4px;
+        }
+        .progress-segment {
+            flex: 1;
+            height: 3px;
+            background: var(--progress-bg);
+            border-radius: 2px;
+            transition: background 0.4s;
+            cursor: pointer;
+        }
+        .progress-segment.completed { background: var(--success); }
+        .progress-segment.active { background: var(--progress-fill); }
+
+        .progress-labels {
+            display: none;
+            justify-content: space-between;
+            margin-top: 0.5rem;
+        }
+        @media (min-width: 768px) {
+            .progress-labels { display: flex; }
+        }
+        .progress-label {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--text-muted);
+            text-align: center;
+            flex: 1;
+            cursor: pointer;
+            transition: color 0.2s;
+            padding: 0.3rem 0.1rem;
+        }
+        .progress-label.active { color: var(--accent); font-weight: 500; }
+        .progress-label.completed { color: var(--success); }
+        .progress-label:hover { color: var(--text-primary); }
+
+        /* MAIN CONTENT */
+        .main-content {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        /* HEADER (shown on intro step) */
+        .tutorial-header {
+            margin-bottom: 2rem;
+        }
+        .tutorial-meta {
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            margin-bottom: 1rem;
+        }
+        .tutorial-header h1 {
+            font-family: var(--font-heading);
+            font-size: clamp(1.8rem, 4vw, 2.6rem);
+            font-weight: 800;
+            line-height: 1.15;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            font-style: normal;
+        }
+        .tutorial-header .subtitle {
+            font-size: 1.05rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+            font-weight: 300;
+        }
+
+        /* FEATURED IMAGE */
+        .image-placeholder {
+            border: 2px dashed var(--border);
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 2rem 1rem;
+            background: var(--bg-card);
+        }
+        .image-placeholder .label {
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+        .image-placeholder .hint {
+            font-family: var(--font-body);
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 0.3rem;
+            opacity: 0.6;
+            font-weight: 300;
+        }
+        .featured-image {
+            aspect-ratio: 16 / 7;
+            margin-bottom: 2rem;
+        }
+        .featured-image .image-placeholder { height: 100%; }
+        .step-image {
+            margin: 1.2rem 0;
+        }
+        .step-image .image-placeholder { aspect-ratio: 16 / 9; }
+
+        /* TLDR BOX */
+        .tldr-box {
+            background: var(--accent-light);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .tldr-label {
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--accent);
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+        .tldr-box p { color: var(--text-secondary); font-size: 0.95rem; }
+
+        /* STEP VIEW */
+        .step-view {
+            display: none;
+        }
+        .step-view.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .step-heading {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .step-badge {
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--accent);
+            background: var(--accent-light);
+            padding: 0.3rem 0.7rem;
+            border-radius: 4px;
+            white-space: nowrap;
+            margin-top: 0.25rem;
+        }
+        .step-heading h2 {
+            font-family: var(--font-heading);
+            font-size: 1.55rem;
+            font-weight: 800;
+            line-height: 1.2;
+        }
+
+        .step-view p { margin-bottom: 1rem; color: var(--text-secondary); font-weight: 400; }
+        .step-view h3 {
+            font-family: var(--font-body);
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-top: 1.5rem;
+            margin-bottom: 0.6rem;
+            color: var(--text-primary);
+        }
+        .step-view ul, .step-view ol {
+            margin-left: 1.2rem;
+            margin-bottom: 1rem;
+            color: var(--text-secondary);
+        }
+        .step-view li { margin-bottom: 0.35rem; }
+
+        /* CODE BLOCKS */
+        .code-block-wrapper {
+            position: relative;
+            margin: 1rem 0;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #1f2937;
+        }
+        .code-block-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #1f2937;
+            padding: 0.5rem 1rem;
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #6b7280;
+        }
+        .copy-btn {
+            background: none;
+            border: 1px solid #374151;
+            color: #6b7280;
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            transition: all 0.2s;
+        }
+        .copy-btn:hover { color: #d1d5db; border-color: #4b5563; }
+        .copy-btn.copied { color: var(--success); border-color: var(--success); }
+
+        pre {
+            background: var(--bg-code);
+            padding: 1rem;
+            overflow-x: auto;
+            font-family: var(--font-mono);
+            font-size: 0.82rem;
+            line-height: 1.6;
+            color: #e5e7eb;
+        }
+        code { font-family: var(--font-mono); }
+        p code, li code {
+            background: #f3f4f6;
+            padding: 0.15em 0.4em;
+            border-radius: 3px;
+            color: var(--accent-dark);
+            font-size: 0.85em;
+        }
+
+        /* CALLOUT BOXES */
+        .callout {
+            border-radius: 8px;
+            padding: 1rem 1.2rem;
+            margin: 1.2rem 0;
+            display: flex;
+            gap: 0.8rem;
+            align-items: flex-start;
+        }
+        .callout-icon { flex-shrink: 0; width: 18px; height: 18px; margin-top: 0.2rem; }
+        .callout p { margin-bottom: 0; font-size: 0.92rem; }
+        .callout-tip { background: #ecfdf5; border: 1px solid #a7f3d0; }
+        .callout-tip .callout-icon { color: var(--success); }
+        .callout-warning { background: #fffbeb; border: 1px solid #fde68a; }
+        .callout-warning .callout-icon { color: var(--warning); }
+        .callout-info { background: #eff6ff; border: 1px solid #bfdbfe; }
+        .callout-info .callout-icon { color: var(--info); }
+
+        /* PREV / NEXT NAVIGATION */
+        .step-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 3rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border);
+            gap: 1rem;
+        }
+        .step-nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.7rem 1.2rem;
+            border-radius: 8px;
+            font-family: var(--font-body);
+            font-size: 0.88rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+            cursor: pointer;
+            border: none;
+        }
+        .step-nav-btn svg { width: 16px; height: 16px; }
+        .step-nav-prev {
+            background: var(--bg-card);
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+        }
+        .step-nav-prev:hover { border-color: var(--text-muted); color: var(--text-primary); }
+        .step-nav-next {
+            background: var(--accent);
+            color: #fff;
+        }
+        .step-nav-next:hover { background: var(--accent-dark); }
+        .step-nav-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+        .step-nav-spacer { flex: 1; }
+
+        /* KEY TAKEAWAYS */
+        .takeaways-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 2rem 1.5rem;
+            margin-top: 2rem;
+        }
+        .takeaways-box h2 {
+            font-family: var(--font-heading);
+            font-size: 1.55rem;
+            font-weight: 800;
+            margin-bottom: 1.2rem;
+        }
+        .takeaway-item {
+            display: flex;
+            gap: 0.8rem;
+            align-items: flex-start;
+            padding: 0.7rem 0;
+            border-bottom: 1px solid var(--border-light);
+        }
+        .takeaway-item:last-child { border-bottom: none; }
+        .takeaway-check {
+            width: 20px;
+            height: 20px;
+            color: var(--success);
+            flex-shrink: 0;
+            margin-top: 0.15rem;
+        }
+        .takeaway-item p { color: var(--text-secondary); }
+
+        /* SOURCES */
+        .sources-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        .sources-box h2 {
+            font-family: var(--font-heading);
+            font-size: 1.55rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+        .source-item {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--border-light);
+        }
+        .source-item:last-child { border-bottom: none; }
+        .source-item a {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .source-item a:hover { text-decoration: underline; }
+        .source-detail {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 0.1rem;
+            font-weight: 300;
+        }
+
+        /* CTA SECTION */
+        .cta-box {
+            background: linear-gradient(135deg, var(--bg-code) 0%, #1e3a5f 100%);
+            border-radius: 12px;
+            padding: 2.5rem 2rem;
+            text-align: center;
+            margin-top: 2rem;
+        }
+        .cta-box h2 {
+            font-family: var(--font-heading);
+            font-size: 1.55rem;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 0.5rem;
+        }
+        .cta-box p { color: #94a3b8; margin-bottom: 1.5rem; font-weight: 300; }
+        .cta-buttons { display: flex; flex-wrap: wrap; gap: 0.8rem; justify-content: center; }
+        .cta-btn-primary { background: var(--accent); color: #fff; }
+        .cta-btn-primary:hover { background: var(--accent-dark); }
+        .cta-btn-secondary { background: transparent; color: #94a3b8; border: 1px solid #334155; }
+        .cta-btn-secondary:hover { border-color: #64748b; color: #e2e8f0; }
+
+        /* SHARE */
+        .share-buttons { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+        .share-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.45rem 0.9rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-family: var(--font-body);
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            text-decoration: none;
+            background: var(--bg-card);
+            transition: all 0.2s;
+        }
+        .share-btn:hover { border-color: var(--accent); color: var(--accent); }
+        .share-btn svg { width: 14px; height: 14px; }
+
+        /* FOOTER */
+        .tutorial-footer {
+            max-width: 720px;
+            margin: 3rem auto 0;
+            padding: 1.5rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .footer-text {
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+        }
+        .footer-link {
+            color: var(--accent);
+            text-decoration: none;
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+        .footer-link:hover { text-decoration: underline; }
+
+        /* RESPONSIVE */
+        @media (min-width: 640px) {
+            .main-content { padding: 2.5rem 2rem; }
+        }
+    
+
+/* === Share Bar === */
+.share-bar { display: flex; align-items: center; gap: 12px; justify-content: center; margin: 32px 0; padding: 16px 0; border-top: 1px solid rgba(128,128,128,0.15); }
+.share-label { font-size: 0.78rem; color: #9ca3af; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+.share-buttons { display: flex; gap: 8px; }
+.share-btn { display: inline-flex; align-items: center; justify-content: center; width: 38px; height: 38px; border-radius: 50%; background: rgba(128,128,128,0.08); border: none; cursor: pointer; color: #9ca3af; transition: all 0.2s; text-decoration: none; position: relative; }
+.share-btn:hover { background: rgba(128,128,128,0.18); color: #fff; }
+.share-copied { position: absolute; top: -28px; left: 50%; transform: translateX(-50%); font-size: 0.7rem; color: #10b981; background: rgba(16,185,129,0.1); padding: 2px 8px; border-radius: 4px; white-space: nowrap; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+
+/* === CTA Block === */
+.cta-block { text-align: center; margin: 32px 0; padding: 40px 24px; background: linear-gradient(135deg, rgba(128,128,128,0.06), rgba(128,128,128,0.02)); border: 1px solid rgba(128,128,128,0.12); border-radius: 16px; }
+.cta-download { margin-bottom: 24px; }
+.cta-headline { font-size: 1.25rem; font-weight: 700; margin-bottom: 8px; }
+.cta-sub { font-size: 0.9rem; color: #9ca3af; margin-bottom: 16px; }
+.cta-primary-btn { display: inline-block; padding: 14px 32px; font-size: 1rem; font-weight: 700; color: #fff; background: #2196f3; border-radius: 8px; text-decoration: none; transition: all 0.2s; }
+.cta-primary-btn:hover { background: #1976d2; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(33,150,243,0.3); }
+.cta-follow { padding-top: 20px; border-top: 1px solid rgba(128,128,128,0.1); }
+.cta-follow-label { font-size: 0.82rem; color: #9ca3af; display: block; margin-bottom: 10px; }
+.cta-social-links { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+.cta-social-links a { font-size: 0.85rem; color: #6b7280; text-decoration: none; font-weight: 500; transition: color 0.2s; }
+.cta-social-links a:hover { color: #2196f3; }
+
+
+/* === Mobile Safety === */
+html, body { overflow-x: hidden; }
+img, video, iframe, table, pre, code { max-width: 100%; }
+@media (max-width: 600px) {
+  .stat-row { flex-direction: column; align-items: flex-start; gap: 4px; }
+  .sidebar-metrics { grid-template-columns: 1fr !important; }
+  .timeline { grid-template-columns: 1fr !important; }
+  .tool-cards { flex-direction: column !important; }
+  .tool-card { flex: 1 1 100% !important; }
+  table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+}
+
+</style>
+</head>
+<body>
+
+    <!-- Sticky Topbar with Progress -->
+    <div class="topbar">
+        <div class="topbar-inner">
+            <div class="topbar-nav">
+                <a href="../index.html" class="back-link">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+                    Library
+                </a>
+                <span class="topbar-title">How to Build Offline AI Agents With Gemma 4 — The Step-by-Step Guide for Agent Builders</span>
+                <span class="topbar-step-label" id="topStepLabel">Intro</span>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-steps" id="progressSteps">
+                    <div class="progress-segment active" data-step="0" onclick="goToStep(0)"></div>
+                    <div class="progress-segment" data-step="1" onclick="goToStep(1)"></div>
+                    <div class="progress-segment" data-step="2" onclick="goToStep(2)"></div>
+                    <div class="progress-segment" data-step="3" onclick="goToStep(3)"></div>
+                    <div class="progress-segment" data-step="4" onclick="goToStep(4)"></div>
+                    <div class="progress-segment" data-step="5" onclick="goToStep(5)"></div>
+                    <div class="progress-segment" data-step="6" onclick="goToStep(6)"></div>
+                    <div class="progress-segment" data-step="7" onclick="goToStep(7)"></div>
+                </div>
+                <div class="progress-labels">
+                    <span class="progress-label active" data-step="0" onclick="goToStep(0)">Intro</span>
+                    <span class="progress-label" data-step="1" onclick="goToStep(1)">Setup</span>
+                    <span class="progress-label" data-step="2" onclick="goToStep(2)">Tools</span>
+                    <span class="progress-label" data-step="3" onclick="goToStep(3)">Memory</span>
+                    <span class="progress-label" data-step="4" onclick="goToStep(4)">Loop</span>
+                    <span class="progress-label" data-step="5" onclick="goToStep(5)">Test</span>
+                    <span class="progress-label" data-step="6" onclick="goToStep(6)">Deploy</span>
+                    <span class="progress-label" data-step="7" onclick="goToStep(7)">Wrap-up</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-content">
+
+        <!-- STEP 0: INTRO -->
+        <div class="step-view active" data-step="0">
+            <header class="tutorial-header">
+                <div class="tutorial-meta">
+                    <span>Tutorial</span>
+                    <span>&middot;</span>
+                    <span>30 min</span>
+                    <span>&middot;</span>
+                    <span>6 steps</span>
+                    <span>&middot;</span>
+                    <span>April 09, 2026</span>
+                </div>
+                <h1>How to Build Offline AI Agents With Gemma 4 — The Step-by-Step Guide for Agent Builders</h1>
+                <p class="subtitle">
+                    A hands-on walkthrough from zero to a deployed AI agent. You will set up your environment, define tools, configure memory, build the orchestration loop, test everything, and ship to production.
+                </p>
+            </header>
+
+            <div class="featured-image">
+                <div class="image-placeholder">
+                    <span class="label">Featured Image</span>
+                    <span class="hint">Architecture diagram: User -> LLM -> Tools -> Memory -> Response</span>
+                </div>
+            </div>
+
+            <div class="tldr-box">
+                <div class="tldr-label">TL;DR</div>
+                <p>
+                    Install Python 3.11+ and the <code>openai</code> SDK. Define tools as JSON-schema-annotated functions. Wire up a SQLite-backed memory layer. Run an orchestration loop that calls the LLM, dispatches tool calls, and appends results. Write three focused test cases. Deploy behind FastAPI on a $5/month VPS. Total time: roughly 30 minutes.
+                </p>
+            </div>
+
+            <h3>What you will need</h3>
+            <ul>
+                <li>Python 3.11 or higher (<code>python --version</code>)</li>
+                <li>An OpenAI API key (or any OpenAI-compatible endpoint)</li>
+                <li>Basic familiarity with Python functions and dictionaries</li>
+                <li>A terminal and a code editor</li>
+            </ul>
+
+            <div class="step-nav">
+                <div class="step-nav-spacer"></div>
+                <button class="step-nav-btn step-nav-next" onclick="goToStep(1)">
+                    Begin: Environment Setup
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- STEP 1: ENVIRONMENT SETUP -->
+        <div class="step-view" data-step="1">
+            <div class="step-heading">
+                <span class="step-badge">Step 1 / 6 &middot; ~5 min</span>
+                <h2>Environment Setup</h2>
+            </div>
+
+            <p>
+                Create an isolated project directory and virtual environment. This keeps your agent's dependencies separate and prevents version conflicts.
+            </p>
+
+            <div class="code-block-wrapper">
+                <div class="code-block-header">
+                    <span>terminal</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                </div>
+                <pre><code>mkdir my-first-agent && cd my-first-agent
+python -m venv .venv
+source .venv/bin/activate  # Windows: .venv\Scripts\activate</code></pre>
+            </div>
+
+            <p>
+                Install the two packages you need: the OpenAI SDK for LLM calls and <code>python-dotenv</code> so your API key stays out of source control.
+            </p>
+
+            <div class="code-block-wrapper">
+                <div class="code-block-header">
+                    <span>terminal</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                </div>
+                <pre><code>pip install openai python-dotenv</code></pre>
+            </div>
+
+            <p>
+                Create a <code>.env</code> file in the project root for your API key:
+            </p>
+
+            <div class="code-block-wrapper">
+                <div class="code-block-header">
+                    <span>.env</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                </div>
+                <pre><code>OPENAI_API_KEY=sk-your-key-here</code></pre>
+            </div>
+
+            <div class="callout callout-warning">
+                <svg class="callout-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                <p>Never commit <code>.env</code> to version control. Add it to <code>.gitignore</code> immediately.</p>
+            </div>
+
+            <p>Set up the project scaffold -- just three files:</p>
+
+            <div class="code-block-wrapper">
+                <div class="code-block-header">
+                    <span>terminal</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                </div>
+                <pre><code>touch agent.py tools.py memory.py
+echo ".env" >> .gitignore</code></pre>
+            </div>
+
+            <div class="step-image">
+                <div class="image-placeholder">
+                    <span class="label">Step 1 Image</span>
+                    <span class="hint">Screenshot of terminal with completed environment setup and directory listing</span>
+                </div>
+            </div>
+
+            <div class="step-nav">
+                <button class="step-nav-btn step-nav-prev" onclick="goToStep(0)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+                    Intro
+                </button>
+                <button class="step-nav-btn step-nav-next" onclick="goToStep(2)">
+                    Define Your Tools
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- STEP 2: TOOLS -->
+        <div class="step-view" data-step="2">
+            <div class="step-heading">
+                <span class="step-badge">Step 2 / 6 &middot; ~7 min</span>
+                <h2>Define Your Tools</h2>
+            </div>
+
+            <p>
+                Tools make an agent more than a chatbot. Each tool is a Python function the LLM can invoke to interact with the outside world. The LLM decides which tool to use based on the JSON schema you provide.
+            </p>
+
+            <h3>Write the tool functions</h3>
+
+            <div class="code-block-wrapper">
+                <div class="code-block-header">
+                    <span>tools.py</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                </div>
+                <pre><code>import json
+import urllib.request
+from datetime import datetime
+
+
+def get_weather(location: str) -> str:
+    """Fetch current weather for a given city name."""
+    url = f"https://wttr.in/{location}?format=j1"
+    try:
+        with urllib.request.urlopen(url, timeout=5) as resp:
+            data = json.loads(resp.read())
+            current = data["current_condition"][0]
+            return (
+                f"Weather in {location}: "
+                f"{current['temp_C']}°C, "
+                f"{current['weatherDesc'][0]['value']}"
+            )
+    except Exception as e:
+        return f"Could not fetch weather: {e}"
+
+
+def calculate(expression: str) -> str:
+    """Evaluate a mathematical expression safely."""
+    allowed = set("0123456789+-*/.() ")
+    if not all(c in allowed for c in expression):
+        return "Error: expression contains invalid characters"
+    try:
+        result = eval(expression)
+        return str(result)
+    except Exception as e:
+        return f"Calculation error: {e}"
+
+
+def get_current_time() -> str:
+    """Return the current date and time."""
+    return datetime.now().strftime("%Y-%m-%d %H:%M:%S")</code></pre>
+            </div>
+
+            <h3>Register the tool schemas</h3>
+            <p>
+                Create the schema definitions that tell the LLM what each tool does. This follows the OpenAI function-calling format.
+            </p>
+
+            <div class="code-block-wrapper">
+                <div class="code-block-header">
+                    <span>tools.py (continued)</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                </div>
+                <pre><code>TOOL_FUNCTIONS = {
+    "get_weather": get_weather,
+    "calculate": calculate,
+    "get_current_time": get_current_time,
+}
+
+TOOL_SCHEMAS = [
+    {
+        "type": "function",
+        "function": {
+            "name": "get_weather",
+            "description": "Get current weather for a city",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "location": {
+                        "type": "string",
+                        "description": "City name, e.g. 'London'"
+                    }
+                },
+                "required": ["location"]
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "calculate",
+            "description": "Evaluate a math expression",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "expression": {
+                        "type": "string",
+                        "description": "Math expression, e.g. '2 + 2'"
+                    }
+                },
+                "required": ["expression"]
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "get_current_time",
+            "description": "Get current date and time",
+            "parameters": {
+                "type": "object",
+                "properties": {}
+            }
+        }
+    }
+]</code></pre>
+            </div>
+
+            <div class="step-image">
+                <div class="image-placeholder">
+                    <span class="label">Step 2 Diagram</span>
+                    <span class="hint">Diagram: LLM reads schema -> decides to call function -> receives result -> continues reasoning</span>
+                </div>
+            </div>
+
+            <div class="callout callout-info">
+                <svg class="callout-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                <p>Add more tools by following this same pattern. The agent automatically picks them up from <code>TOOL_SCHEMAS</code> and <code>TOOL_FUNCTIONS</code>.</p>
+            </div>
+
+            <div class="step-nav">
+                <button class="step-nav-btn step-nav-prev" onclick="goToStep(1)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+                    Environment Setup
+                </button>
+                <button class="step-nav-btn step-nav-next" onclick="goToStep(3)">
+                    Configure Memory
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- STEP 3: MEMORY -->
+        <div class="step-view" data-step="3">
+            <div class="step-heading">
+                <span class="step-badge">Step 3 / 6 &middot; ~5 min</span>
+                <h2>Configure Memory</h2>
+            </div>
+
+            <p>
+                Without memory, your agent forgets everything between sessions. A lightweight SQLite database gives you persistent conversation history with zero infrastructure.
+            </p>
+
+            <div class="code-block-wrapper">
+                <div class="code-block-header">
+                    <span>memory.py</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                </div>
+                <pre><code>import sqlite3
+import json
+from pathlib import Path
+
+DB_PATH = Path(__file__).parent / "agent_memory.db"
+
+
+def _get_conn():
+    conn = sqlite3.connect(DB_PATH)
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS messages (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            session_id TEXT NOT NULL,
+            role TEXT NOT NULL,
+            content TEXT,
+            tool_calls TEXT,
+            tool_call_id TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
+    return conn
+
+
+def save_message(session_id: str, message: dict):
+    """Persist a single message to the database."""
+    conn = _get_conn()
+    conn.execute(
+        """INSERT INTO messages
+           (session_id, role, content, tool_calls, tool_call_id)
+           VALUES (?, ?, ?, ?, ?)""",
+        (
+            session_id,
+            message.get("role"),
+            message.get("content"),
+            json.dumps(message.get("tool_calls"))
+                if message.get("tool_calls") else None,
+            message.get("tool_call_id"),
+        ),
+    )
+    conn.commit()
+    conn.close()
+
+
+def load_history(session_id: str, limit: int = 50) -> list:
+    """Load the most recent messages for a session."""
+    conn = _get_conn()
+    rows = conn.execute(
+        """SELECT role, content, tool_calls, tool_call_id
+           FROM messages
+           WHERE session_id = ?
+           ORDER BY id DESC LIMIT ?""",
+        (session_id, limit),
+    ).fetchall()
+    conn.close()
+
+    messages = []
+    for role, content, tool_calls_json, tool_call_id in reversed(rows):
+        msg = {"role": role}
+        if content:
+            msg["content"] = content
+        if tool_calls_json and tool_calls_json != "null":
+            msg["tool_calls"] = json.loads(tool_calls_json)
+        if tool_call_id:
+            msg["tool_call_id"] = tool_call_id
+        messages.append(msg)
+    return messages</code></pre>
+            </div>
+
+            <div class="callout callout-tip">
+                <svg class="callout-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                <p>For production, swap SQLite for PostgreSQL or Redis. The interface stays the same -- only the storage backend changes.</p>
+            </div>
+
+            <p>
+                The <code>limit=50</code> default keeps your context window manageable. For GPT-4o with 128k context, you can increase this to 200+ messages. For smaller models, keep it around 20-30.
+            </p>
+
+            <div class="step-nav">
+                <button class="step-nav-btn step-nav-prev" onclick="goToStep(2)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+                    Define Your Tools
+                </button>
+                <button class="step-nav-btn step-nav-next" onclick="goToStep(4)">
+                    Build the Loop
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- STEP 4: ORCHESTRATION LOOP -->
+        <div class="step-view" data-step="4">
+            <div class="step-heading">
+                <span class="step-badge">Step 4 / 6 &middot; ~8 min</span>
+                <h2>Build the Orchestration Loop</h2>
+            </div>
+
+            <p>
+                The orchestration loop is the heart of your agent. It runs a cycle: send messages to the LLM, check if the LLM wants to call a tool, execute the tool, append the result, and repeat until a plain text response comes back.
+            </p>
+
+            <div class="step-image">
+                <div class="image-placeholder">
+                    <span class="label">Step 4 Diagram</span>
+                    <span class="hint">Flowchart: User Input -> LLM Call -> Tool Call? (yes: execute + loop, no: return response)</span>
+                </div>
+            </div>
+
+            <div class="code-block-wrapper">
+                <div class="code-block-header">
+                    <span>agent.py</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                </div>
+                <pre><code>import json
+import os
+from dotenv import load_dotenv
+from openai import OpenAI
+
+from tools import TOOL_SCHEMAS, TOOL_FUNCTIONS
+from memory import save_message, load_history
+
+load_dotenv()
+client = OpenAI()
+
+SYSTEM_PROMPT = """You are a helpful assistant with access to tools.
+Use them when the user's request requires real-time data or computation.
+Always explain your reasoning before calling a tool."""
+
+MAX_TOOL_ROUNDS = 10
+
+
+def run_agent(user_input: str, session_id: str = "default"):
+    # 1. Load conversation history
+    messages = load_history(session_id)
+
+    # 2. Ensure system prompt is first
+    if not messages or messages[0].get("role") != "system":
+        messages.insert(0, {"role": "system", "content": SYSTEM_PROMPT})
+
+    # 3. Append new user message
+    user_msg = {"role": "user", "content": user_input}
+    messages.append(user_msg)
+    save_message(session_id, user_msg)
+
+    # 4. Orchestration loop
+    for _ in range(MAX_TOOL_ROUNDS):
+        response = client.chat.completions.create(
+            model="gpt-4o",
+            messages=messages,
+            tools=TOOL_SCHEMAS,
+        )
+        choice = response.choices[0]
+        assistant_msg = choice.message
+
+        msg_dict = {"role": "assistant", "content": assistant_msg.content}
+        if assistant_msg.tool_calls:
+            msg_dict["tool_calls"] = [
+                {
+                    "id": tc.id,
+                    "type": "function",
+                    "function": {
+                        "name": tc.function.name,
+                        "arguments": tc.function.arguments,
+                    },
+                }
+                for tc in assistant_msg.tool_calls
+            ]
+
+        messages.append(msg_dict)
+        save_message(session_id, msg_dict)
+
+        # 5. If no tool calls, we have our final answer
+        if not assistant_msg.tool_calls:
+            return assistant_msg.content
+
+        # 6. Execute each tool call
+        for tool_call in assistant_msg.tool_calls:
+            fn_name = tool_call.function.name
+            fn_args = json.loads(tool_call.function.arguments)
+
+            fn = TOOL_FUNCTIONS.get(fn_name)
+            if fn:
+                result = fn(**fn_args)
+            else:
+                result = f"Error: unknown tool '{fn_name}'"
+
+            tool_msg = {
+                "role": "tool",
+                "content": result,
+                "tool_call_id": tool_call.id,
+            }
+            messages.append(tool_msg)
+            save_message(session_id, tool_msg)
+
+    return "Agent reached maximum tool call rounds."
+
+
+if __name__ == "__main__":
+    print("AI Agent Ready. Type 'quit' to exit.\n")
+    while True:
+        user_input = input("You: ")
+        if user_input.lower() in ("quit", "exit"):
+            break
+        response = run_agent(user_input)
+        print(f"\nAgent: {response}\n")</code></pre>
+            </div>
+
+            <h3>How the loop works</h3>
+            <ol>
+                <li>The user message is appended to conversation history.</li>
+                <li>Full history is sent to the LLM with available tool schemas.</li>
+                <li>If the LLM returns <code>tool_calls</code>, each is executed and the result appended as a <code>tool</code> message.</li>
+                <li>The updated history goes back to the LLM.</li>
+                <li>When the LLM returns plain text (no tool calls), the loop exits.</li>
+            </ol>
+
+            <div class="callout callout-warning">
+                <svg class="callout-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                <p><code>MAX_TOOL_ROUNDS = 10</code> is critical. Without it, a misbehaving model could loop forever, burning your API budget.</p>
+            </div>
+
+            <div class="step-nav">
+                <button class="step-nav-btn step-nav-prev" onclick="goToStep(3)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+                    Configure Memory
+                </button>
+                <button class="step-nav-btn step-nav-next" onclick="goToStep(5)">
+                    Testing
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- STEP 5: TESTING -->
+        <div class="step-view" data-step="5">
+            <div class="step-heading">
+                <span class="step-badge">Step 5 / 6 &middot; ~3 min</span>
+                <h2>Testing Your Agent</h2>
+            </div>
+
+            <p>
+                Verify your agent handles three key scenarios: a plain question (no tools), a single tool call, and a multi-step reasoning chain requiring multiple tool calls.
+            </p>
+
+            <div class="code-block-wrapper">
+                <div class="code-block-header">
+                    <span>test_agent.py</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                </div>
+                <pre><code>from agent import run_agent
+
+def test_no_tools():
+    """The agent should answer without tools."""
+    result = run_agent(
+        "What is an AI agent?",
+        session_id="test-no-tools"
+    )
+    assert isinstance(result, str)
+    assert len(result) > 20
+    print(f"PASS: no-tools -> {result[:80]}...")
+
+def test_single_tool():
+    """The agent should use the weather tool."""
+    result = run_agent(
+        "What's the weather in Tokyo right now?",
+        session_id="test-single-tool"
+    )
+    assert "Tokyo" in result or "tokyo" in result.lower()
+    print(f"PASS: single-tool -> {result[:80]}...")
+
+def test_multi_step():
+    """The agent should chain multiple tools."""
+    result = run_agent(
+        "What time is it, and what's 1547 * 23?",
+        session_id="test-multi-step"
+    )
+    assert "35581" in result
+    print(f"PASS: multi-step -> {result[:80]}...")
+
+if __name__ == "__main__":
+    test_no_tools()
+    test_single_tool()
+    test_multi_step()
+    print("\nAll tests passed.")</code></pre>
+            </div>
+
+            <p>Run the tests:</p>
+
+            <div class="code-block-wrapper">
+                <div class="code-block-header">
+                    <span>terminal</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                </div>
+                <pre><code>python test_agent.py</code></pre>
+            </div>
+
+            <div class="step-image">
+                <div class="image-placeholder">
+                    <span class="label">Step 5 Image</span>
+                    <span class="hint">Terminal screenshot showing all three test cases passing</span>
+                </div>
+            </div>
+
+            <div class="callout callout-tip">
+                <svg class="callout-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                <p>Use separate <code>session_id</code> values for each test to prevent cross-contamination from memory.</p>
+            </div>
+
+            <div class="step-nav">
+                <button class="step-nav-btn step-nav-prev" onclick="goToStep(4)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+                    Build the Loop
+                </button>
+                <button class="step-nav-btn step-nav-next" onclick="goToStep(6)">
+                    Deploy
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- STEP 6: DEPLOY -->
+        <div class="step-view" data-step="6">
+            <div class="step-heading">
+                <span class="step-badge">Step 6 / 6 &middot; ~5 min</span>
+                <h2>Deploy to Production</h2>
+            </div>
+
+            <p>
+                Wrap your agent in a FastAPI server so it can be called over HTTP. This gives you a REST endpoint accessible from a front-end, mobile app, or another service.
+            </p>
+
+            <div class="code-block-wrapper">
+                <div class="code-block-header">
+                    <span>terminal</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                </div>
+                <pre><code>pip install fastapi uvicorn</code></pre>
+            </div>
+
+            <div class="code-block-wrapper">
+                <div class="code-block-header">
+                    <span>server.py</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                </div>
+                <pre><code>from fastapi import FastAPI
+from pydantic import BaseModel
+from agent import run_agent
+
+app = FastAPI(title="AI Agent API")
+
+
+class ChatRequest(BaseModel):
+    message: str
+    session_id: str = "default"
+
+
+class ChatResponse(BaseModel):
+    response: str
+    session_id: str
+
+
+@app.post("/chat", response_model=ChatResponse)
+async def chat(req: ChatRequest):
+    result = run_agent(req.message, req.session_id)
+    return ChatResponse(
+        response=result,
+        session_id=req.session_id,
+    )
+
+
+@app.get("/health")
+async def health():
+    return {"status": "ok"}</code></pre>
+            </div>
+
+            <p>Start the server locally:</p>
+
+            <div class="code-block-wrapper">
+                <div class="code-block-header">
+                    <span>terminal</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                </div>
+                <pre><code>uvicorn server:app --reload --port 8000</code></pre>
+            </div>
+
+            <p>Test with <code>curl</code>:</p>
+
+            <div class="code-block-wrapper">
+                <div class="code-block-header">
+                    <span>terminal</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                </div>
+                <pre><code>curl -X POST http://localhost:8000/chat \
+  -H "Content-Type: application/json" \
+  -d '{"message": "What is 42 * 17?", "session_id": "test"}'</code></pre>
+            </div>
+
+            <h3>Deploy to a VPS</h3>
+            <p>
+                A $5/month VPS (DigitalOcean, Hetzner, Railway) is more than enough. Minimal deployment script:
+            </p>
+
+            <div class="code-block-wrapper">
+                <div class="code-block-header">
+                    <span>deploy.sh</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                </div>
+                <pre><code>#!/bin/bash
+git clone your-repo-url my-agent && cd my-agent
+python -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+echo "OPENAI_API_KEY=sk-your-key" > .env
+pip install gunicorn
+gunicorn server:app -w 2 -k uvicorn.workers.UvicornWorker \
+  --bind 0.0.0.0:8000</code></pre>
+            </div>
+
+            <div class="callout callout-info">
+                <svg class="callout-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                <p>Add rate limiting and authentication before exposing to the public internet. <code>slowapi</code> and a simple API key middleware will cover the basics.</p>
+            </div>
+
+            <div class="step-image">
+                <div class="image-placeholder">
+                    <span class="label">Step 6 Image</span>
+                    <span class="hint">Screenshot of successful API response from the deployed agent</span>
+                </div>
+            </div>
+
+            <div class="step-nav">
+                <button class="step-nav-btn step-nav-prev" onclick="goToStep(5)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+                    Testing
+                </button>
+                <button class="step-nav-btn step-nav-next" onclick="goToStep(7)">
+                    Wrap-up
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- STEP 7: WRAP-UP -->
+        <div class="step-view" data-step="7">
+            <div class="step-heading">
+                <span class="step-badge">Complete</span>
+                <h2>You Built an AI Agent</h2>
+            </div>
+
+            <p>
+                Congratulations. You now have a working AI agent with tools, persistent memory, and a production API endpoint. Here is what you accomplished and what to build next.
+            </p>
+
+            <!-- Key Takeaways -->
+            <div class="takeaways-box">
+                <h2>Key Takeaways</h2>
+                <div class="takeaway-item">
+                    <svg class="takeaway-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                    <p>An AI agent is a loop: call the LLM, execute requested tools, feed results back, repeat until you get a text response.</p>
+                </div>
+                <div class="takeaway-item">
+                    <svg class="takeaway-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                    <p>Tools are the superpower. Define them as plain Python functions with JSON schemas, and the LLM figures out when to use them.</p>
+                </div>
+                <div class="takeaway-item">
+                    <svg class="takeaway-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                    <p>Memory is non-negotiable for real use. Even a SQLite file gives persistent, session-aware conversations.</p>
+                </div>
+                <div class="takeaway-item">
+                    <svg class="takeaway-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                    <p>Always cap tool-calling rounds. A runaway loop drains your API budget fast.</p>
+                </div>
+                <div class="takeaway-item">
+                    <svg class="takeaway-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                    <p>Test no-tools, single-tool, and multi-tool chains. Three tests cover the critical paths.</p>
+                </div>
+                <div class="takeaway-item">
+                    <svg class="takeaway-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                    <p>FastAPI + Gunicorn = localhost to production in under 5 minutes.</p>
+                </div>
+            </div>
+
+            <!-- Sources -->
+            <div class="sources-box">
+                <h2>Sources &amp; References</h2>
+                <div class="source-item">
+                    <a href="https://platform.openai.com/docs/guides/function-calling">[1] OpenAI Function Calling Guide</a>
+                    <div class="source-detail">Official documentation for tool/function calling</div>
+                </div>
+                <div class="source-item">
+                    <a href="https://docs.python.org/3/library/sqlite3.html">[2] Python sqlite3 Documentation</a>
+                    <div class="source-detail">Standard library reference for SQLite</div>
+                </div>
+                <div class="source-item">
+                    <a href="https://fastapi.tiangolo.com/">[3] FastAPI Documentation</a>
+                    <div class="source-detail">Web framework used for the deployment layer</div>
+                </div>
+                <div class="source-item">
+                    <a href="https://www.anthropic.com/research/building-effective-agents">[4] Building Effective Agents (Anthropic)</a>
+                    <div class="source-detail">Agent architecture patterns and orchestration strategies</div>
+                </div>
+                <div class="source-item">
+                    <a href="https://github.com/openai/openai-python">[5] OpenAI Python SDK</a>
+                    <div class="source-detail">The Python client library used in this tutorial</div>
+                </div>
+            </div>
+
+            <!-- CTA -->
+            <div class="cta-box">
+                <h2>Keep Building</h2>
+                <p>This is tutorial #14 in the Agents series. New walkthroughs drop every Wednesday.</p>
+                <div class="cta-buttons">
+                    <a href="#" class="cta-btn cta-btn-primary">Follow @AgentsAssemble</a>
+                    <a href="#" class="cta-btn cta-btn-secondary">Join 2,400+ builders</a>
+                </div>
+            </div>
+
+            <!-- Share -->
+<div class="step-nav">
+                <button class="step-nav-btn step-nav-prev" onclick="goToStep(6)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+                    Deploy
+                </button>
+                <div class="step-nav-spacer"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="tutorial-footer">
+        <span class="footer-text">AgentsAssemble &middot; Tutorial Library</span>
+        <a href="#" class="footer-link">Explore ClawLancing</a>
+    </footer>
+
+    <script>
+        const stepNames = ['Intro', 'Setup', 'Tools', 'Memory', 'Loop', 'Test', 'Deploy', 'Wrap-up'];
+        let currentStep = 0;
+
+        function goToStep(step) {
+            // Hide current
+            document.querySelectorAll('.step-view').forEach(v => v.classList.remove('active'));
+            // Show target
+            document.querySelector(`.step-view[data-step="${step}"]`).classList.add('active');
+
+            // Update progress bar
+            document.querySelectorAll('.progress-segment').forEach(seg => {
+                const s = parseInt(seg.dataset.step);
+                seg.classList.remove('active', 'completed');
+                if (s < step) seg.classList.add('completed');
+                if (s === step) seg.classList.add('active');
+            });
+
+            // Update labels
+            document.querySelectorAll('.progress-label').forEach(lbl => {
+                const s = parseInt(lbl.dataset.step);
+                lbl.classList.remove('active', 'completed');
+                if (s < step) lbl.classList.add('completed');
+                if (s === step) lbl.classList.add('active');
+            });
+
+            // Update top label
+            document.getElementById('topStepLabel').textContent = stepNames[step];
+
+            currentStep = step;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function copyCode(btn) {
+            const pre = btn.closest('.code-block-wrapper').querySelector('pre');
+            navigator.clipboard.writeText(pre.textContent).then(() => {
+                btn.textContent = 'Copied!';
+                btn.classList.add('copied');
+                setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+            });
+        }
+
+        // Keyboard nav
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' && currentStep < 7) goToStep(currentStep + 1);
+            if (e.key === 'ArrowLeft' && currentStep > 0) goToStep(currentStep - 1);
+        });
+    </script>
+  <div class="share-bar">
+    <span class="share-label">Share</span>
+    <div class="share-buttons">
+      <a class="share-btn" onclick="window.open('https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(location.href),'_blank');return false" href="#" aria-label="Share on Facebook"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></a>
+      <a class="share-btn" onclick="window.open('https://twitter.com/intent/tweet?url='+encodeURIComponent(location.href)+'&text='+encodeURIComponent(document.title),'_blank');return false" href="#" aria-label="Share on X"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+      <a class="share-btn" onclick="window.open('https://www.linkedin.com/sharing/share-offsite/?url='+encodeURIComponent(location.href),'_blank');return false" href="#" aria-label="Share on LinkedIn"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a>
+      <a class="share-btn" onclick="location.href='mailto:?subject='+encodeURIComponent(document.title)+'&body='+encodeURIComponent(location.href);return false" href="#" aria-label="Share via email"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg></a>
+      <button class="share-btn" onclick="navigator.clipboard.writeText(location.href);this.querySelector('.share-copied').style.opacity=1;setTimeout(()=>this.querySelector('.share-copied').style.opacity=0,2000)" aria-label="Copy link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg><span class="share-copied">Copied!</span></button>
+    </div>
+  </div>
+
+  <div class="cta-block">
+    <div class="cta-download">
+      <p class="cta-headline">Want the full guide?</p>
+      <p class="cta-sub">Join Agents Assemble for free — takes 30 seconds.</p>
+      <a href="https://agents-assemble.com/resources/google-gemma-4-release" class="cta-primary-btn" target="_blank" rel="noopener">Get the Full Guide</a>
+    </div>
+    <div class="cta-follow">
+      <span class="cta-follow-label">Follow for more</span>
+      <div class="cta-social-links">
+        <a href="#" target="_blank" rel="noopener">Instagram</a>
+        <a href="#" target="_blank" rel="noopener">TikTok</a>
+        <a href="#" target="_blank" rel="noopener">YouTube</a>
+        <a href="#" target="_blank" rel="noopener">LinkedIn</a>
+      </div>
+    </div>
+  </div>
+
+
+</body>
+</html>

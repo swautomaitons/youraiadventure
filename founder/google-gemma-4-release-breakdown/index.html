@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Moment I Realized Open-Source AI Wasn't a Compromise Anymore</title>
+
+<!-- SEO Meta -->
+<meta name="description" content="My honest, numbers-backed experience running Gemma 4 on real production workloads for a week. What I switched, what I kept, and why the real answer turned out to be 'both.'">
+<meta name="keywords" content="Gemma 4, open-source AI, local AI, Google, cost analysis, production workloads, AI models">
+<meta name="author" content="Founder">
+<link rel="canonical" href="https://youraiadventure.com/founder/gemma-4-breakdown">
+
+<!-- Open Graph -->
+<meta property="og:type" content="article">
+<meta property="og:title" content="The Moment I Realized Open-Source AI Wasn't a Compromise Anymore">
+<meta property="og:description" content="My honest, numbers-backed experience running Gemma 4 on real production workloads for a week.">
+<meta property="og:url" content="https://youraiadventure.com/founder/gemma-4-breakdown">
+<meta property="article:published_time" content="2026-04-09">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="The Moment I Realized Open-Source AI Wasn't a Compromise Anymore">
+<meta name="twitter:description" content="My honest, numbers-backed experience running Gemma 4 on real production workloads for a week.">
+
+<!-- Schema.org -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "The Moment I Realized Open-Source AI Wasn't a Compromise Anymore",
+  "description": "My honest, numbers-backed experience running Gemma 4 on real production workloads for a week.",
+  "author": { "@type": "Person", "name": "Symond" },
+  "datePublished": "2026-04-09",
+  "publisher": { "@type": "Organization", "name": "Founder" },
+  "mainEntityOfPage": "https://youraiadventure.com/founder/gemma-4-breakdown"
+}
+</script>
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================
+   FROST — Founder Brand Customization
+   Brand: Founder (warm, personal, reflective)
+   Colors: Blue-grey + Coral + Light warm bg
+   ============================================ */
+
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --surface-primary: #fafafa;
+  --surface-secondary: #ffffff;
+  --surface-tertiary: #f5f5f5;
+  --surface-card: #ffffff;
+  --surface-dark: #37474f;
+  --surface-muted: #f0f0f0;
+  --text-primary: #37474f;
+  --text-secondary: #607d8b;
+  --text-muted: #90a4ae;
+  --accent: #607d8b;
+  --accent-light: #eceff1;
+  --accent-bg: rgba(96, 125, 139, 0.06);
+  --highlight: #ff7043;
+  --highlight-bg: rgba(255, 112, 67, 0.08);
+  --metric-green: #607d8b;
+  --metric-red: #ff7043;
+  --border: rgba(0, 0, 0, 0.08);
+  --border-strong: rgba(0, 0, 0, 0.14);
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.06);
+  --serif: 'Lora', Georgia, serif;
+  --sans: 'Inter', -apple-system, sans-serif;
+  --mono: 'JetBrains Mono', 'SF Mono', monospace;
+  --body-size: 17px;
+  --h1-size: clamp(1.8rem, 4vw, 2.6rem);
+  --h2-size: clamp(1.5rem, 3vw, 1.6rem);
+  --h3-size: clamp(1.2rem, 2.5vw, 1.25rem);
+  --meta-size: 0.72rem;
+  --line-height: 1.7;
+  --content-width: 680px;
+  --sidebar-width: 260px;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  font-family: var(--sans);
+  font-size: var(--body-size);
+  line-height: var(--line-height);
+  color: var(--text-primary);
+  background: var(--surface-primary);
+}
+
+/* --- Back Link --- */
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--mono);
+  font-size: var(--meta-size);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  text-decoration: none;
+  padding: 1.25rem 1.5rem;
+  transition: color 0.3s;
+}
+
+.back-link:hover {
+  color: var(--accent);
+}
+
+.back-link svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* --- Report Header --- */
+.report-header {
+  padding: 2rem 1.5rem 3rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-secondary);
+}
+
+.report-header__inner {
+  max-width: var(--content-width);
+}
+
+.report-header__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--mono);
+  font-size: var(--meta-size);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+  background: var(--accent-light);
+  padding: 0.35rem 0.75rem;
+  border-radius: 100px;
+  margin-bottom: 1.5rem;
+}
+
+.report-header__badge::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  background: var(--accent);
+  border-radius: 50%;
+}
+
+.report-header__title {
+  font-family: var(--serif);
+  font-size: var(--h1-size);
+  font-weight: 600;
+  line-height: 1.15;
+  color: var(--text-primary);
+  margin-bottom: 1.25rem;
+  max-width: 24ch;
+}
+
+.report-header__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  font-family: var(--mono);
+  font-size: var(--meta-size);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+}
+
+.report-header__meta-item {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.report-header__meta-item svg {
+  width: 12px;
+  height: 12px;
+  stroke: var(--text-muted);
+  fill: none;
+  stroke-width: 1.5;
+}
+
+/* --- TL;DR --- */
+.tldr-bar {
+  padding: 1.5rem;
+  background: var(--highlight-bg);
+  border-bottom: 1px solid var(--border);
+}
+
+.tldr-bar__inner {
+  max-width: calc(var(--content-width) + var(--sidebar-width) + 3rem);
+  margin: 0 auto;
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.tldr-bar__label {
+  font-family: var(--mono);
+  font-size: var(--meta-size);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--highlight);
+  font-weight: 500;
+  flex-shrink: 0;
+  padding-top: 0.15rem;
+}
+
+.tldr-bar__text {
+  font-size: 0.92rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.tldr-bar__text strong {
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+/* --- Main Layout --- */
+.report-layout {
+  max-width: calc(var(--content-width) + var(--sidebar-width) + 3rem);
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
+
+/* --- Sidebar (mobile: horizontal strip) --- */
+.sidebar {
+  order: -1;
+  padding: 2rem 0;
+}
+
+.sidebar__section {
+  margin-bottom: 2rem;
+}
+
+.sidebar__section:last-child {
+  margin-bottom: 0;
+}
+
+.sidebar__label {
+  font-family: var(--mono);
+  font-size: var(--meta-size);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+/* Sidebar Metrics */
+.sidebar-metrics {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.sidebar-metric {
+  padding: 1rem;
+  background: var(--surface-secondary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.sidebar-metric__value {
+  font-family: var(--serif);
+  font-size: 1.6rem;
+  color: var(--accent);
+  font-style: italic;
+  line-height: 1;
+  margin-bottom: 0.25rem;
+}
+
+.sidebar-metric__label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  line-height: 1.3;
+}
+
+/* Table of Contents */
+.toc {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.toc__item a {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.3rem 0;
+  transition: color 0.3s;
+}
+
+.toc__item a:hover {
+  color: var(--accent);
+}
+
+.toc__item a::before {
+  content: '';
+  width: 12px;
+  height: 1px;
+  background: var(--border-strong);
+  flex-shrink: 0;
+}
+
+/* --- Main Content --- */
+.report-content {
+  padding: 2.5rem 0 4rem;
+}
+
+.section-block {
+  margin-bottom: 3.5rem;
+}
+
+.section-block__number {
+  font-family: var(--mono);
+  font-size: var(--meta-size);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+  margin-bottom: 0.5rem;
+}
+
+.section-block__title {
+  font-family: var(--sans);
+  font-size: var(--h2-size);
+  font-weight: 800;
+  line-height: 1.25;
+  color: var(--text-primary);
+  margin-bottom: 1.5rem;
+}
+
+.section-block p {
+  color: var(--text-secondary);
+  margin-bottom: 1.25rem;
+}
+
+.section-block p strong {
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+.section-block h3 {
+  font-size: var(--h3-size);
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+}
+
+/* --- Carousel Gallery --- */
+.carousel-gallery {
+  margin: 2rem 0;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x mandatory;
+}
+
+.carousel-gallery__inner {
+  display: flex;
+  gap: 1rem;
+  padding: 0.5rem 0;
+}
+
+.carousel-gallery__slide {
+  flex: 0 0 320px;
+  scroll-snap-align: start;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+}
+
+.carousel-gallery__slide img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* --- Implementation Timeline --- */
+.timeline {
+  margin: 2.5rem 0;
+  position: relative;
+  padding-left: 2rem;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 5px;
+  top: 8px;
+  bottom: 8px;
+  width: 2px;
+  background: var(--border-strong);
+}
+
+.timeline__item {
+  position: relative;
+  margin-bottom: 2rem;
+}
+
+.timeline__item:last-child {
+  margin-bottom: 0;
+}
+
+.timeline__item::before {
+  content: '';
+  position: absolute;
+  left: -2rem;
+  top: 8px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--surface-secondary);
+  border: 2px solid var(--accent);
+  z-index: 1;
+}
+
+.timeline__item--active::before {
+  background: var(--accent);
+}
+
+.timeline__week {
+  font-family: var(--mono);
+  font-size: var(--meta-size);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+  margin-bottom: 0.25rem;
+}
+
+.timeline__title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.35rem;
+}
+
+.timeline__desc {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+/* --- Stat Row --- */
+.stat-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin: 2rem 0;
+}
+
+.stat-card {
+  padding: 1.25rem;
+  background: var(--surface-secondary);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  text-align: center;
+}
+
+.stat-card__value {
+  font-family: var(--serif);
+  font-size: 2rem;
+  font-style: italic;
+  color: var(--accent);
+  line-height: 1;
+  margin-bottom: 0.3rem;
+}
+
+.stat-card__label {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.stat-card__context {
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  margin-top: 0.35rem;
+}
+
+/* --- Callout Box --- */
+.callout {
+  margin: 2rem 0;
+  padding: 1.5rem;
+  background: var(--accent-bg);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 8px 8px 0;
+}
+
+.callout__label {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.callout__text {
+  font-size: 0.92rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.callout__text strong {
+  color: var(--text-primary);
+}
+
+/* --- Key Takeaways --- */
+.takeaways {
+  margin: 3rem 0;
+  padding: 2rem;
+  background: var(--surface-secondary);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: var(--shadow-md);
+}
+
+.takeaways__label {
+  font-family: var(--mono);
+  font-size: var(--meta-size);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+  margin-bottom: 1.5rem;
+  font-weight: 500;
+}
+
+.takeaways__list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.takeaways__item {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.takeaways__item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.takeaways__icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  background: var(--accent-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-family: var(--serif);
+  font-size: 0.75rem;
+  font-style: italic;
+  color: var(--accent);
+}
+
+.takeaways__text {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.55;
+}
+
+.takeaways__text strong {
+  color: var(--text-primary);
+}
+
+/* --- Sources --- */
+.sources {
+  margin: 2rem 0;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+}
+
+.sources__label {
+  font-family: var(--mono);
+  font-size: var(--meta-size);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  margin-bottom: 0.75rem;
+}
+
+.sources__list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.sources__item {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  display: flex;
+  gap: 0.4rem;
+}
+
+.sources__item a {
+  color: var(--text-secondary);
+  text-decoration: underline;
+  text-decoration-color: var(--border);
+  text-underline-offset: 3px;
+  transition: color 0.3s;
+}
+
+.sources__item a:hover {
+  color: var(--accent);
+}
+
+/* --- Share / Footer --- */
+.share-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 7px;
+  border: 1px solid var(--border);
+  background: var(--surface-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: border-color 0.3s, background 0.3s;
+}
+
+.share-btn:hover {
+  border-color: var(--accent);
+  background: var(--accent-light);
+}
+
+.share-btn svg {
+  width: 14px;
+  height: 14px;
+  stroke: var(--text-muted);
+  fill: none;
+  stroke-width: 1.5;
+}
+
+.share-btn:hover svg {
+  stroke: var(--accent);
+}
+
+.site-footer {
+  padding: 2rem 1.5rem;
+  border-top: 1px solid var(--border);
+  text-align: center;
+}
+
+.site-footer__text {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+}
+
+/* --- Responsive --- */
+@media (min-width: 600px) {
+  .stat-row {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .sidebar-metrics {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .carousel-gallery__slide {
+    flex: 0 0 380px;
+  }
+}
+
+@media (min-width: 960px) {
+  .report-layout {
+    grid-template-columns: var(--content-width) var(--sidebar-width);
+    gap: 3rem;
+    align-items: start;
+  }
+
+  .sidebar {
+    order: 0;
+    position: sticky;
+    top: 2rem;
+    padding-top: 2.5rem;
+  }
+
+  .sidebar-metrics {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* === Share Bar === */
+.share-bar { display: flex; align-items: center; gap: 12px; justify-content: center; margin: 32px 0; padding: 16px 0; border-top: 1px solid rgba(128,128,128,0.15); }
+.share-label { font-size: 0.78rem; color: #9ca3af; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+.share-buttons { display: flex; gap: 8px; }
+.share-btn { display: inline-flex; align-items: center; justify-content: center; width: 38px; height: 38px; border-radius: 50%; background: rgba(128,128,128,0.08); border: none; cursor: pointer; color: #9ca3af; transition: all 0.2s; text-decoration: none; position: relative; }
+.share-btn:hover { background: rgba(128,128,128,0.18); color: #607d8b; }
+.share-copied { position: absolute; top: -28px; left: 50%; transform: translateX(-50%); font-size: 0.7rem; color: #607d8b; background: rgba(96,125,139,0.1); padding: 2px 8px; border-radius: 4px; white-space: nowrap; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+
+/* === CTA Block === */
+.cta-block { text-align: center; margin: 32px 0; padding: 40px 24px; background: linear-gradient(135deg, rgba(96,125,139,0.06), rgba(96,125,139,0.02)); border: 1px solid rgba(96,125,139,0.12); border-radius: 16px; }
+.cta-follow { padding-top: 20px; }
+.cta-follow-label { font-size: 0.82rem; color: #90a4ae; display: block; margin-bottom: 10px; }
+.cta-social-links { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+.cta-social-links a { font-size: 0.85rem; color: #607d8b; text-decoration: none; font-weight: 500; transition: color 0.2s; }
+.cta-social-links a:hover { color: #ff7043; }
+
+/* === Mobile Safety === */
+html, body { overflow-x: hidden; }
+img, video, iframe, table, pre, code { max-width: 100%; }
+@media (max-width: 600px) {
+  .stat-row { flex-direction: column; align-items: flex-start; gap: 4px; }
+  .sidebar-metrics { grid-template-columns: 1fr !important; }
+  .timeline { grid-template-columns: 1fr !important; }
+}
+
+</style>
+</head>
+<body>
+
+<!-- Back Link -->
+<a href="https://instagram.com/founder" class="back-link" aria-label="Go back">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+  Back
+</a>
+
+<!-- Report Header -->
+<header class="report-header">
+  <div class="report-header__inner">
+    <div class="report-header__badge">Case Study — Gemma</div>
+    <h1 class="report-header__title">The Moment I Realized Open-Source AI Wasn't a Compromise Anymore — And Also Wasn't a Complete Solution</h1>
+    <div class="report-header__meta">
+      <span class="report-header__meta-item">
+        <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        April 9, 2026
+      </span>
+      <span class="report-header__meta-item">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        8 min read
+      </span>
+      <span class="report-header__meta-item">
+        <svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+        Founder
+      </span>
+    </div>
+  </div>
+</header>
+
+<!-- TL;DR Bar -->
+<div class="tldr-bar">
+  <div class="tldr-bar__inner">
+    <span class="tldr-bar__label">TL;DR</span>
+    <p class="tldr-bar__text">
+      My honest, numbers-backed experience running <strong>Gemma 4</strong> on real production workloads for a week. What I switched, what I kept, and why the real answer turned out to be <strong>"both."</strong>
+    </p>
+  </div>
+</div>
+
+<!-- Layout: Content + Sidebar -->
+<div class="report-layout">
+
+  <!-- Main Content -->
+  <main class="report-content">
+
+    <!-- Carousel Gallery -->
+    <div class="carousel-gallery">
+      <div class="carousel-gallery__inner">
+        <div class="carousel-gallery__slide">
+          <img src="images/slide_1.png" alt="Gemma 4 breakdown slide 1" loading="lazy">
+        </div>
+        <div class="carousel-gallery__slide">
+          <img src="images/slide_2.png" alt="Gemma 4 breakdown slide 2" loading="lazy">
+        </div>
+        <div class="carousel-gallery__slide">
+          <img src="images/slide_3.png" alt="Gemma 4 breakdown slide 3" loading="lazy">
+        </div>
+        <div class="carousel-gallery__slide">
+          <img src="images/slide_4.png" alt="Gemma 4 breakdown slide 4" loading="lazy">
+        </div>
+        <div class="carousel-gallery__slide">
+          <img src="images/slide_5.png" alt="Gemma 4 breakdown slide 5" loading="lazy">
+        </div>
+        <div class="carousel-gallery__slide">
+          <img src="images/slide_6.png" alt="Gemma 4 breakdown slide 6" loading="lazy">
+        </div>
+        <div class="carousel-gallery__slide">
+          <img src="images/slide_7.png" alt="Gemma 4 breakdown slide 7" loading="lazy">
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 1: My Experience -->
+    <section class="section-block" id="experience">
+      <div class="section-block__number">My Experience</div>
+      <h2 class="section-block__title">Testing Gemma 4 on Real Production Workloads</h2>
+
+      <p>I've been building with AI APIs for over a year now, and my monthly token bill has been one of those numbers I try not to look at too closely. When Gemma 4 dropped with benchmarks showing frontier-quality performance under an Apache 2.0 license, I didn't get excited. I got skeptical. I've been burned by "open-source breakthrough" announcements before.</p>
+
+      <p>So I did what I always do — I tested it myself. Not benchmarks. Not vibes. I ran my actual production workloads through it for a full week and tracked everything.</p>
+
+      <p>The first two days were genuinely surprising. Batch inference tasks that were costing me real money on Claude and GPT-4 ran smoothly on local hardware. Document processing, summarization, chat — all of it worked. Not "worked for an open-source model" worked. <strong>Actually worked.</strong> The E2B variant running at 30 tokens per second on an iPhone 16 Pro tells you something about where the optimization has gotten to.</p>
+
+      <p>Then day four happened. I tried tool calling — the kind of structured function invocation that my agent pipeline depends on. <strong>Every single call failed.</strong> Not gracefully, not with useful errors. Just broken. I spent hours thinking I'd misconfigured something before accepting that this is a known limitation. The model that ranks #3 globally on Arena AI with 1,452 Elo simply cannot do one of the most important things I need from an AI model.</p>
+
+      <div class="callout">
+        <div class="callout__label">Day Five Reality Check</div>
+        <p class="callout__text">Complex reasoning tasks — the multi-step logic chains where getting step three wrong cascades through everything — produced outputs that were <strong>wrong but sounded completely right.</strong> A model that says "I'm not sure" is useful. A model that says "here's your answer" when the answer is wrong is actively dangerous.</p>
+      </div>
+
+      <p>That's when I stopped trying to make it work for everything and started thinking about architecture.</p>
+    </section>
+
+    <!-- Section 2: Implementation Timeline -->
+    <section class="section-block" id="timeline">
+      <div class="section-block__number">Seven-Day Timeline</div>
+      <h2 class="section-block__title">How I Tested Gemma 4</h2>
+
+      <div class="timeline">
+        <div class="timeline__item timeline__item--active">
+          <div class="timeline__week">Day 1</div>
+          <div class="timeline__title">Local Setup</div>
+          <div class="timeline__desc">Set up local Gemma 4 on personal hardware. Downloaded models, configured environment.</div>
+        </div>
+        <div class="timeline__item timeline__item--active">
+          <div class="timeline__week">Day 2-3</div>
+          <div class="timeline__title">Production Testing</div>
+          <div class="timeline__desc">Ran batch inference tasks, document processing, chat workloads. Everything worked surprisingly well.</div>
+        </div>
+        <div class="timeline__item timeline__item--active">
+          <div class="timeline__week">Day 4</div>
+          <div class="timeline__title">Tool Calling Failure</div>
+          <div class="timeline__desc">Tested tool calling and agentic workflows — discovered critical failures. 100% failure rate.</div>
+        </div>
+        <div class="timeline__item timeline__item--active">
+          <div class="timeline__week">Day 5</div>
+          <div class="timeline__title">Reasoning Limits</div>
+          <div class="timeline__desc">Attempted complex multi-step reasoning — encountered confident but wrong outputs.</div>
+        </div>
+        <div class="timeline__item timeline__item--active">
+          <div class="timeline__week">Day 6</div>
+          <div class="timeline__title">Split-Stack Architecture</div>
+          <div class="timeline__desc">Built split-stack architecture (Gemma + Claude) — each model handling what it does best.</div>
+        </div>
+        <div class="timeline__item timeline__item--active">
+          <div class="timeline__week">Day 7</div>
+          <div class="timeline__title">Financial Analysis</div>
+          <div class="timeline__desc">Calculated break-even and long-term cost projections. 3-month ROI confirmed.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 3: The Solution -->
+    <section class="section-block" id="solution">
+      <div class="section-block__number">The Solution</div>
+      <h2 class="section-block__title">Split-Stack Architecture: Using Both</h2>
+
+      <p>By day six I had my answer, and it's boring. I split my stack. <strong>Gemma 4 handles all batch inference and high-volume tasks</strong> — the workloads where cost matters more than reasoning depth. Claude stays for agentic workflows, complex reasoning, and anything where a confidently wrong answer has real consequences. The two models never compete with each other because they're solving different problems.</p>
+
+      <p>The financial math works out clearly. Local Gemma at $0/token versus API providers at $0.14-0.40 per million versus Claude/GPT-4 at $3-15 per million. At 320 million tokens, the <strong>$749 hardware investment pays for itself in roughly 3 months.</strong> I'm past that already.</p>
+
+      <div class="stat-row">
+        <div class="stat-card">
+          <div class="stat-card__value">$0</div>
+          <div class="stat-card__label">Cost per token (local)</div>
+          <div class="stat-card__context">After hardware investment</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card__value">~3 mo</div>
+          <div class="stat-card__label">Break-even period</div>
+          <div class="stat-card__context">At 320M tokens</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card__value">$749</div>
+          <div class="stat-card__label">Hardware investment</div>
+          <div class="stat-card__context">One-time cost</div>
+        </div>
+      </div>
+
+      <p>But I want to be honest about what this means and what it doesn't. Gemma 4 won on cost. It did not win on reasoning. It's a partial solution that handles a real and significant portion of AI workloads. It is not a replacement for proprietary models on tasks that require reliability, structured output, or deep reasoning.</p>
+
+      <p>The market seems to agree — <strong>two million downloads in a week</strong> with known tool-calling bugs means people are willing to work around limitations for the cost benefit.</p>
+    </section>
+
+    <!-- Key Takeaways -->
+    <div class="takeaways">
+      <div class="takeaways__label">Key Takeaways</div>
+      <ol class="takeaways__list">
+        <li class="takeaways__item">
+          <span class="takeaways__icon">1</span>
+          <span class="takeaways__text"><strong>The cost savings are real, not theoretical.</strong> Running Gemma 4 locally means $0 per token after a one-time $749 hardware investment. At my usage volume of roughly 320 million tokens, I hit break-even in about 3 months.</span>
+        </li>
+        <li class="takeaways__item">
+          <span class="takeaways__icon">2</span>
+          <span class="takeaways__text"><strong>What works, works genuinely well.</strong> Batch inference, document processing, summarization, chat-style Q&A — Gemma handles these at a level I wouldn't have believed from an open-source model six months ago.</span>
+        </li>
+        <li class="takeaways__item">
+          <span class="takeaways__icon">3</span>
+          <span class="takeaways__text"><strong>What's broken is dangerously broken.</strong> Tool calling had a 100% failure rate in my testing. Complex multi-step reasoning produces wrong answers delivered with full confidence. That's worse than a model that says "I don't know."</span>
+        </li>
+        <li class="takeaways__item">
+          <span class="takeaways__icon">4</span>
+          <span class="takeaways__text"><strong>Two million downloads in one week — bugs and all — tells you where the market is heading.</strong> People want local AI badly enough to debug it themselves. The Apache 2.0 license means they actually can.</span>
+        </li>
+        <li class="takeaways__item">
+          <span class="takeaways__icon">5</span>
+          <span class="takeaways__text"><strong>The honest answer is "both," and the nuance is the entire insight.</strong> I'm running Gemma for batch work and Claude for reasoning. Not because I'm hedging — because they're genuinely better at different things.</span>
+        </li>
+      </ol>
+    </div>
+
+    <!-- Sources -->
+    <div class="sources">
+      <div class="sources__label">Sources &amp; References</div>
+      <ol class="sources__list">
+        <li class="sources__item"><span>1.</span> Google Gemma 4 release (April 2026) — Apache 2.0 license, open-weights</li>
+        <li class="sources__item"><span>2.</span> Arena AI leaderboard — #3 globally, 1,452 Elo rating</li>
+        <li class="sources__item"><span>3.</span> E2B benchmark — 30 TPS on iPhone 16 Pro</li>
+        <li class="sources__item"><span>4.</span> Download metrics — 2M+ in first week (Hugging Face / Kaggle)</li>
+        <li class="sources__item"><span>5.</span> Token pricing — Claude API ($3-15/1M), OpenAI GPT-4 ($3-15/1M), third-party Gemma API ($0.14-0.40/1M)</li>
+        <li class="sources__item"><span>6.</span> Personal testing — 7 days of production workload evaluation</li>
+      </ol>
+    </div>
+
+  </main>
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+
+    <!-- Key Metrics -->
+    <div class="sidebar__section">
+      <div class="sidebar__label">Key Metrics</div>
+      <div class="sidebar-metrics">
+        <div class="sidebar-metric">
+          <div class="sidebar-metric__value">$0</div>
+          <div class="sidebar-metric__label">Cost per token (local)</div>
+        </div>
+        <div class="sidebar-metric">
+          <div class="sidebar-metric__value">~3 mo</div>
+          <div class="sidebar-metric__label">Break-even period</div>
+        </div>
+        <div class="sidebar-metric">
+          <div class="sidebar-metric__value">$749</div>
+          <div class="sidebar-metric__label">Hardware investment</div>
+        </div>
+        <div class="sidebar-metric">
+          <div class="sidebar-metric__value">2M+</div>
+          <div class="sidebar-metric__label">Downloads (week 1)</div>
+        </div>
+        <div class="sidebar-metric">
+          <div class="sidebar-metric__value">#3</div>
+          <div class="sidebar-metric__label">Arena AI ranking</div>
+        </div>
+        <div class="sidebar-metric">
+          <div class="sidebar-metric__value">0%</div>
+          <div class="sidebar-metric__label">Tool calling success</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Table of Contents -->
+    <div class="sidebar__section">
+      <div class="sidebar__label">Contents</div>
+      <ol class="toc">
+        <li class="toc__item"><a href="#experience">My Experience</a></li>
+        <li class="toc__item"><a href="#timeline">Seven-Day Timeline</a></li>
+        <li class="toc__item"><a href="#solution">The Solution</a></li>
+      </ol>
+    </div>
+
+  </aside>
+
+</div>
+
+<!-- Share Bar -->
+<div class="share-bar">
+  <span class="share-label">Share</span>
+  <div class="share-buttons">
+    <a class="share-btn" onclick="window.open('https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(location.href),'_blank');return false" href="#" aria-label="Share on Facebook"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></a>
+    <a class="share-btn" onclick="window.open('https://twitter.com/intent/tweet?url='+encodeURIComponent(location.href)+'&text='+encodeURIComponent(document.title),'_blank');return false" href="#" aria-label="Share on X"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+    <a class="share-btn" onclick="window.open('https://www.linkedin.com/sharing/share-offsite/?url='+encodeURIComponent(location.href),'_blank');return false" href="#" aria-label="Share on LinkedIn"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a>
+    <a class="share-btn" onclick="location.href='mailto:?subject='+encodeURIComponent(document.title)+'&body='+encodeURIComponent(location.href);return false" href="#" aria-label="Share via email"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg></a>
+    <button class="share-btn" onclick="navigator.clipboard.writeText(location.href);this.querySelector('.share-copied').style.opacity=1;setTimeout(()=>this.querySelector('.share-copied').style.opacity=0,2000)" aria-label="Copy link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg><span class="share-copied">Copied!</span></button>
+  </div>
+</div>
+
+<!-- CTA Block -->
+<div class="cta-block">
+  <div class="cta-follow">
+    <span class="cta-follow-label">Follow for more builder updates</span>
+    <div class="cta-social-links">
+      <a href="https://instagram.com/founder" target="_blank" rel="noopener">Instagram</a>
+      <a href="https://tiktok.com/@founder" target="_blank" rel="noopener">TikTok</a>
+      <a href="https://youtube.com/@founder" target="_blank" rel="noopener">YouTube</a>
+      <a href="https://linkedin.com/in/founder" target="_blank" rel="noopener">LinkedIn</a>
+    </div>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer class="site-footer">
+  <p class="site-footer__text">Founder — Building in public — 2026</p>
+</footer>
+
+</body>
+</html>
