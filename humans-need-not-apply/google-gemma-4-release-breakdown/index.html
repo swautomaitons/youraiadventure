@@ -3,121 +3,236 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Numbers Don't Lie: Gemma 4 31B Beats Llama 4 on Every Major Benchmark — Under Apache 2.0, For Free</title>
-  <meta property="og:image" content="">
+<title>Gemma 4 vs Qwen 3.5 vs Llama 4: The Benchmark Data Nobody's Reading Honestly — Humans Need Not Apply</title>
   <meta property="og:url" content="">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="The Numbers Don't Lie: Gemma 4 31B Beats Llama 4 on Every Major Benchmark — Under Apache 2.0, For Free">
-  <meta name="twitter:description" content="From prompt to autonomous action — the architecture behind every AI agent.">
+  <meta name="twitter:title" content="Gemma 4 vs Qwen 3.5 vs Llama 4: The Benchmark Data Nobody's Reading Honestly">
+  <meta name="twitter:description" content="The licensing gap is the most underpriced variable in model selection. Here's what the numbers actually show when you lay everything side by side.">
   <meta name="twitter:image" content="">
-<meta name="description" content="From prompt to autonomous action — the architecture, tools, memory, and planning loops that make AI agents tick.">
-<meta property="og:title" content="How AI Agents Actually Work">
-<meta property="og:description" content="From prompt to autonomous action — the architecture behind every AI agent.">
+<meta name="description" content="A complete comparison of Gemma 4, Qwen 3.5, and Llama 4 with licensing analysis. The data everyone's ignoring, and the strategic gaps that matter.">
+<meta property="og:title" content="Gemma 4 vs Qwen 3.5 vs Llama 4: Complete Comparison">
+<meta property="og:description" content="The licensing gap is the most underpriced variable in model selection. Here's what the numbers actually show when you lay everything side by side.">
 <meta property="og:type" content="article">
+<meta property="og:image" content="og-comparison-ember.png">
 <link rel="canonical" href="#">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "Article",
-  "headline": "How AI Agents Actually Work",
-  "description": "From prompt to autonomous action — the architecture, tools, memory, and planning loops behind every AI agent.",
-  "author": { "@type": "Person", "name": "Symond" },
+  "headline": "Gemma 4 vs Qwen 3.5 vs Llama 4: The Benchmark Data Nobody's Reading Honestly",
+  "description": "A complete comparison with licensing analysis, performance benchmarks, and strategic model selection guidance.",
+  "author": { "@type": "Person", "name": "Humans Need Not Apply" },
   "publisher": { "@type": "Organization", "name": "Humans Need Not Apply" },
-  "datePublished": "2026-04-09",
-  "dateModified": "2026-04-09"
+  "datePublished": "2026-04-10",
+  "dateModified": "2026-04-10",
+  "about": [
+    { "@type": "Thing", "name": "Gemma 4" },
+    { "@type": "Thing", "name": "Qwen 3.5" },
+    { "@type": "Thing", "name": "Llama 4" }
+  ]
 }
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Manrope:wght@300;400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-body { background: #1a1a1a; color: #d1d5db; font-family: 'Manrope', sans-serif; font-size: 17px; line-height: 1.7; -webkit-font-smoothing: antialiased; }
+body { background: #1a1a1a; color: #ffffff; font-family: 'Manrope', sans-serif; font-size: 17px; line-height: 1.7; -webkit-font-smoothing: antialiased; }
 a { color: inherit; text-decoration: none; }
 
-/* Single-column layout with no sidebar — this template uses a different structure */
-.post-wrap { max-width: 760px; margin: 0 auto; padding: 0 24px 80px; }
+.page-wrap { max-width: 780px; margin: 0 auto; padding: 0 20px; }
+.wide-wrap { max-width: 1000px; margin: 0 auto; padding: 0 20px; }
+.back-link { display: inline-flex; align-items: center; gap: 6px; font-family: 'Space Mono', monospace; font-size: 0.68rem; color: #999; padding: 16px 0; text-decoration: none; transition: color 0.2s; }
+.back-link:hover { color: #f44336; }
 
-.back-link { display: inline-flex; align-items: center; gap: 6px; font-family: 'Space Mono', monospace; font-size: 0.68rem; color: #6b7280; padding: 16px 0; text-decoration: none; transition: color 0.2s; }
-.back-link:hover { color: #ff9800; }
+/* Header */
+.comp-header { padding: 56px 20px 44px; border-bottom: 2px solid #333; }
+.comp-label { font-family: 'Space Mono', monospace; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: #f44336; margin-bottom: 14px; }
+h1.comp-title { font-family: 'Libre Baskerville', serif; font-size: clamp(1.8rem, 4vw, 2.6rem); font-weight: 700; line-height: 1.15; color: #ffffff; margin-bottom: 14px; }
+.comp-subtitle { font-family: 'Libre Baskerville', serif; font-style: italic; font-size: 1.1rem; color: #999; margin-bottom: 18px; font-weight: 400; }
+.comp-meta { font-family: 'Space Mono', monospace; font-size: 0.72rem; color: #666; display: flex; gap: 16px; flex-wrap: wrap; }
 
-/* Hero — full-width with stats bar */
-.post-hero { padding: 48px 0 32px; }
-.post-badge { display: inline-flex; align-items: center; gap: 6px; font-family: 'Space Mono', monospace; font-size: 0.68rem; letter-spacing: 2px; text-transform: uppercase; color: #ff9800; background: rgba(251,146,60,0.1); padding: 5px 14px; border-radius: 4px; margin-bottom: 18px; border: 1px solid rgba(251,146,60,0.15); }
-.post-badge::before { content: ''; width: 6px; height: 6px; background: #ff9800; border-radius: 1px; transform: rotate(45deg); }
-.post-hero h1 { font-family: 'Sora', sans-serif; font-size: clamp(1.8rem, 5vw, 2.8rem); font-weight: 800; line-height: 1.1; letter-spacing: -1px; margin-bottom: 14px; background: linear-gradient(135deg, #fff 0%, #ff9800 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-.post-hero .lead { font-size: 1rem; color: #9ca3af; font-weight: 300; margin-bottom: 20px; }
-.post-meta { font-family: 'Space Mono', monospace; font-size: 0.72rem; color: #6b7280; margin-bottom: 24px; }
-.post-stats { display: flex; gap: 16px; flex-wrap: wrap; }
-.post-stat { background: rgba(251,146,60,0.05); border: 1px solid rgba(251,146,60,0.1); border-radius: 8px; padding: 12px 18px; flex: 1; min-width: 90px; }
-.post-stat-val { font-family: 'Sora', sans-serif; font-size: 1.3rem; font-weight: 800; color: #ff9800; }
-.post-stat-label { font-size: 0.62rem; text-transform: uppercase; letter-spacing: 1px; color: #6b7280; margin-top: 2px; font-family: 'Space Mono', monospace; }
+/* Hero */
+.hero-img-placeholder { width: 100%; aspect-ratio: 21/9; border: 2px dashed #333; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 36px 0; background: #212121; }
+.hero-img-placeholder .ph-label { font-family: 'Space Mono', monospace; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 2px; color: #666; }
+.hero-img-placeholder .ph-hint { font-size: 0.85rem; color: #555; margin-top: 6px; }
 
 /* TL;DR */
-.tldr-box { background: rgba(251,146,60,0.06); border-left: 4px solid #ff9800; padding: 18px 22px; margin: 32px 0; border-radius: 0 8px 8px 0; }
-.tldr-box strong { font-family: 'Space Mono', monospace; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 1px; color: #ff9800; }
-.tldr-box p { margin-top: 6px; font-size: 0.95rem; line-height: 1.65; color: #d1d5db; }
+.tldr-box { background: #212121; border-left: 4px solid #f44336; padding: 22px 26px; margin-bottom: 44px; border-radius: 0 10px 10px 0; }
+.tldr-box .tldr-label { font-family: 'Space Mono', monospace; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 1.5px; color: #f44336; font-weight: 700; margin-bottom: 8px; }
+.tldr-box p { font-size: 0.95rem; color: #ccc; line-height: 1.65; }
 
-/* Inline TOC — horizontal pill nav instead of sidebar */
-.toc-inline { display: flex; flex-wrap: wrap; gap: 6px; margin: 24px 0 36px; padding: 16px; background: rgba(255,255,255,0.02); border: 1px solid rgba(251,146,60,0.08); border-radius: 10px; }
-.toc-inline a { font-family: 'Space Mono', monospace; font-size: 0.68rem; color: #9ca3af; padding: 4px 12px; border-radius: 4px; background: rgba(255,255,255,0.03); transition: all 0.2s; text-decoration: none; }
-.toc-inline a:hover { background: rgba(251,146,60,0.12); color: #ff9800; }
+/* Navigation pills */
+.nav-pills { display: flex; gap: 8px; margin: 32px 0; flex-wrap: wrap; }
+.nav-pill { font-family: 'Space Mono', monospace; font-size: 0.75rem; padding: 8px 16px; border-radius: 20px; border: 1px solid #333; color: #999; transition: all 0.2s; text-decoration: none; }
+.nav-pill:hover, .nav-pill.active { background: #f44336; color: #fff; border-color: #f44336; }
 
-/* Article */
-.article-body h2 { font-family: 'Sora', sans-serif; font-size: 1.6rem; font-weight: 700; color: #f5f5f0; margin: 48px 0 16px; scroll-margin-top: 24px; display: flex; align-items: center; gap: 12px; }
-.article-body h2 .sec-num { font-size: 0.72rem; font-weight: 800; color: #ff9800; background: rgba(251,146,60,0.1); width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; border-radius: 6px; flex-shrink: 0; }
-.article-body h3 { font-family: 'Sora', sans-serif; font-size: 1.25rem; font-weight: 700; margin: 32px 0 12px; color: #e5e7eb; scroll-margin-top: 24px; }
-.article-body p { margin-bottom: 20px; }
-.article-body strong { color: #ff9800; }
+/* Section headings */
+h2.section-title { font-family: 'Libre Baskerville', serif; font-size: 1.55rem; font-weight: 700; color: #ffffff; margin: 56px 0 8px; scroll-margin-top: 24px; }
+.section-lead { font-size: 0.95rem; color: #999; margin-bottom: 24px; }
+h3.subsection { font-family: 'Libre Baskerville', serif; font-size: 1.22rem; font-weight: 700; color: #ffffff; margin: 32px 0 12px; scroll-margin-top: 24px; }
+p { margin-bottom: 18px; color: #ccc; }
 
-.highlight { display: inline; background: rgba(251,146,60,0.12); color: #fbbf24; padding: 1px 6px; border-radius: 3px; font-family: 'Space Mono', monospace; font-size: 0.88rem; }
-.insight { padding: 16px 20px; background: rgba(251,146,60,0.06); border: 1px solid rgba(251,146,60,0.12); border-radius: 10px; margin: 20px 0; position: relative; }
-.insight::before { content: '\26A1'; position: absolute; top: -10px; left: 16px; background: #1a1a1a; padding: 0 6px; font-size: 0.85rem; }
-.insight p { font-size: 0.92rem; color: #e5e7eb; margin: 0; font-weight: 500; }
-.codeblock { font-family: 'Space Mono', monospace; font-size: 0.78rem; background: #111; border: 1px solid rgba(251,146,60,0.1); border-radius: 8px; padding: 16px; margin: 18px 0; color: #fbbf24; line-height: 1.8; overflow-x: auto; white-space: pre-wrap; word-break: break-word; }
-.codeblock .comment { color: #6b7280; }
-.gradient-bar { height: 3px; background: linear-gradient(90deg, #f97316, #ef4444, transparent); border-radius: 3px; margin: 40px 0; }
+/* Model review section */
+.model-review { border: 2px solid #333; border-radius: 20px; padding: 36px 32px; margin: 40px 0; background: #212121; position: relative; }
+@media (max-width: 600px) { .model-review { padding: 24px 18px; } }
+.model-review .mr-number { font-family: 'Space Mono', monospace; font-size: 0.68rem; text-transform: uppercase; letter-spacing: 2px; color: #f44336; font-weight: 700; margin-bottom: 6px; }
+.model-review .mr-name { font-family: 'Libre Baskerville', serif; font-size: 1.8rem; font-weight: 700; color: #ffffff; margin-bottom: 4px; }
+.model-review .mr-maker { font-family: 'Space Mono', monospace; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 1px; color: #666; margin-bottom: 16px; }
+.model-review .mr-tagline { font-family: 'Libre Baskerville', serif; font-style: italic; font-size: 1.05rem; color: #999; margin-bottom: 20px; }
+
+/* Icon placeholder */
+.mr-icon { width: 64px; height: 64px; border-radius: 50%; border: 2px dashed #333; display: flex; align-items: center; justify-content: center; margin-bottom: 16px; font-family: 'Space Mono', monospace; font-size: 0.68rem; color: #666; }
+
+/* Score bars */
+.score-bars { margin: 24px 0; }
+.score-bar-row { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+.sbr-label { font-family: 'Space Mono', monospace; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 1px; color: #999; font-weight: 700; width: 130px; flex-shrink: 0; }
+.sbr-track { flex: 1; height: 10px; background: #333; border-radius: 5px; overflow: hidden; }
+.sbr-fill { height: 100%; border-radius: 5px; transition: width 0.8s ease; }
+.sbr-value { font-family: 'Space Mono', monospace; font-size: 0.82rem; font-weight: 700; width: 36px; text-align: right; }
+.sbr-value.high { color: #ff9800; }
+.sbr-value.mid { color: #ffc107; }
+.sbr-value.low { color: #f44336; }
+
+/* Pros / Cons */
+.pros-cons { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 24px 0; }
+@media (max-width: 560px) { .pros-cons { grid-template-columns: 1fr; } }
+.pros-col, .cons-col { padding: 18px; border-radius: 12px; }
+.pros-col { background: rgba(255, 152, 0, 0.1); border: 1px solid rgba(255, 152, 0, 0.3); }
+.cons-col { background: rgba(244, 67, 54, 0.1); border: 1px solid rgba(244, 67, 54, 0.3); }
+.pc-label { font-family: 'Space Mono', monospace; font-size: 0.68rem; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700; margin-bottom: 10px; }
+.pros-col .pc-label { color: #ff9800; }
+.cons-col .pc-label { color: #f44336; }
+.pc-list { list-style: none; }
+.pc-list li { font-size: 0.9rem; color: #ccc; padding: 4px 0; padding-left: 18px; position: relative; line-height: 1.55; }
+.pros-col .pc-list li::before { content: '+'; position: absolute; left: 0; font-weight: 700; color: #ff9800; }
+.cons-col .pc-list li::before { content: '\2212'; position: absolute; left: 0; font-weight: 700; color: #f44336; }
+
+/* Overall score circle */
+.overall-score { display: flex; align-items: center; gap: 16px; margin: 24px 0; padding: 20px; background: #2a2a2a; border-radius: 12px; }
+.os-circle { width: 72px; height: 72px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Libre Baskerville', serif; font-size: 1.6rem; font-weight: 700; color: #fff; flex-shrink: 0; }
+.os-circle.excellent { background: #ff9800; }
+.os-circle.good { background: #ffc107; }
+.os-circle.fair { background: #f44336; }
+.os-text .os-verdict { font-family: 'Libre Baskerville', serif; font-weight: 700; font-size: 1.1rem; color: #ffffff; }
+.os-text .os-summary { font-size: 0.9rem; color: #999; margin-top: 2px; line-height: 1.5; }
+
+/* Best for badges */
+.best-for { display: flex; gap: 8px; flex-wrap: wrap; margin: 16px 0; }
+.best-for-badge { font-family: 'Space Mono', monospace; font-size: 0.72rem; padding: 6px 14px; border-radius: 6px; background: rgba(244, 67, 54, 0.15); color: #f44336; font-weight: 700; }
+
+/* Spec grid */
+.spec-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 20px 0; }
+@media (max-width: 480px) { .spec-grid { grid-template-columns: 1fr; } }
+.spec-item { background: #2a2a2a; border-radius: 8px; padding: 14px; }
+.spec-item .si-label { font-family: 'Space Mono', monospace; font-size: 0.68rem; text-transform: uppercase; letter-spacing: 1px; color: #666; font-weight: 700; }
+.spec-item .si-val { font-family: 'Manrope', sans-serif; font-weight: 700; font-size: 1.05rem; color: #ffffff; margin-top: 2px; }
+
+/* Divider */
+.section-divider { height: 2px; background: #333; margin: 56px 0; border: none; }
+
+/* Image placeholder */
+.img-placeholder { width: 100%; border: 2px dashed #333; border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #212121; padding: 24px; margin: 24px 0; }
+.img-placeholder .ph-label { font-family: 'Space Mono', monospace; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 2px; color: #666; }
+.img-placeholder .ph-hint { font-size: 0.82rem; color: #555; margin-top: 4px; }
+
+/* Carousel Image Display */
+.carousel-img { width: 100%; border-radius: 10px; margin: 24px 0; }
+
+/* Head-to-head verdict */
+.h2h-section { background: #212121; border: 2px solid #f44336; border-radius: 20px; padding: 40px 32px; margin: 48px 0; }
+@media (max-width: 600px) { .h2h-section { padding: 28px 18px; } }
+.h2h-section .h2h-label { font-family: 'Space Mono', monospace; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 2px; color: #f44336; font-weight: 700; margin-bottom: 10px; }
+.h2h-section .h2h-title { font-family: 'Libre Baskerville', serif; font-size: 1.6rem; font-weight: 700; color: #ffffff; margin-bottom: 16px; }
+.h2h-section p { font-size: 0.95rem; color: #ccc; }
+
+/* Score comparison bars (h2h) */
+.h2h-bars { margin: 28px 0; }
+.h2h-bar-group { margin-bottom: 20px; }
+.h2h-bar-group .hbg-label { font-family: 'Space Mono', monospace; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 1px; color: #999; font-weight: 700; margin-bottom: 8px; }
+.h2h-bar-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+.hbr-name { font-family: 'Space Mono', monospace; font-size: 0.72rem; color: #666; width: 70px; flex-shrink: 0; }
+.hbr-track { flex: 1; height: 8px; background: #333; border-radius: 4px; overflow: hidden; }
+.hbr-fill { height: 100%; border-radius: 4px; }
+.hbr-fill.gemma { background: #f44336; }
+.hbr-fill.qwen { background: #ff9800; }
+.hbr-fill.llama { background: #ffc107; }
+.hbr-score { font-family: 'Space Mono', monospace; font-size: 0.78rem; font-weight: 700; width: 30px; text-align: right; color: #ffffff; }
+
+/* Final winner */
+.final-winner { text-align: center; padding: 24px; margin-top: 24px; background: #2a2a2a; border-radius: 14px; }
+.final-winner .fw-label { font-family: 'Space Mono', monospace; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 2px; color: #f44336; font-weight: 700; }
+.final-winner .fw-name { font-family: 'Libre Baskerville', serif; font-size: 2rem; font-weight: 700; color: #ffffff; margin: 6px 0; }
+.final-winner .fw-note { font-size: 0.92rem; color: #999; }
+
+/* Recommendation cards */
+.rec-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin-top: 24px; }
+.rec-card { background: #2a2a2a; border-radius: 12px; padding: 18px; border: 1px solid #333; }
+.rec-card .rc-use { font-family: 'Space Mono', monospace; font-size: 0.68rem; text-transform: uppercase; letter-spacing: 1px; color: #f44336; font-weight: 700; }
+.rec-card .rc-model { font-family: 'Libre Baskerville', serif; font-weight: 700; font-size: 1.1rem; color: #ffffff; margin-top: 4px; }
+.rec-card .rc-why { font-size: 0.85rem; color: #999; margin-top: 6px; line-height: 1.5; }
 
 /* Key Takeaways */
-.key-takeaways { background: rgba(251,146,60,0.06); border-radius: 12px; padding: 24px 28px; margin: 48px 0; border-left: 5px solid #ff9800; }
-.key-takeaways h3 { font-family: 'Sora', sans-serif; color: #ff9800; margin: 0 0 14px 0; font-size: 1.1rem; font-weight: 700; }
-.key-takeaways ul { margin-left: 20px; list-style: disc; }
-.key-takeaways li { margin-bottom: 10px; color: #d1d5db; font-size: 0.95rem; line-height: 1.6; }
+.takeaways-box { background: #212121; border: 1px solid #333; border-radius: 14px; padding: 28px; margin: 44px 0; }
+.takeaways-box .tk-label { font-family: 'Space Mono', monospace; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 1.5px; color: #f44336; font-weight: 700; margin-bottom: 16px; }
+.takeaways-box ol { padding-left: 20px; }
+.takeaways-box li { margin-bottom: 12px; color: #ccc; font-size: 0.95rem; line-height: 1.65; }
+.takeaways-box li strong { color: #ffffff; }
 
-/* Share & CTA */
-.post-footer { text-align: center; padding: 40px 20px; font-size: 0.65rem; color: #5a5a72; font-family: 'Space Mono', monospace; }
+/* Sources */
+.sources-section { margin: 44px 0; }
+.sources-section .src-label { font-family: 'Space Mono', monospace; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 1.5px; color: #666; font-weight: 700; margin-bottom: 14px; }
+.sources-list { list-style: none; }
+.sources-list li { font-size: 0.88rem; color: #999; padding: 6px 0; border-bottom: 1px solid #333; }
+.sources-list li a { color: #f44336; text-decoration: underline; text-underline-offset: 2px; }
+.sources-list li a:hover { color: #ff9800; }
 
-.img-placeholder { background: rgba(251,146,60,0.03); border: 2px dashed rgba(251,146,60,0.12); border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 6px; margin: 24px 0; min-height: 180px; }
-.img-placeholder .ph-label { font-family: 'Space Mono', monospace; font-size: 0.68rem; text-transform: uppercase; letter-spacing: 1.5px; color: #6b7280; }
-.img-placeholder .ph-hint { font-size: 0.78rem; color: #4a5060; }
+/* Share bar */
+.share-bar .sb-label { font-family: 'Space Mono', monospace; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 1.5px; color: #666; font-weight: 700; }
+.share-bar a { display: inline-flex; align-items: center; justify-content: center; height: 38px; padding: 0 16px; border-radius: 8px; background: #212121; font-family: 'Space Mono', monospace; font-size: 0.75rem; color: #999; transition: all 0.2s; gap: 6px; }
+.share-bar a:hover { background: #f44336; color: #fff; }
 
-.sources { margin: 40px 0; padding-top: 24px; border-top: 1px solid rgba(251,146,60,0.1); }
-.sources h3 { font-family: 'Space Mono', monospace; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 1.5px; color: #6b7280; margin-bottom: 14px; }
-.sources ol { margin-left: 20px; }
-.sources li { margin-bottom: 8px; font-size: 0.85rem; color: #6b7280; line-height: 1.5; }
-.sources a { color: #ff9800; text-decoration: underline; text-underline-offset: 2px; }
+/* CTA */
+.cta-section .email-form { display: flex; gap: 8px; max-width: 420px; margin: 0 auto; }
+.email-form input { flex: 1; padding: 12px 16px; border-radius: 10px; border: 1px solid #333; background: #212121; font-family: 'Manrope', sans-serif; font-size: 0.92rem; color: #ffffff; outline: none; }
+.email-form input::placeholder { color: #666; }
+.email-form input:focus { border-color: #f44336; }
+.email-form button { padding: 12px 22px; border-radius: 10px; background: #f44336; color: #fff; border: none; font-family: 'Manrope', sans-serif; font-size: 0.88rem; font-weight: 700; cursor: pointer; white-space: nowrap; }
+.email-form button:hover { background: #d32f2f; }
+.cta-links { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 18px; }
+.cta-links a { font-family: 'Space Mono', monospace; font-size: 0.78rem; color: #f44336; padding: 8px 18px; border: 1px solid #333; border-radius: 8px; transition: all 0.2s; }
+.cta-links a:hover { background: #f44336; color: #fff; border-color: #f44336; }
+
+/* Footer */
+.site-footer { padding: 32px 0; text-align: center; border-top: 2px solid #333; margin-top: 48px; }
+.site-footer p { font-family: 'Space Mono', monospace; font-size: 0.72rem; color: #666; }
+.site-footer a { color: #f44336; text-decoration: underline; text-underline-offset: 2px; }
+
+@media (max-width: 600px) {
+  .email-form { flex-direction: column; }
+  .sbr-label { width: 100px; font-size: 0.65rem; }
+}
 
 
 /* === Share Bar === */
-.share-bar { display: flex; align-items: center; gap: 12px; justify-content: center; margin: 32px 0; padding: 16px 0; border-top: 1px solid rgba(128,128,128,0.15); }
-.share-label { font-size: 0.78rem; color: #9ca3af; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+.share-bar { display: flex; align-items: center; gap: 12px; justify-content: center; margin: 32px 0; padding: 16px 0; border-top: 1px solid #333; }
+.share-label { font-size: 0.78rem; color: #999; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
 .share-buttons { display: flex; gap: 8px; }
-.share-btn { display: inline-flex; align-items: center; justify-content: center; width: 38px; height: 38px; border-radius: 50%; background: rgba(128,128,128,0.08); border: none; cursor: pointer; color: #9ca3af; transition: all 0.2s; text-decoration: none; position: relative; }
-.share-btn:hover { background: rgba(128,128,128,0.18); color: #fff; }
-.share-copied { position: absolute; top: -28px; left: 50%; transform: translateX(-50%); font-size: 0.7rem; color: #10b981; background: rgba(16,185,129,0.1); padding: 2px 8px; border-radius: 4px; white-space: nowrap; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+.share-btn { display: inline-flex; align-items: center; justify-content: center; width: 38px; height: 38px; border-radius: 50%; background: #212121; border: none; cursor: pointer; color: #999; transition: all 0.2s; text-decoration: none; position: relative; }
+.share-btn:hover { background: #f44336; color: #fff; }
+.share-copied { position: absolute; top: -28px; left: 50%; transform: translateX(-50%); font-size: 0.7rem; color: #ff9800; background: rgba(255, 152, 0, 0.1); padding: 2px 8px; border-radius: 4px; white-space: nowrap; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
 
 /* === CTA Block === */
-.cta-block { text-align: center; margin: 32px 0; padding: 40px 24px; background: linear-gradient(135deg, rgba(128,128,128,0.06), rgba(128,128,128,0.02)); border: 1px solid rgba(128,128,128,0.12); border-radius: 16px; }
+.cta-block { text-align: center; margin: 32px 0; padding: 40px 24px; background: linear-gradient(135deg, rgba(244, 67, 54, 0.1), rgba(255, 152, 0, 0.05)); border: 1px solid rgba(244, 67, 54, 0.2); border-radius: 16px; }
 .cta-download { margin-bottom: 24px; }
-.cta-headline { font-size: 1.25rem; font-weight: 700; margin-bottom: 8px; }
-.cta-sub { font-size: 0.9rem; color: #9ca3af; margin-bottom: 16px; }
+.cta-headline { font-size: 1.25rem; font-weight: 700; margin-bottom: 8px; color: #ffffff; }
+.cta-sub { font-size: 0.9rem; color: #999; margin-bottom: 16px; }
 .cta-primary-btn { display: inline-block; padding: 14px 32px; font-size: 1rem; font-weight: 700; color: #fff; background: #f44336; border-radius: 8px; text-decoration: none; transition: all 0.2s; }
-.cta-primary-btn:hover { background: #1976d2; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(33,150,243,0.3); }
-.cta-follow { padding-top: 20px; border-top: 1px solid rgba(128,128,128,0.1); }
-.cta-follow-label { font-size: 0.82rem; color: #9ca3af; display: block; margin-bottom: 10px; }
+.cta-primary-btn:hover { background: #d32f2f; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(244, 67, 54, 0.3); }
+.cta-follow { padding-top: 20px; border-top: 1px solid #333; }
+.cta-follow-label { font-size: 0.82rem; color: #999; display: block; margin-bottom: 10px; }
 .cta-social-links { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
-.cta-social-links a { font-size: 0.85rem; color: #6b7280; text-decoration: none; font-weight: 500; transition: color 0.2s; }
+.cta-social-links a { font-size: 0.85rem; color: #999; text-decoration: none; font-weight: 500; transition: color 0.2s; }
 .cta-social-links a:hover { color: #f44336; }
 
 
@@ -136,168 +251,487 @@ img, video, iframe, table, pre, code { max-width: 100%; }
 </style>
 </head>
 <body>
-<div class="post-wrap">
-  <a href="../index.html" class="back-link">&larr; Back to Library</a>
 
-  <div class="post-hero">
-    <div class="post-badge">Deep Dive &middot; 14 min</div>
-    <h1>How AI Agents Actually Work</h1>
-    <p class="lead">From prompt to autonomous action — the architecture, tools, memory, and planning loops that make agents tick.</p>
-    <div class="post-meta">By Symond &middot; April 09, 2026</div>
-    <div class="post-stats">
-      <div class="post-stat"><div class="post-stat-val">7</div><div class="post-stat-label">Concepts</div></div>
-      <div class="post-stat"><div class="post-stat-val">5</div><div class="post-stat-label">Code Examples</div></div>
-      <div class="post-stat"><div class="post-stat-val">0</div><div class="post-stat-label">Fluff</div></div>
-    </div>
+<div class="page-wrap">
+  <a href="../index.html" class="back-link">&larr; Back to Resources</a>
+</div>
+
+<header class="page-wrap comp-header">
+  <div class="comp-label">Deep-Dive Comparison</div>
+  <h1 class="comp-title">Gemma 4 vs Qwen 3.5 vs Llama 4: The Benchmark Data Nobody's Reading Honestly</h1>
+  <p class="comp-subtitle">A Complete Comparison With Licensing Analysis</p>
+  <div class="comp-meta">
+    <span>By Humans Need Not Apply</span>
+    <span>April 10, 2026</span>
+    <span>12 min read</span>
   </div>
+</header>
 
-  <!-- Featured Image Placeholder -->
-  <div class="img-placeholder" style="aspect-ratio: 16/9;">
-    <div class="ph-label">Featured Image</div>
-    <div class="ph-hint">Technical diagram or bold hero graphic &mdash; 16:9</div>
-  </div>
+<div class="page-wrap">
 
+  <!-- Hero -->
+  <img src="images/slide_1.png" alt="Gemma 4 vs Qwen 3.5 vs Llama 4 comparison" class="carousel-img">
+
+  <!-- TL;DR -->
   <div class="tldr-box">
-    <strong>TL;DR</strong>
-    <p>An AI agent is a language model in a while-loop with tools, memory, and planning. It reasons, acts, observes, repeats. The difference from a chatbot is scaffolding, not intelligence. Master these 7 building blocks and you can build, evaluate, or debug any agent system.</p>
+    <div class="tldr-label">TL;DR</div>
+    <p>The licensing gap is the most underpriced variable in model selection. Apache 2.0 (Gemma 4 and Qwen 3.5) means zero commercial restrictions. Llama 4's 700M monthly active user cap creates a legal ceiling that compounds as you scale. Qwen 3.5 is 40% faster and edges general benchmarks. Gemma 4 dominates math, agentic tasks, and is the only multimodal open model at this performance tier. There is no "best open-source model" in 2026 — only models that lead specific categories.</p>
   </div>
 
-  <!-- Inline TOC (horizontal pills) -->
-  <nav class="toc-inline">
-    <a href="#s1">Agent vs Chatbot</a>
-    <a href="#s2">ReAct Loop</a>
-    <a href="#s3">Tool Use</a>
-    <a href="#s4">Memory</a>
-    <a href="#s5">Planning</a>
-    <a href="#s6">Error Handling</a>
-    <a href="#s7">Full Architecture</a>
+  <!-- Jump nav -->
+  <nav class="nav-pills">
+    <a href="#review-gemma" class="nav-pill active">Gemma 4 Review</a>
+    <a href="#review-qwen" class="nav-pill">Qwen 3.5 Review</a>
+    <a href="#review-llama" class="nav-pill">Llama 4 Review</a>
+    <a href="#head-to-head" class="nav-pill">Head-to-Head</a>
+    <a href="#verdict" class="nav-pill">Verdict</a>
   </nav>
 
-  <div class="article-body">
-    <h2 id="s1"><span class="sec-num">01</span> Agent &ne; Chatbot</h2>
-    <p>A chatbot takes input and produces output. Once. An agent runs in a <span class="highlight">while loop</span>. It receives a goal, picks an action, executes it, reads the result, and decides what to do next — autonomously, without you typing another word.</p>
-    <p>The model inside might be identical. The difference is <span class="highlight">scaffolding</span>: tools it can call, memory it can access, and an orchestration loop that keeps it running until the task is done or a limit is hit.</p>
-    <div class="insight"><p>Same model + different architecture = completely different capability. A single API call is a chatbot. A loop around that API call is an agent.</p></div>
+  <!-- ============================================ -->
+  <!-- REVIEW 1: GEMMA 4 -->
+  <!-- ============================================ -->
+  <div class="model-review" id="review-gemma">
+    <div class="mr-number">Review 01 of 03</div>
+    <div class="mr-icon">Logo</div>
+    <div class="mr-name">Gemma 4</div>
+    <div class="mr-maker">Google DeepMind</div>
+    <div class="mr-tagline">"The multimodal specialist with agentic dominance"</div>
 
-    <div class="gradient-bar"></div>
-
-    <h2 id="s2"><span class="sec-num">02</span> The ReAct Loop</h2>
-    <p>Coined by Google Research in 2022, <span class="highlight">ReAct</span> = Reasoning + Acting. The model alternates between thinking out loud (chain of thought) and taking actions (tool calls). Each action result feeds back into the next reasoning step.</p>
-    <div class="codeblock"><span class="comment">// The agent loop in pseudocode</span>
-while (task_not_complete) {
-  thought = model.reason(goal, context, history)
-  action  = model.select_tool(thought)
-  result  = execute(action)
-  history.append(thought, action, result)
-
-  if (model.should_stop(result)) break
-}</div>
-    <p>That's it. Every agent framework — LangChain, CrewAI, Claude's tool use, AutoGPT — is some version of this loop with different levels of sophistication around error handling, planning, and memory management.</p>
-
-    <div class="gradient-bar"></div>
-
-    <h2 id="s3"><span class="sec-num">03</span> Tools: Giving the Model Hands</h2>
-    <p>Without tools, a model can only generate text. Tools connect it to the real world. A "tool" is a function defined by three things: a <span class="highlight">name</span>, a <span class="highlight">description</span>, and a <span class="highlight">parameter schema</span>.</p>
-    <p>The model reads the description, decides when to call the tool, and formats parameters per the schema. The orchestrator executes the actual function and passes the result back. The model never runs code directly — it just generates the request.</p>
-    <div class="codeblock"><span class="comment">// Tool definition example</span>
-{
-  name: "web_search",
-  description: "Search Google for current info.
-    Returns top 5 results with titles + snippets.
-    Best for factual queries about events
-    or products.",
-  parameters: {
-    query: "string (2-100 chars, natural language)",
-    max_results: "integer (1-10, default 5)"
-  }
-}</div>
-    <div class="insight"><p>Tool descriptions are 80% of tool reliability. The model selects tools based on descriptions, not code. A vague description = wrong tool selection = failed task.</p></div>
-
-    <!-- Section Illustration Placeholder -->
-    <div class="img-placeholder" style="aspect-ratio: 16/10; min-height: 140px;">
-      <div class="ph-label">Section Illustration</div>
-      <div class="ph-hint">Tool integration flow or API architecture diagram</div>
+    <div class="score-bars">
+      <div class="score-bar-row">
+        <span class="sbr-label">Math (AIME)</span>
+        <div class="sbr-track"><div class="sbr-fill" style="width:89.2%;background:#ff9800"></div></div>
+        <span class="sbr-value high">89.2</span>
+      </div>
+      <div class="score-bar-row">
+        <span class="sbr-label">Agentic Tasks</span>
+        <div class="sbr-track"><div class="sbr-fill" style="width:86.4%;background:#ff9800"></div></div>
+        <span class="sbr-value high">86.4</span>
+      </div>
+      <div class="score-bar-row">
+        <span class="sbr-label">GPQA</span>
+        <div class="sbr-track"><div class="sbr-fill" style="width:84.3%;background:#ffc107"></div></div>
+        <span class="sbr-value mid">84.3</span>
+      </div>
+      <div class="score-bar-row">
+        <span class="sbr-label">LiveCodeBench</span>
+        <div class="sbr-track"><div class="sbr-fill" style="width:80%;background:#ffc107"></div></div>
+        <span class="sbr-value mid">80.0</span>
+      </div>
+      <div class="score-bar-row">
+        <span class="sbr-label">Speed (tok/s)</span>
+        <div class="sbr-track"><div class="sbr-fill" style="width:25%;background:#f44336"></div></div>
+        <span class="sbr-value low">25</span>
+      </div>
+      <div class="score-bar-row">
+        <span class="sbr-label">Multimodal</span>
+        <div class="sbr-track"><div class="sbr-fill" style="width:100%;background:#ff9800"></div></div>
+        <span class="sbr-value high">Yes</span>
+      </div>
+      <div class="score-bar-row">
+        <span class="sbr-label">Licensing</span>
+        <div class="sbr-track"><div class="sbr-fill" style="width:100%;background:#ff9800"></div></div>
+        <span class="sbr-value high">Apache</span>
+      </div>
     </div>
 
-    <div class="gradient-bar"></div>
+    <img src="images/slide_2.png" alt="Gemma 4 performance breakdown" class="carousel-img">
 
-    <h2 id="s4"><span class="sec-num">04</span> Memory Architecture</h2>
-    <p>Three types of memory, each solving a different problem:</p>
-    <p><strong>Short-term</strong> — the conversation context window itself. Every message, tool result, and reasoning trace lives here. Finite and expensive. At 200K tokens, a complex workflow can fill it in minutes.</p>
-    <p><strong>Long-term</strong> — vector database (Pinecone, Chroma, pgvector). Before each step, the agent queries for relevant past interactions. This is RAG applied to the agent's own history. The trap: irrelevant retrievals are worse than no memory at all.</p>
-    <p><strong>Episodic</strong> — stored experiences, not facts. "Last time I tried scraping that site without delays, I got rate-limited. Use 2s between requests." The most underexplored memory type, and potentially the most powerful.</p>
-    <div class="codeblock"><span class="comment">// Memory retrieval before each step</span>
-relevant_memories = vector_db.query(
-  embedding(current_context),
-  top_k=5,
-  threshold=0.82  <span class="comment">// &larr; this threshold matters</span>
-)
-context = current_msgs + relevant_memories</div>
+    <p>Gemma 4 delivers a 13x improvement in agentic task performance over Gemma 3, driven by Google's decision to train tool calling as a first-class objective rather than fine-tuning it as an afterthought. Its 89.2% score on AIME 2025 (math reasoning) and 86.4% on agentic benchmarks represent category dominance, not just leadership.</p>
 
-    <div class="gradient-bar"></div>
+    <p>The multimodal dimension is where Gemma 4 stands alone. It is currently the only open-source model at this performance tier with native vision capability. For the growing class of applications that require vision plus reasoning plus tool calling — document understanding, visual QA, multimodal agents — Gemma 4 has no open-source competitor.</p>
 
-    <h2 id="s5"><span class="sec-num">05</span> Planning: Task Decomposition</h2>
-    <p>Single-step tasks are easy. Multi-step planning is the hard problem. "Set up CI/CD for this repo" requires decomposing into dozens of subtasks with dependencies, ordering, and fallback paths.</p>
-    <p>The practical approach: <span class="highlight">hierarchical lazy planning</span>. Generate a rough 5-8 step plan upfront, then decompose each step into specific actions only when you reach it. Don't over-plan — the information you need for step 7 probably doesn't exist yet at step 1.</p>
-    <div class="insight"><p>The #1 failure mode of agent planning isn't bad plans — it's plan drift. After 20+ steps, the agent loses sight of the original goal. Build in periodic reflection checkpoints.</p></div>
+    <p>The tradeoff is speed. At 25 tokens/second, Gemma 4 trails Qwen 3.5's 35 tokens/second by 40%. For latency-sensitive applications, this gap translates directly into user experience and infrastructure costs.</p>
 
-    <div class="gradient-bar"></div>
-
-    <h2 id="s6"><span class="sec-num">06</span> Error Handling in Production</h2>
-    <p>Demo agents break on the first error. Production agents expect errors and handle them at three levels:</p>
-    <p><strong>Layer 1: Retry</strong> — Exponential backoff (1s &rarr; 2s &rarr; 4s &rarr; 8s). Handles most transient failures: timeouts, rate limits, temporary outages.</p>
-    <p><strong>Layer 2: Fallback</strong> — If the primary search API fails, use an alternative. If JSON parsing fails, extract from raw text. If one approach fails, try another.</p>
-    <p><strong>Layer 3: Graceful degradation</strong> — Report what was accomplished, what failed, and why. A partial result with a clear explanation beats silent failure.</p>
-    <p>And the meta-layer: <span class="highlight">cost circuit breakers</span>. A runaway loop can burn hundreds of dollars in minutes. Set per-task budgets and automatic shutoffs.</p>
-
-    <div class="gradient-bar"></div>
-
-    <h2 id="s7"><span class="sec-num">07</span> The Full Architecture</h2>
-    <p>Wire it all together:</p>
-    <div class="codeblock"><span class="comment">// Production agent architecture</span>
-&#9484;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9488;
-&#9474;         ORCHESTRATOR            &#9474;
-&#9474;  Think &rarr; Act &rarr; Observe &rarr; Loop &#9474;
-&#9474;                                 &#9474;
-&#9474;  Tools: search, code, API       &#9474;
-&#9474;  Memory: short + long + episodic&#9474;
-&#9474;  Planner: hierarchical lazy     &#9474;
-&#9474;  Error: retry &rarr; fallback       &#9474;
-&#9474;  Budget: cost circuit break      &#9474;
-&#9500;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9508;
-&#9474;  HUMAN-IN-THE-LOOP CHECKPOINTS  &#9474;
-&#9474;  &rarr; external comms, prod writes &#9474;
-&#9474;  &rarr; spending &gt; threshold        &#9474;
-&#9492;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9496;</div>
-    <p>Every production agent — Claude Code, Devin, Copilot Workspace — follows this pattern. The differences are in implementation details. But the bones are the same.</p>
-    <p>Full autonomy isn't the goal. <span class="highlight">Maximum useful autonomy</span> is. Handle routine tasks independently, escalate high-stakes decisions to humans. That line is the real art of agent engineering.</p>
-
-    <!-- Key Takeaways -->
-    <!-- Sources & References -->
-    <div class="sources">
-      <h3>Sources &amp; References</h3>
-      <ol>
-        <li><a href="#">Yao et al.</a> &mdash; "ReAct: Synergizing Reasoning and Acting in Language Models" (2022)</li>
-        <li><a href="#">Anthropic</a> &mdash; "Tool Use Documentation &mdash; Claude API" (2026)</li>
-        <li><a href="#">LangChain</a> &mdash; "Agent Architecture Patterns" (2026)</li>
-        <li><a href="#">Pinecone</a> &mdash; "Vector Databases for AI Agent Memory" (2025)</li>
-        <li><a href="#">Cognition Labs</a> &mdash; "Building Production-Grade AI Agents" (2026)</li>
-      </ol>
+    <div class="pros-cons">
+      <div class="pros-col">
+        <div class="pc-label">Strengths</div>
+        <ul class="pc-list">
+          <li>Best-in-class math reasoning (AIME 89.2%)</li>
+          <li>13x agentic task improvement over Gemma 3</li>
+          <li>Only multimodal open model at this tier</li>
+          <li>Apache 2.0 — zero commercial restrictions</li>
+          <li>Native tool calling as core training objective</li>
+          <li>Document understanding + visual QA leader</li>
+        </ul>
+      </div>
+      <div class="cons-col">
+        <div class="pc-label">Weaknesses</div>
+        <ul class="pc-list">
+          <li>40% slower than Qwen 3.5 (25 vs 35 tok/s)</li>
+          <li>Trails on general reasoning (GPQA 84.3% vs 85.5%)</li>
+          <li>LiveCodeBench lags Qwen (80% vs 83.6%)</li>
+          <li>Higher latency for real-time applications</li>
+          <li>Smaller ecosystem than Llama 4</li>
+          <li>Speed gap affects production economics</li>
+        </ul>
+      </div>
     </div>
 
-    <div class="key-takeaways" id="key-takeaways">
-      <h3>Key Takeaways</h3>
-      <ul>
-        <li>An agent is a model in a loop. Same model + orchestration scaffolding = completely different capability.</li>
-        <li>ReAct (Reason + Act) is the universal pattern — think, act, observe, repeat.</li>
-        <li>Tool descriptions determine 80% of reliability. Invest in clear, specific descriptions.</li>
-        <li>Three memory layers: short-term (context window), long-term (vector DB), episodic (learned patterns).</li>
-        <li>Hierarchical lazy planning beats exhaustive upfront planning every time.</li>
-        <li>Production needs three error layers: retry, fallback, graceful degradation — plus cost circuit breakers.</li>
-        <li>The goal: maximum useful autonomy with human oversight at critical junctures.</li>
-      </ul>
+    <div class="spec-grid">
+      <div class="spec-item"><div class="si-label">Speed</div><div class="si-val">25 tokens/second</div></div>
+      <div class="spec-item"><div class="si-label">Math (AIME)</div><div class="si-val">89.2%</div></div>
+      <div class="spec-item"><div class="si-label">License</div><div class="si-val">Apache 2.0</div></div>
+      <div class="spec-item"><div class="si-label">Multimodal</div><div class="si-val">Native vision support</div></div>
+    </div>
+
+    <div class="best-for">
+      <span class="best-for-badge">Math Reasoning</span>
+      <span class="best-for-badge">Agentic Tasks</span>
+      <span class="best-for-badge">Multimodal Apps</span>
+      <span class="best-for-badge">Tool Calling</span>
+    </div>
+
+    <div class="overall-score">
+      <div class="os-circle excellent">8.6</div>
+      <div class="os-text">
+        <div class="os-verdict">Excellent — Multimodal + Agentic Leader</div>
+        <div class="os-summary">Choose Gemma 4 when you need vision + reasoning + tool calling. Accept the speed tradeoff for quality and capability.</div>
+      </div>
     </div>
   </div>
+
+  <hr class="section-divider">
+
+  <!-- ============================================ -->
+  <!-- REVIEW 2: QWEN 3.5 -->
+  <!-- ============================================ -->
+  <div class="model-review" id="review-qwen">
+    <div class="mr-number">Review 02 of 03</div>
+    <div class="mr-icon">Logo</div>
+    <div class="mr-name">Qwen 3.5</div>
+    <div class="mr-maker">Alibaba Cloud</div>
+    <div class="mr-tagline">"The speed and general reasoning champion"</div>
+
+    <div class="score-bars">
+      <div class="score-bar-row">
+        <span class="sbr-label">Speed (tok/s)</span>
+        <div class="sbr-track"><div class="sbr-fill" style="width:35%;background:#ff9800"></div></div>
+        <span class="sbr-value high">35</span>
+      </div>
+      <div class="score-bar-row">
+        <span class="sbr-label">GPQA</span>
+        <div class="sbr-track"><div class="sbr-fill" style="width:85.5%;background:#ff9800"></div></div>
+        <span class="sbr-value high">85.5</span>
+      </div>
+      <div class="score-bar-row">
+        <span class="sbr-label">LiveCodeBench</span>
+        <div class="sbr-track"><div class="sbr-fill" style="width:83.6%;background:#ff9800"></div></div>
+        <span class="sbr-value high">83.6</span>
+      </div>
+      <div class="score-bar-row">
+        <span class="sbr-label">Math (AIME)</span>
+        <div class="sbr-track"><div class="sbr-fill" style="width:82%;background:#ffc107"></div></div>
+        <span class="sbr-value mid">82.0</span>
+      </div>
+      <div class="score-bar-row">
+        <span class="sbr-label">Agentic Tasks</span>
+        <div class="sbr-track"><div class="sbr-fill" style="width:78%;background:#ffc107"></div></div>
+        <span class="sbr-value mid">78.0</span>
+      </div>
+      <div class="score-bar-row">
+        <span class="sbr-label">Multimodal</span>
+        <div class="sbr-track"><div class="sbr-fill" style="width:0%;background:#f44336"></div></div>
+        <span class="sbr-value low">No</span>
+      </div>
+      <div class="score-bar-row">
+        <span class="sbr-label">Licensing</span>
+        <div class="sbr-track"><div class="sbr-fill" style="width:100%;background:#ff9800"></div></div>
+        <span class="sbr-value high">Apache</span>
+      </div>
+    </div>
+
+    <img src="images/slide_3.png" alt="Qwen 3.5 performance breakdown" class="carousel-img">
+
+    <p>Qwen 3.5 delivers 40% more throughput than Gemma 4 at 35 tokens/second versus 25 tokens/second. For latency-sensitive applications — chatbots, real-time processing, interactive agents — this gap translates directly into user experience and infrastructure costs. It's not a rounding error.</p>
+
+    <p>On reasoning benchmarks, Qwen 3.5 edges Gemma 4 on GPQA (85.5% vs 84.3%) and LiveCodeBench (83.6% vs 80.0%). These aren't decisive margins, but they're consistent. For general-purpose reasoning and code generation, Qwen currently holds a slight advantage.</p>
+
+    <p>The critical gap: no multimodal capability. Qwen 3.5, despite strong text benchmarks, doesn't offer equivalent vision performance. For applications requiring visual reasoning, it's simply not an option.</p>
+
+    <div class="pros-cons">
+      <div class="pros-col">
+        <div class="pc-label">Strengths</div>
+        <ul class="pc-list">
+          <li>40% faster than Gemma 4 (35 vs 25 tok/s)</li>
+          <li>Best general reasoning (GPQA 85.5%)</li>
+          <li>Code generation leader (LiveCodeBench 83.6%)</li>
+          <li>Apache 2.0 — zero commercial restrictions</li>
+          <li>Lower latency for real-time applications</li>
+          <li>Better production economics on speed workloads</li>
+        </ul>
+      </div>
+      <div class="cons-col">
+        <div class="pc-label">Weaknesses</div>
+        <ul class="pc-list">
+          <li>No multimodal capability</li>
+          <li>Trails math reasoning (82% vs 89.2%)</li>
+          <li>Weaker agentic performance (78% vs 86.4%)</li>
+          <li>No native vision support</li>
+          <li>Tool calling less mature than Gemma 4</li>
+          <li>Smaller community than Llama 4</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="spec-grid">
+      <div class="spec-item"><div class="si-label">Speed</div><div class="si-val">35 tokens/second</div></div>
+      <div class="spec-item"><div class="si-label">GPQA</div><div class="si-val">85.5%</div></div>
+      <div class="spec-item"><div class="si-label">License</div><div class="si-val">Apache 2.0</div></div>
+      <div class="spec-item"><div class="si-label">Multimodal</div><div class="si-val">No</div></div>
+    </div>
+
+    <div class="best-for">
+      <span class="best-for-badge">Speed</span>
+      <span class="best-for-badge">General Reasoning</span>
+      <span class="best-for-badge">Code Generation</span>
+      <span class="best-for-badge">Low Latency</span>
+    </div>
+
+    <div class="overall-score">
+      <div class="os-circle excellent">8.4</div>
+      <div class="os-text">
+        <div class="os-verdict">Excellent — Speed + Reasoning Leader</div>
+        <div class="os-summary">Choose Qwen 3.5 for speed-critical and code-heavy workloads. The throughput advantage is real, but multimodal is off the table.</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="section-divider">
+
+  <!-- ============================================ -->
+  <!-- REVIEW 3: LLAMA 4 -->
+  <!-- ============================================ -->
+  <div class="model-review" id="review-llama">
+    <div class="mr-number">Review 03 of 03</div>
+    <div class="mr-icon">Logo</div>
+    <div class="mr-name">Llama 4</div>
+    <div class="mr-maker">Meta</div>
+    <div class="mr-tagline">"The ecosystem leader with a licensing ceiling"</div>
+
+    <div class="score-bars">
+      <div class="score-bar-row">
+        <span class="sbr-label">Ecosystem</span>
+        <div class="sbr-track"><div class="sbr-fill" style="width:100%;background:#ff9800"></div></div>
+        <span class="sbr-value high">10</span>
+      </div>
+      <div class="score-bar-row">
+        <span class="sbr-label">GPQA</span>
+        <div class="sbr-track"><div class="sbr-fill" style="width:83%;background:#ffc107"></div></div>
+        <span class="sbr-value mid">83.0</span>
+      </div>
+      <div class="score-bar-row">
+        <span class="sbr-label">LiveCodeBench</span>
+        <div class="sbr-track"><div class="sbr-fill" style="width:81%;background:#ffc107"></div></div>
+        <span class="sbr-value mid">81.0</span>
+      </div>
+      <div class="score-bar-row">
+        <span class="sbr-label">Speed (tok/s)</span>
+        <div class="sbr-track"><div class="sbr-fill" style="width:30%;background:#ffc107"></div></div>
+        <span class="sbr-value mid">30</span>
+      </div>
+      <div class="score-bar-row">
+        <span class="sbr-label">Math (AIME)</span>
+        <div class="sbr-track"><div class="sbr-fill" style="width:79%;background:#ffc107"></div></div>
+        <span class="sbr-value mid">79.0</span>
+      </div>
+      <div class="score-bar-row">
+        <span class="sbr-label">Multimodal</span>
+        <div class="sbr-track"><div class="sbr-fill" style="width:0%;background:#f44336"></div></div>
+        <span class="sbr-value low">Limited</span>
+      </div>
+      <div class="score-bar-row">
+        <span class="sbr-label">Licensing</span>
+        <div class="sbr-track"><div class="sbr-fill" style="width:60%;background:#f44336"></div></div>
+        <span class="sbr-value low">700M Cap</span>
+      </div>
+    </div>
+
+    <img src="images/slide_4.png" alt="Llama 4 performance breakdown" class="carousel-img">
+
+    <p>Llama 4 has the largest ecosystem of any open model — more integrations, more tooling, more community support. For developers building on established infrastructure, this matters. But the licensing constraint is a structural ceiling that most comparisons ignore.</p>
+
+    <p>The 700M monthly active user cap creates a legal threshold that individual developers won't hit, but that companies, platforms, and SaaS builders must plan around. The cost of renegotiating a license mid-scale is non-trivial, and it's a variable that benchmark comparisons systematically underweight.</p>
+
+    <p>On benchmarks, Llama 4 trails both Gemma 4 and Qwen 3.5 across most categories. It's competitive, but not leading. The ecosystem advantage is real, but the licensing disadvantage compounds over time.</p>
+
+    <div class="pros-cons">
+      <div class="pros-col">
+        <div class="pc-label">Strengths</div>
+        <ul class="pc-list">
+          <li>Largest ecosystem and community support</li>
+          <li>Most integrations and tooling available</li>
+          <li>Proven production stability</li>
+          <li>Extensive documentation and examples</li>
+          <li>Wide hardware optimization</li>
+          <li>Strong benchmark performance across the board</li>
+        </ul>
+      </div>
+      <div class="cons-col">
+        <div class="pc-label">Weaknesses</div>
+        <ul class="pc-list">
+          <li>700M MAU licensing cap (legal ceiling)</li>
+          <li>Trails Gemma 4 on math (79% vs 89.2%)</li>
+          <li>Trails Qwen 3.5 on speed (30 vs 35 tok/s)</li>
+          <li>Limited multimodal capability</li>
+          <li>License renegotiation risk at scale</li>
+          <li>Commercial restrictions compound over time</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="spec-grid">
+      <div class="spec-item"><div class="si-label">Speed</div><div class="si-val">30 tokens/second</div></div>
+      <div class="spec-item"><div class="si-label">GPQA</div><div class="si-val">83.0%</div></div>
+      <div class="spec-item"><div class="si-label">License</div><div class="si-val">700M MAU cap</div></div>
+      <div class="spec-item"><div class="si-label">Ecosystem</div><div class="si-val">Largest</div></div>
+    </div>
+
+    <div class="best-for">
+      <span class="best-for-badge">Ecosystem</span>
+      <span class="best-for-badge">Community Support</span>
+      <span class="best-for-badge">Production Stability</span>
+      <span class="best-for-badge">Integrations</span>
+    </div>
+
+    <div class="overall-score">
+      <div class="os-circle good">7.9</div>
+      <div class="os-text">
+        <div class="os-verdict">Good — Ecosystem Leader, Licensing Ceiling</div>
+        <div class="os-summary">Choose Llama 4 for ecosystem breadth and production stability. Understand the 700M MAU cap before you scale.</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="section-divider">
+
+  <!-- ============================================ -->
+  <!-- HEAD-TO-HEAD -->
+  <!-- ============================================ -->
+  <div class="h2h-section" id="head-to-head">
+    <div class="h2h-label">Head-to-Head</div>
+    <div class="h2h-title">All Three Models Compared Side by Side</div>
+    <p>The narrative around Gemma 4's release has followed a predictable pattern: Google fans celebrate the benchmarks where it leads, competitors highlight the benchmarks where it trails, and the actual data gets lost in the positioning. Here's what the numbers actually show when you lay everything side by side.</p>
+
+    <img src="images/slide_5.png" alt="Head-to-head comparison chart" class="carousel-img">
+
+    <div class="h2h-bars">
+      <div class="h2h-bar-group">
+        <div class="hbg-label">Speed (tokens/second)</div>
+        <div class="h2h-bar-row"><span class="hbr-name">Gemma 4</span><div class="hbr-track"><div class="hbr-fill gemma" style="width:25%"></div></div><span class="hbr-score">25</span></div>
+        <div class="h2h-bar-row"><span class="hbr-name">Qwen 3.5</span><div class="hbr-track"><div class="hbr-fill qwen" style="width:35%"></div></div><span class="hbr-score">35</span></div>
+        <div class="h2h-bar-row"><span class="hbr-name">Llama 4</span><div class="hbr-track"><div class="hbr-fill llama" style="width:30%"></div></div><span class="hbr-score">30</span></div>
+      </div>
+      <div class="h2h-bar-group">
+        <div class="hbg-label">GPQA (General Reasoning)</div>
+        <div class="h2h-bar-row"><span class="hbr-name">Gemma 4</span><div class="hbr-track"><div class="hbr-fill gemma" style="width:84.3%"></div></div><span class="hbr-score">84.3</span></div>
+        <div class="h2h-bar-row"><span class="hbr-name">Qwen 3.5</span><div class="hbr-track"><div class="hbr-fill qwen" style="width:85.5%"></div></div><span class="hbr-score">85.5</span></div>
+        <div class="h2h-bar-row"><span class="hbr-name">Llama 4</span><div class="hbr-track"><div class="hbr-fill llama" style="width:83%"></div></div><span class="hbr-score">83.0</span></div>
+      </div>
+      <div class="h2h-bar-group">
+        <div class="hbg-label">LiveCodeBench (Code)</div>
+        <div class="h2h-bar-row"><span class="hbr-name">Gemma 4</span><div class="hbr-track"><div class="hbr-fill gemma" style="width:80%"></div></div><span class="hbr-score">80.0</span></div>
+        <div class="h2h-bar-row"><span class="hbr-name">Qwen 3.5</span><div class="hbr-track"><div class="hbr-fill qwen" style="width:83.6%"></div></div><span class="hbr-score">83.6</span></div>
+        <div class="h2h-bar-row"><span class="hbr-name">Llama 4</span><div class="hbr-track"><div class="hbr-fill llama" style="width:81%"></div></div><span class="hbr-score">81.0</span></div>
+      </div>
+      <div class="h2h-bar-group">
+        <div class="hbg-label">AIME 2025 (Math)</div>
+        <div class="h2h-bar-row"><span class="hbr-name">Gemma 4</span><div class="hbr-track"><div class="hbr-fill gemma" style="width:89.2%"></div></div><span class="hbr-score">89.2</span></div>
+        <div class="h2h-bar-row"><span class="hbr-name">Qwen 3.5</span><div class="hbr-track"><div class="hbr-fill qwen" style="width:82%"></div></div><span class="hbr-score">82.0</span></div>
+        <div class="h2h-bar-row"><span class="hbr-name">Llama 4</span><div class="hbr-track"><div class="hbr-fill llama" style="width:79%"></div></div><span class="hbr-score">79.0</span></div>
+      </div>
+      <div class="h2h-bar-group">
+        <div class="hbg-label">Agentic Tasks</div>
+        <div class="h2h-bar-row"><span class="hbr-name">Gemma 4</span><div class="hbr-track"><div class="hbr-fill gemma" style="width:86.4%"></div></div><span class="hbr-score">86.4</span></div>
+        <div class="h2h-bar-row"><span class="hbr-name">Qwen 3.5</span><div class="hbr-track"><div class="hbr-fill qwen" style="width:78%"></div></div><span class="hbr-score">78.0</span></div>
+        <div class="h2h-bar-row"><span class="hbr-name">Llama 4</span><div class="hbr-track"><div class="hbr-fill llama" style="width:75%"></div></div><span class="hbr-score">75.0</span></div>
+      </div>
+    </div>
+
+    <img src="images/slide_6.png" alt="Licensing comparison analysis" class="carousel-img">
+  </div>
+
+  <!-- ============================================ -->
+  <!-- FINAL VERDICT -->
+  <!-- ============================================ -->
+  <div class="h2h-section" id="verdict" style="border-color: #333; margin-top: 0; border-top: none; border-top-left-radius: 0; border-top-right-radius: 0;">
+    <div class="h2h-label">Final Verdict</div>
+    <div class="h2h-title">Strategic Model Selection and the Overall Landscape</div>
+    <p>The uncomfortable conclusion: "best open-source model" is now a meaningless phrase. Model selection in 2026 requires specifying the workload, the deployment constraints, the licensing requirements, and the performance priorities. The era of a single open-source model that dominates every leaderboard is over.</p>
+
+    <img src="images/slide_7.png" alt="Strategic selection framework" class="carousel-img">
+
+    <div class="rec-grid">
+      <div class="rec-card">
+        <div class="rc-use">Best for Math</div>
+        <div class="rc-model">Gemma 4</div>
+        <div class="rc-why">Dominates AIME 2025 with 89.2%. No open-source alternative at this tier.</div>
+      </div>
+      <div class="rec-card">
+        <div class="rc-use">Best for Agentic</div>
+        <div class="rc-model">Gemma 4</div>
+        <div class="rc-why">13x improvement over Gemma 3. Tool calling as core training objective.</div>
+      </div>
+      <div class="rec-card">
+        <div class="rc-use">Best for Speed</div>
+        <div class="rc-model">Qwen 3.5</div>
+        <div class="rc-why">40% faster than Gemma 4. Real throughput advantage for latency workloads.</div>
+      </div>
+      <div class="rec-card">
+        <div class="rc-use">Best for Code</div>
+        <div class="rc-model">Qwen 3.5</div>
+        <div class="rc-why">LiveCodeBench leader at 83.6%. Consistent edge in code generation.</div>
+      </div>
+      <div class="rec-card">
+        <div class="rc-use">Best for Multimodal</div>
+        <div class="rc-model">Gemma 4</div>
+        <div class="rc-why">Only open model at this tier with native vision. No alternative exists.</div>
+      </div>
+      <div class="rec-card">
+        <div class="rc-use">Best for Ecosystem</div>
+        <div class="rc-model">Llama 4</div>
+        <div class="rc-why">Largest community, most integrations. Proven production stability.</div>
+      </div>
+    </div>
+
+    <div class="final-winner">
+      <div class="fw-label">Strategic Reality</div>
+      <div class="fw-name">No Single Winner</div>
+      <div class="fw-note">Open-source AI is fragmenting, not converging. Organizations that treat model selection as a strategic decision based on workload requirements will have a structural advantage. Licensing is the most underpriced variable.</div>
+    </div>
+  </div>
+
+  <!-- KEY TAKEAWAYS -->
+  <div class="takeaways-box" id="takeaways">
+    <div class="tk-label">Key Takeaways</div>
+    <ol>
+      <li><strong>Qwen 3.5 is faster and edges general benchmarks.</strong> 35 tokens/second vs Gemma 4's 25 tokens/second. GPQA: 85.5% vs 84.3%. LiveCodeBench: 83.6% vs 80.0%. For speed-critical and code-heavy workloads, Qwen currently leads. These aren't marginal differences on speed — 40% faster throughput changes production economics.</li>
+      <li><strong>Gemma 4 dominates math and agentic tasks.</strong> 89.2% on AIME 2025 (math) and 86.4% on agentic benchmarks — a 13x improvement over Gemma 3. More importantly, Gemma 4 is the only multimodal open model at this performance tier. If your workload requires vision + reasoning + tool calling, there's currently no open-source alternative.</li>
+      <li><strong>The licensing gap is the most underpriced variable in model selection.</strong> Apache 2.0 (Gemma 4 and Qwen 3.5) means zero commercial restrictions. Llama 4's 700M monthly active user cap creates a legal ceiling that compounds as you scale. Most benchmark comparisons ignore licensing entirely. That's a mistake.</li>
+      <li><strong>Open-source AI is fragmenting, not converging.</strong> There is no "best open-source model" in 2026. There are models that lead specific categories. The era of a single dominant open model is over, and strategic model selection based on workload requirements is now mandatory.</li>
+      <li><strong>Multimodal remains Gemma 4's strongest differentiator.</strong> No other open model at this performance tier offers native vision capability. For organizations building multimodal pipelines — document understanding, image analysis, visual reasoning — Gemma 4 is currently the only viable open-source option.</li>
+    </ol>
+  </div>
+
+  <!-- SOURCES -->
+  <div class="sources-section" id="sources">
+    <div class="src-label">Sources &amp; References</div>
+    <ul class="sources-list">
+      <li><a href="#">Google AI Blog: Gemma 4 Release</a> — April 9, 2026</li>
+      <li><a href="#">Gemma 4 Technical Report</a> — DeepMind, April 2026</li>
+      <li><a href="#">Qwen 3.5 Benchmarks</a> — Alibaba Cloud, 2026</li>
+      <li><a href="#">Llama 4 License Terms</a> — Meta, 2026</li>
+      <li><a href="#">Open LLM Leaderboard</a> — Hugging Face, April 2026</li>
+      <li><a href="#">Artificial Analysis Throughput Benchmarks</a> — 2026</li>
+    </ul>
+  </div>
+
+  <!-- SHARE -->
+</div>
+
+<footer class="page-wrap site-footer">
+  <p>&copy; 2026 Humans Need Not Apply &middot; <a href="#">Privacy</a> &middot; <a href="#">Terms</a></p>
+</footer>
   <div class="share-bar">
     <span class="share-label">Share</span>
     <div class="share-buttons">
@@ -311,12 +745,12 @@ context = current_msgs + relevant_memories</div>
 
   <div class="cta-block">
     <div class="cta-download">
-      <p class="cta-headline">Want the full breakdown?</p>
-      <p class="cta-sub">Join Humans Need Not Apply for free — takes 30 seconds.</p>
-      <a href="https://agents-assemble.com/resources/not-apply-google-gemma-4-release" class="cta-primary-btn" target="_blank" rel="noopener">Get the Full Breakdown</a>
+      <p class="cta-headline">Get the full benchmark dataset</p>
+      <p class="cta-sub">Download the complete comparison spreadsheet</p>
+      <a href="https://agents-assemble.com/resources/Gemma" class="cta-primary-btn" target="_blank" rel="noopener">Download Now</a>
     </div>
     <div class="cta-follow">
-      <span class="cta-follow-label">Follow for more</span>
+      <span class="cta-follow-label">Follow for more industry analysis</span>
       <div class="cta-social-links">
         <a href="#" target="_blank" rel="noopener">Instagram</a>
         <a href="#" target="_blank" rel="noopener">TikTok</a>
@@ -326,7 +760,6 @@ context = current_msgs + relevant_memories</div>
     </div>
   </div>
 
-<div class="post-footer">Humans Need Not Apply &middot; Deep Dive &middot; Hacker Digest</div>
-</div>
+
 </body>
 </html>

@@ -3,122 +3,180 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Google Just Gave Away Frontier AI for Free — And It Runs on a $35 Raspberry Pi. Here's Why the Entire Pricing Model Should Be Nervous.</title>
-  <meta property="og:image" content="">
+<title>The Complete Gemma 4 Bug Survival Guide | Last Week To 404</title>
   <meta property="og:url" content="">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Google Just Gave Away Frontier AI for Free — And It Runs on a $35 Raspberry Pi. Here's Why the Entire Pricing Model Should Be Nervous.">
-  <meta name="twitter:description" content="The architecture, memory systems, and planning loops behind every AI agent — explained from first principles.">
+  <meta name="twitter:title" content="The Complete Gemma 4 Bug Survival Guide | Last Week To 404">
+  <meta name="twitter:description" content="What's broken, what works, and why 2 million people downloaded it anyway. Tool calling bugs, vLLM throughput problems, quantization failures, and the infinite token loop explained.">
   <meta name="twitter:image" content="">
-<meta name="description" content="A comprehensive breakdown of AI agent architecture — tools, memory, planning loops, and error handling explained from first principles.">
-<meta property="og:title" content="Google Just Gave Away Frontier AI for Free — And It Runs on a $35 Raspberry Pi. Here's Why the Entire Pricing Model Should Be Nervous.">
-<meta property="og:description" content="The architecture, memory systems, and planning loops behind every AI agent — explained from first principles.">
+<meta name="description" content="Dense, bookmarkable reference guide covering Gemma 4's broken tool calling, vLLM throughput issues, GGUF quantization problems, the <unused24> token loop, and all the workarounds you need.">
+<meta property="og:title" content="The Complete Gemma 4 Bug Survival Guide">
+<meta property="og:description" content="What's broken, what works, and why 2 million people downloaded it anyway. Tool calling bugs, vLLM throughput problems, quantization failures, and the infinite token loop explained.">
 <meta property="og:type" content="article">
+<meta property="og:image" content="">
 <link rel="canonical" href="#">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "Article",
-  "headline": "Google Just Gave Away Frontier AI for Free — And It Runs on a $35 Raspberry Pi. Here's Why the Entire Pricing Model Should Be Nervous.",
-  "description": "A comprehensive breakdown of AI agent architecture — tools, memory, planning loops, and error handling explained from first principles.",
+  "headline": "The Complete Gemma 4 Bug Survival Guide",
+  "description": "A comprehensive, comedic bug reference covering Gemma 4's broken tool calling, vLLM throughput issues, GGUF quantization problems, and the infinite token loop.",
   "author": { "@type": "Person", "name": "Symond" },
   "publisher": { "@type": "Organization", "name": "Last Week To 404" },
-  "datePublished": "2026-04-09",
-  "dateModified": "2026-04-09"
+  "datePublished": "2026-04-10",
+  "dateModified": "2026-04-10",
+  "mainEntityOfPage": { "@type": "WebPage" }
 }
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,700;0,900;1,700&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,700;0,900;1,700&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,400;0,500;1,400&family=Fraunces:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-body { background: #121212; color: #c8c8dc; font-family: 'Crimson Pro', serif; font-size: 17px; line-height: 1.7; -webkit-font-smoothing: antialiased; }
+body { background: #121212; color: #b0b0c8; font-family: 'Fraunces', serif; font-size: 17px; line-height: 1.7; -webkit-font-smoothing: antialiased; }
 a { color: inherit; text-decoration: none; }
 
-/* Layout */
-.post-layout { display: grid; grid-template-columns: 240px 1fr; gap: 40px; max-width: 1080px; margin: 0 auto; padding: 0 24px; align-items: start; }
-@media (max-width: 900px) { .post-layout { grid-template-columns: 1fr; } }
-
 /* Back link */
-.back-link { display: inline-flex; align-items: center; gap: 6px; font-family: 'DM Mono', monospace; font-size: 0.68rem; color: #6b6b8a; padding: 16px 24px; text-decoration: none; transition: color 0.2s; max-width: 1080px; margin: 0 auto; }
+.back-link { display: inline-flex; align-items: center; gap: 6px; font-family: 'DM Mono', monospace; font-size: 0.72rem; color: #505068; padding: 14px 20px; text-decoration: none; transition: color 0.2s; text-transform: uppercase; letter-spacing: 1px; }
 .back-link:hover { color: #7c4dff; }
 
-/* TOC Sidebar */
-.toc-column { position: sticky; top: 24px; padding-top: 48px; }
-@media (max-width: 900px) { .toc-column { position: static; padding-top: 0; order: -1; } }
-.toc-box { border: 1px solid rgba(167,139,250,0.1); border-radius: 8px; padding: 20px; background: rgba(167,139,250,0.03); }
-.toc-title { font-family: 'DM Mono', monospace; font-weight: 700; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 1.5px; color: #6b6b8a; margin-bottom: 14px; }
-.toc-list { list-style: none; }
-.toc-list li { margin-bottom: 8px; }
-.toc-list a { text-decoration: none; color: #8080a0; font-size: 0.85rem; font-family: 'DM Mono', monospace; line-height: 1.4; display: block; padding: 3px 0; transition: color 0.2s; }
-.toc-list a:hover, .toc-list a.active { color: #7c4dff; }
-.share-box { margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(167,139,250,0.1); }
-.share-buttons { display: flex; gap: 8px; }
-.share-buttons a { display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 50%; background: rgba(167,139,250,0.08); text-decoration: none; font-size: 0.78rem; color: #8080a0; transition: all 0.2s; font-family: 'DM Mono', monospace; }
-.share-buttons a:hover { background: #7c4dff; color: #fff; }
-/* Mobile TOC toggle */
-.toc-toggle { display: none; background: none; border: none; cursor: pointer; width: 100%; text-align: left; font-family: 'DM Mono', monospace; font-size: 0.78rem; font-weight: 700; color: #7c4dff; padding: 0; margin-bottom: 10px; }
-.toc-toggle .arrow { float: right; transition: transform 0.2s; }
-@media (max-width: 900px) {
-  .toc-toggle { display: block; }
-  .toc-list.collapsed { display: none; }
-  .share-box { display: none; }
+/* Container */
+.sheet-container { max-width: 960px; margin: 0 auto; padding: 0 16px 80px; }
+
+/* Header */
+.page-header { padding: 28px 0 24px; border-bottom: 1px solid rgba(124,77,255,0.1); margin-bottom: 24px; }
+.header-meta { font-family: 'DM Mono', monospace; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 1.5px; color: #7c4dff; margin-bottom: 12px; display: flex; gap: 16px; flex-wrap: wrap; }
+.header-meta span { opacity: 0.7; }
+.page-title { font-family: 'Fraunces', serif; font-size: clamp(1.8rem, 4vw, 2.6rem); font-weight: 800; line-height: 1.15; color: #e8e8f4; margin-bottom: 10px; }
+.page-subtitle { font-size: 0.95rem; color: #7a7a96; max-width: 600px; line-height: 1.6; }
+
+/* Hero image placeholder */
+.hero-image-placeholder { border: 2px dashed rgba(124,77,255,0.2); border-radius: 6px; padding: 40px 20px; text-align: center; margin: 20px 0 0; background: rgba(124,77,255,0.02); }
+.hero-image-placeholder .label { font-family: 'DM Mono', monospace; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 1.5px; color: #7c4dff; margin-bottom: 4px; }
+.hero-image-placeholder .hint { font-size: 0.78rem; color: #505068; }
+
+/* Hero image - actual image */
+.hero-image { width: 100%; max-width: 900px; margin: 20px auto 0; display: block; border-radius: 6px; border: 1px solid rgba(124,77,255,0.1); }
+
+/* TL;DR */
+.tldr-box { background: rgba(124,77,255,0.04); border-left: 3px solid #7c4dff; padding: 14px 18px; margin: 24px 0; border-radius: 0 6px 6px 0; }
+.tldr-box strong { font-family: 'DM Mono', monospace; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 1.5px; color: #7c4dff; }
+.tldr-box p { margin-top: 6px; font-size: 0.92rem; color: #a0a0bc; line-height: 1.65; }
+
+/* Multi-column grid */
+.ref-grid { display: grid; grid-template-columns: 1fr; gap: 14px; margin-bottom: 28px; }
+@media (min-width: 600px) {
+  .ref-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (min-width: 820px) {
+  .ref-grid.three-col { grid-template-columns: 1fr 1fr 1fr; }
 }
 
-/* Content column */
-.content-col { padding: 48px 0 64px; }
+/* Section card */
+.ref-card { background: #0e0e18; border: 1px solid rgba(124,77,255,0.1); border-radius: 6px; overflow: hidden; }
+.ref-card.span-2 { grid-column: span 1; }
+@media (min-width: 600px) {
+  .ref-card.span-2 { grid-column: span 2; }
+}
+.ref-card-header { padding: 10px 14px; background: rgba(124,77,255,0.04); border-bottom: 1px solid rgba(124,77,255,0.08); display: flex; justify-content: space-between; align-items: center; }
+.ref-card-title { font-family: 'Fraunces', serif; font-size: 1.2rem; font-weight: 700; color: #d0d0e8; }
+.ref-card-badge { font-family: 'DM Mono', monospace; font-size: 0.62rem; text-transform: uppercase; letter-spacing: 1px; padding: 3px 8px; border-radius: 3px; background: rgba(124,77,255,0.1); color: #7c4dff; }
+.ref-card-body { padding: 12px 14px; }
 
-/* Post header */
-.post-category { display: inline-block; font-family: 'DM Mono', monospace; font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: #7c4dff; margin-bottom: 12px; }
-.post-title { font-family: 'Playfair Display', serif; font-size: clamp(1.8rem, 4vw, 2.6rem); font-weight: 900; line-height: 1.15; color: #e8e8f0; margin-bottom: 16px; }
-.post-subtitle { font-family: 'Playfair Display', serif; font-style: italic; font-size: 1.05rem; color: #7c4dff; margin-bottom: 20px; font-weight: 400; }
-.post-meta { font-family: 'DM Mono', monospace; font-size: 0.78rem; color: #6b6b8a; display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 32px; }
+/* Entries inside cards */
+.ref-entry { margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid rgba(124,77,255,0.05); }
+.ref-entry:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+.ref-entry-label { font-family: 'DM Mono', monospace; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 1px; color: #7c4dff; margin-bottom: 3px; }
+.ref-entry-value { font-size: 0.88rem; color: #b0b0c8; line-height: 1.55; }
+.ref-entry-value code { font-family: 'DM Mono', monospace; font-size: 0.8rem; background: rgba(124,77,255,0.08); color: #c4b5fd; padding: 1px 6px; border-radius: 3px; }
 
-/* TL;DR box */
-.tldr-box { background: rgba(167,139,250,0.05); border-left: 4px solid #7c4dff; padding: 18px 22px; margin-bottom: 36px; border-radius: 0 8px 8px 0; }
-.tldr-box strong { font-family: 'DM Mono', monospace; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 1px; color: #7c4dff; }
-.tldr-box p { margin-top: 6px; font-size: 0.95rem; line-height: 1.65; color: #b8b8d0; }
+/* Code block inside card */
+.ref-code { font-family: 'DM Mono', monospace; font-size: 0.78rem; background: #07070d; border: 1px solid rgba(124,77,255,0.06); border-radius: 4px; padding: 10px 12px; margin: 6px 0; line-height: 1.65; color: #a0a0bc; white-space: pre-wrap; word-break: break-word; overflow-x: auto; }
+.ref-code .kw { color: #7c4dff; }
+.ref-code .str { color: #34d399; }
+.ref-code .cmt { color: #4a4a64; font-style: italic; }
+.ref-code .var { color: #ffab00; }
 
-/* Article body */
-.article-body h2 { font-family: 'Playfair Display', serif; font-size: 1.6rem; font-weight: 800; margin: 48px 0 16px; color: #e8e8f0; scroll-margin-top: 24px; }
-.article-body h3 { font-family: 'Playfair Display', serif; font-size: 1.25rem; font-weight: 700; margin: 32px 0 12px; color: #d8d8ec; scroll-margin-top: 24px; }
-.article-body p { margin-bottom: 20px; color: #b8b8d0; }
-.article-body .dropcap::first-letter { font-family: 'Playfair Display', serif; font-size: 3.5rem; float: left; line-height: 0.8; padding-right: 10px; padding-top: 6px; color: #7c4dff; font-weight: 900; }
+/* Key-value row */
+.kv-row { display: flex; gap: 8px; margin-bottom: 4px; align-items: flex-start; }
+.kv-key { font-family: 'DM Mono', monospace; font-size: 0.74rem; color: #7c4dff; min-width: 90px; flex-shrink: 0; padding-top: 1px; }
+.kv-val { font-size: 0.84rem; color: #9898b4; line-height: 1.5; }
 
-/* Pullquote */
-.pullquote { border-left: 3px solid #7c4dff; padding: 18px 22px; margin: 28px 0; background: rgba(167,139,250,0.04); border-radius: 0 8px 8px 0; font-family: 'Playfair Display', serif; font-style: italic; font-size: 1.05rem; color: #d4d0f0; line-height: 1.55; }
+/* kbd tag — keyboard shortcut style */
+kbd { font-family: 'DM Mono', monospace; font-size: 0.74rem; background: rgba(124,77,255,0.08); border: 1px solid rgba(124,77,255,0.15); border-radius: 3px; padding: 1px 6px; color: #c4b5fd; white-space: nowrap; }
 
-/* Key points */
-.keypoint { display: flex; align-items: flex-start; gap: 12px; padding: 14px 16px; background: rgba(167,139,250,0.05); border-radius: 8px; margin: 14px 0; font-size: 0.92rem; }
-.keypoint::before { content: '\2192'; color: #7c4dff; font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+/* Warning / tip boxes */
+.tip-box { background: rgba(52,211,153,0.04); border-left: 3px solid #34d399; padding: 8px 12px; margin: 8px 0; border-radius: 0 4px 4px 0; font-size: 0.82rem; color: #7dd3a8; line-height: 1.5; }
+.warn-box { background: rgba(255,171,0,0.04); border-left: 3px solid #ffab00; padding: 8px 12px; margin: 8px 0; border-radius: 0 4px 4px 0; font-size: 0.82rem; color: #ffab00; line-height: 1.5; }
+.tip-box strong, .warn-box strong { font-family: 'DM Mono', monospace; font-size: 0.68rem; text-transform: uppercase; letter-spacing: 1px; }
 
-/* Divider */
-.divider { height: 1px; background: linear-gradient(90deg, transparent, rgba(167,139,250,0.15), transparent); margin: 40px 0; }
+/* Inline list */
+.tag-list { display: flex; flex-wrap: wrap; gap: 4px; margin: 6px 0; }
+.tag-list span { font-family: 'DM Mono', monospace; font-size: 0.7rem; padding: 2px 8px; border-radius: 3px; background: rgba(124,77,255,0.06); color: #8a7ac8; border: 1px solid rgba(124,77,255,0.08); }
+
+/* Table inside card */
+.ref-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; margin: 6px 0; }
+.ref-table th { font-family: 'DM Mono', monospace; font-size: 0.68rem; text-transform: uppercase; letter-spacing: 1px; text-align: left; padding: 6px 8px; background: rgba(124,77,255,0.04); color: #8888a8; border-bottom: 1px solid rgba(124,77,255,0.1); }
+.ref-table td { padding: 6px 8px; border-bottom: 1px solid rgba(124,77,255,0.04); color: #9898b4; vertical-align: top; }
+.ref-table td code { font-family: 'DM Mono', monospace; font-size: 0.76rem; background: rgba(124,77,255,0.06); padding: 1px 5px; border-radius: 2px; color: #c4b5fd; }
+
+/* Numbered list */
+.ref-ol { margin-left: 18px; }
+.ref-ol li { font-size: 0.85rem; color: #9898b4; margin-bottom: 5px; line-height: 1.5; }
+.ref-ol li strong { color: #c0c0d8; }
+
+/* Section heading between grids */
+.grid-section-heading { margin: 32px 0 14px; }
+.grid-section-heading h2 { font-family: 'Fraunces', serif; font-size: 1.55rem; font-weight: 800; color: #e0e0f0; display: flex; align-items: center; gap: 8px; }
+.grid-section-heading h2 .sec-num { font-family: 'DM Mono', monospace; font-size: 0.72rem; color: #7c4dff; background: rgba(124,77,255,0.08); padding: 2px 8px; border-radius: 3px; }
+.grid-section-heading .sec-desc { font-size: 0.82rem; color: #6a6a86; margin-top: 3px; }
+
+/* Image placeholder mid-content */
+.image-placeholder { border: 2px dashed rgba(124,77,255,0.15); border-radius: 6px; padding: 32px 16px; text-align: center; margin: 14px 0; background: rgba(124,77,255,0.02); }
+.image-placeholder .label { font-family: 'DM Mono', monospace; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 1.5px; color: #7c4dff; margin-bottom: 4px; }
+.image-placeholder .hint { font-size: 0.76rem; color: #4a4a64; }
+
+/* Content image (carousel slides) */
+.content-image { width: 100%; max-width: 600px; margin: 14px auto; display: block; border-radius: 6px; border: 1px solid rgba(124,77,255,0.1); }
 
 /* Key Takeaways */
-.key-takeaways { background: rgba(167,139,250,0.06); border-radius: 12px; padding: 24px 28px; margin: 48px 0; border-left: 5px solid #7c4dff; }
-.key-takeaways h3 { font-family: 'Playfair Display', serif; color: #7c4dff; margin: 0 0 14px 0 !important; font-size: 1.1rem; }
-.key-takeaways ul { margin-left: 20px; list-style: disc; }
-.key-takeaways li { margin-bottom: 10px; color: #c8c8dc; font-size: 0.95rem; line-height: 1.6; }
-
-/* Bottom CTA */
-.cta-section /* Image placeholders */
-.img-placeholder { background: rgba(167,139,250,0.03); border: 2px dashed rgba(167,139,250,0.12); border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 6px; margin: 24px 0; min-height: 180px; }
-.img-placeholder .ph-label { font-family: 'DM Mono', monospace; font-size: 0.68rem; text-transform: uppercase; letter-spacing: 1.5px; color: #6b6b8a; }
-.img-placeholder .ph-hint { font-size: 0.78rem; color: #5a5a72; }
+.key-takeaways { background: rgba(124,77,255,0.04); border: 1px solid rgba(124,77,255,0.1); border-radius: 6px; padding: 20px 22px; margin: 36px 0; }
+.key-takeaways h3 { font-family: 'Fraunces', serif; font-size: 1.22rem; font-weight: 700; color: #7c4dff; margin-bottom: 12px; }
+.key-takeaways ul { margin-left: 18px; }
+.key-takeaways li { margin-bottom: 7px; font-size: 0.9rem; color: #a0a0bc; line-height: 1.55; }
 
 /* Sources */
-.sources { margin: 40px 0; padding-top: 24px; border-top: 1px solid rgba(167,139,250,0.1); }
-.sources h3 { font-family: 'DM Mono', monospace; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 1.5px; color: #8890a8; margin-bottom: 14px; }
-.sources ol { margin-left: 20px; }
-.sources li { margin-bottom: 8px; font-size: 0.85rem; color: #9898b0; line-height: 1.5; }
-.sources a { color: #7c4dff; text-decoration: underline; text-underline-offset: 2px; }
+.sources-box { margin: 28px 0; padding: 18px 22px; background: rgba(124,77,255,0.02); border-radius: 6px; border: 1px solid rgba(124,77,255,0.06); }
+.sources-box h3 { font-family: 'DM Mono', monospace; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 1.5px; color: #505068; margin-bottom: 10px; }
+.sources-box ol { margin-left: 18px; }
+.sources-box li { font-size: 0.8rem; color: #606080; margin-bottom: 5px; line-height: 1.5; }
+
+/* Share buttons */
+.share-buttons { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+.share-buttons a { display: inline-flex; align-items: center; justify-content: center; width: 38px; height: 38px; border-radius: 50%; background: rgba(124,77,255,0.06); color: #606080; font-family: 'DM Mono', monospace; font-size: 0.76rem; transition: all 0.2s; text-decoration: none; }
+.share-buttons a:hover { background: #7c4dff; color: #121212; }
+
+/* CTA */
+.cta-link { display: inline-block; font-family: 'DM Mono', monospace; font-size: 0.82rem; color: #7c4dff; border: 1px solid rgba(124,77,255,0.3); padding: 10px 24px; border-radius: 6px; transition: all 0.2s; }
+.cta-link:hover { background: rgba(124,77,255,0.08); border-color: #7c4dff; }
 
 /* Footer */
-.post-footer { text-align: center; padding: 40px 20px; font-size: 0.65rem; color: #5a5a72; font-family: 'DM Mono', monospace; }
+.page-footer { text-align: center; padding: 28px 20px; font-family: 'DM Mono', monospace; font-size: 0.62rem; color: #3a3a52; }
 
-/* Bottom share */
+/* Print-friendly */
+@media print {
+  body { background: #fff; color: #222; }
+  .ref-card { break-inside: avoid; border-color: #ccc; }
+  .back-link, .share-section, }
+
+/* Mobile adjustments */
+@media (max-width: 600px) {
+  .ref-grid { gap: 10px; }
+  .ref-card-body { padding: 10px 12px; }
+  .kv-row { flex-direction: column; gap: 1px; }
+  .kv-key { min-width: auto; }
+  .ref-table { font-size: 0.76rem; }
+  .ref-table th, .ref-table td { padding: 5px 6px; }
+}
 
 
 /* === Share Bar === */
@@ -130,12 +188,12 @@ a { color: inherit; text-decoration: none; }
 .share-copied { position: absolute; top: -28px; left: 50%; transform: translateX(-50%); font-size: 0.7rem; color: #10b981; background: rgba(16,185,129,0.1); padding: 2px 8px; border-radius: 4px; white-space: nowrap; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
 
 /* === CTA Block === */
-.cta-block { text-align: center; margin: 32px 0; padding: 40px 24px; background: linear-gradient(135deg, rgba(128,128,128,0.06), rgba(128,128,128,0.02)); border: 1px solid rgba(128,128,128,0.12); border-radius: 16px; }
+.cta-block { text-align: center; margin: 32px 0; padding: 40px 24px; background: linear-gradient(135deg, rgba(124,77,255,0.06), rgba(124,77,255,0.02)); border: 1px solid rgba(124,77,255,0.12); border-radius: 16px; }
 .cta-download { margin-bottom: 24px; }
 .cta-headline { font-size: 1.25rem; font-weight: 700; margin-bottom: 8px; }
 .cta-sub { font-size: 0.9rem; color: #9ca3af; margin-bottom: 16px; }
 .cta-primary-btn { display: inline-block; padding: 14px 32px; font-size: 1rem; font-weight: 700; color: #fff; background: #7c4dff; border-radius: 8px; text-decoration: none; transition: all 0.2s; }
-.cta-primary-btn:hover { background: #1976d2; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(33,150,243,0.3); }
+.cta-primary-btn:hover { background: #6a3de8; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(124,77,255,0.3); }
 .cta-follow { padding-top: 20px; border-top: 1px solid rgba(128,128,128,0.1); }
 .cta-follow-label { font-size: 0.82rem; color: #9ca3af; display: block; margin-bottom: 10px; }
 .cta-social-links { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
@@ -161,161 +219,455 @@ img, video, iframe, table, pre, code { max-width: 100%; }
 
 <a href="../index.html" class="back-link">&larr; Back to Library</a>
 
-<div class="post-layout">
-  <!-- TOC Sidebar -->
-  <aside class="toc-column">
-    <div class="toc-box">
-      <p class="toc-title">In This Article</p>
-      <button class="toc-toggle" onclick="this.nextElementSibling.classList.toggle('collapsed')">
-        Contents <span class="arrow">&#9650;</span>
-      </button>
-      <ul class="toc-list" id="tocList">
-        <li><a href="#agent-vs-chatbot">Agent vs. Chatbot</a></li>
-        <li><a href="#react-loop">The ReAct Loop</a></li>
-        <li><a href="#tool-use">Tool Use</a></li>
-        <li><a href="#memory">Memory Systems</a></li>
-        <li><a href="#planning">Planning</a></li>
-        <li><a href="#error-handling">Error Handling</a></li>
-        <li><a href="#architecture">Full Architecture</a></li>
-        <li><a href="#key-takeaways">Key Takeaways</a></li>
-      </ul>
+<div class="sheet-container">
+
+  <!-- Header -->
+  <header class="page-header">
+    <div class="header-meta">
+      <span>Bug Survival Guide</span>
+      <span>v1.0</span>
+      <span>Apr 2026</span>
     </div>
-    <div class="share-box">
-      <p class="share-label">Share</p>
-      <div class="share-buttons">
-        <a href="#" aria-label="Share on X">X</a>
-        <a href="#" aria-label="Share on Facebook">f</a>
-        <a href="#" aria-label="Share on LinkedIn">in</a>
-        <a href="#" aria-label="Share via email">@</a>
+    <h1 class="page-title">The Complete Gemma 4 Bug Survival Guide</h1>
+    <p class="page-subtitle">What's broken, what works, and why 2 million people downloaded it anyway. A comprehensive reference covering tool calling failures, vLLM throughput problems, quantization gibberish, and the infinite token loop.</p>
+    <img src="images/slide_1.png" alt="Gemma 4 Bug Survival Guide Cover" class="hero-image">
+  </header>
+
+  <!-- TL;DR -->
+  <div class="tldr-box">
+    <strong>TL;DR</strong>
+    <p>Google released Gemma 4 with broken tool calling, vLLM running at 9 tokens/sec (vs 35 tok/s for competitors), quantized versions producing gibberish, and an infinite token loop bug. All of these have workarounds. Most will get fixed. Despite this absolute chaos, the model is genuinely excellent when it works. This guide is your survival manual.</p>
+  </div>
+
+  <!-- ===== SECTION 1: The Bugs ===== -->
+  <div class="grid-section-heading">
+    <h2><span class="sec-num">01</span> The Bugs</h2>
+    <div class="sec-desc">What's broken and how broken it is</div>
+  </div>
+
+  <div class="ref-grid">
+    <!-- Card: Tool Calling -->
+    <div class="ref-card">
+      <div class="ref-card-header">
+        <span class="ref-card-title">Broken Tool Calling</span>
+        <span class="ref-card-badge">Fixed</span>
       </div>
-    </div>
-  </aside>
-
-  <!-- Content -->
-  <article class="content-col">
-    <header>
-      <span class="post-category">Deep Dive</span>
-      <h1 class="post-title">Google Just Gave Away Frontier AI for Free — And It Runs on a $35 Raspberry Pi. Here's Why the Entire Pricing Model Should Be Nervous.</h1>
-      <p class="post-subtitle">The architecture, memory systems, and planning loops behind every agent — explained from first principles</p>
-      <div class="post-meta">
-        <span>By Symond</span>
-        <span>&middot;</span>
-        <time datetime="2026-04-09">April 09, 2026</time>
-        <span>&middot;</span>
-        <span>14 min read</span>
-      </div>
-    </header>
-
-    <!-- Featured Image Placeholder -->
-    <div class="img-placeholder" style="aspect-ratio: 16/9;">
-      <div class="ph-label">Featured Image</div>
-      <div class="ph-hint">Abstract AI architecture diagram or editorial hero illustration &mdash; 16:9</div>
-    </div>
-
-    <!-- TL;DR -->
-    <div class="tldr-box">
-      <strong>TL;DR</strong>
-      <p>An AI agent is a language model running in a loop with tools, memory, and planning. The model reasons about what to do, calls tools to take actions, observes results, and repeats. What separates agents from chatbots isn't intelligence — it's the scaffolding: tool definitions, memory systems (short/long/episodic), hierarchical planning, and robust error handling. Full autonomy isn't the goal; maximum useful autonomy is.</p>
-    </div>
-
-    <!-- Article Body -->
-    <div class="article-body">
-      <h2 id="agent-vs-chatbot">What Makes an Agent Different From a Chatbot</h2>
-      <p class="dropcap">Every AI agent starts as a language model, but what transforms it from a passive text generator into an autonomous actor is a deceptively simple loop: observe, reason, act, repeat. A chatbot waits for your input and responds. An agent decides what to do next on its own, executes that action, observes the result, and plans its next move — all without you typing another word.</p>
-      <p>The difference isn't about intelligence. It's about architecture. A chatbot is a single function call. An agent is a while-loop wrapped around that function call, with tools, memory, and decision-making logic wired in. The model itself might be identical — what changes is everything around it.</p>
-      <div class="pullquote">"The gap between a chatbot and an agent isn't the model — it's the scaffolding. The same brain becomes radically more capable when you give it hands, eyes, and a notepad."</div>
-      <p>This scaffolding is what we're breaking down in this guide. By the end, you'll understand exactly how each piece works — and more importantly, how they fit together to create something that genuinely feels autonomous.</p>
-
-      <div class="divider"></div>
-
-      <h2 id="react-loop">The Core Loop: ReAct and Its Variants</h2>
-      <p>The foundational pattern behind most AI agents is ReAct — Reasoning + Acting. First described in a 2022 paper from Google Research, the pattern is almost embarrassingly simple: ask the model to think out loud about what it should do, let it pick an action, execute that action, feed the result back in, and repeat.</p>
-      <p>Here's what one iteration looks like in practice. The agent receives a task: "Find the three most-cited papers on transformer efficiency published this year, summarize each in two sentences, and save the results to a Notion database." The model's internal reasoning might look something like this:</p>
-      <div class="keypoint">I need to search for recent papers on transformer efficiency. I'll use the Semantic Scholar API to find papers from 2026 sorted by citation count.</div>
-      <div class="keypoint">Got 47 results. The top three by citation count are clear. Now I need to read each abstract and generate two-sentence summaries.</div>
-      <div class="keypoint">Summaries complete. Now I'll use the Notion API to create three new entries in the research database.</div>
-      <p>Each of these reasoning steps is followed by an action — an API call, a database write, a file read. The model sees the result of each action and adjusts its plan accordingly. If the Semantic Scholar API returned an error, the agent might switch to arXiv. If the Notion write failed, it might retry with different formatting.</p>
-      <p>Variants like Plan-and-Execute separate the planning phase from execution entirely — the model first generates a complete step-by-step plan, then executes each step sequentially. This tends to produce more coherent workflows for complex tasks but is less adaptive to unexpected results.</p>
-
-      <div class="divider"></div>
-
-      <h2 id="tool-use">Tool Use: Giving the Model Hands</h2>
-      <p>A language model without tools can only think. Tools let it act. In practice, a "tool" is just a function the model can call — defined by a name, a description, and a parameter schema. The model reads the description, decides when to invoke it, and structures its arguments according to the schema.</p>
-      <p>The tools available to modern agents range from the mundane to the powerful: web search, file system operations, code execution, API calls, database queries, browser automation, email sending, calendar management. Claude's own tool-use capability, for instance, lets developers define arbitrary functions that the model can invoke mid-conversation.</p>
-      <div class="pullquote">"Tool design is agent design. The quality of your tool descriptions and schemas determines 80% of your agent's reliability."</div>
-      <p>Here's a critical insight most tutorials skip: tool descriptions matter enormously. The model decides which tool to use based almost entirely on the natural language description you provide. A vague description like "searches the web" will produce worse tool selection than "searches Google for recent results and returns the top 5 URLs with snippets — best for factual queries about current events or specific products."</p>
-
-      <div class="divider"></div>
-
-      <!-- Section Image Placeholder -->
-      <div class="img-placeholder" style="aspect-ratio: 16/10; min-height: 140px;">
-        <div class="ph-label">Section Illustration</div>
-        <div class="ph-hint">Tool use flow diagram or API integration schematic</div>
-      </div>
-
-      <h2 id="memory">Memory: Short-Term, Long-Term, and Episodic</h2>
-      <p>Without memory, every agent interaction starts from zero. Memory systems give agents the ability to maintain context across a conversation (short-term), recall information from weeks ago (long-term), and learn from past successes and failures (episodic).</p>
-      <p><strong>Short-term memory</strong> is the simplest — it's the conversation itself. Every message in the context window acts as working memory. But context windows are finite and expensive. A 200K token window might seem vast, but a complex agent workflow can burn through it in minutes when tool results, reasoning traces, and error logs pile up.</p>
-      <p><strong>Long-term memory</strong> typically uses a vector database — Pinecone, Weaviate, Chroma, or even a simple SQLite with embeddings. Before each reasoning step, the agent queries its memory with the current context and retrieves relevant past information. This is essentially RAG applied to the agent's own history.</p>
-      <p><strong>Episodic memory</strong> is the most interesting and least implemented. The idea is to store not just facts but entire interaction patterns: "Last time I tried to scrape that site, I got rate-limited. I should use a 2-second delay between requests."</p>
-      <div class="keypoint">The biggest practical challenge with agent memory isn't storage — it's retrieval relevance. Pulling in irrelevant memories is worse than having no memory at all, because it pollutes the context and wastes tokens.</div>
-
-      <div class="divider"></div>
-
-      <h2 id="planning">Planning: How Agents Break Down Complex Tasks</h2>
-      <p>Simple agents handle single-step tasks well. The real challenge — and the frontier of agent research — is multi-step planning. When you ask an agent to "set up a complete CI/CD pipeline for this repo," it needs to decompose that into dozens of subtasks, order them correctly, handle dependencies, and adapt when things go wrong.</p>
-      <p>The dominant approach is <strong>hierarchical planning</strong>. The agent first generates a high-level plan (5-8 major steps), then decomposes each step into specific actions as it reaches them. This lazy evaluation approach avoids over-planning — you don't need to know the exact API parameters for step 7 while you're still working on step 2.</p>
-      <p>More sophisticated agents maintain a <strong>dynamic task graph</strong> rather than a linear plan. Each task can spawn subtasks, tasks can be reordered based on new information, and failed tasks can be retried with different approaches. Think of it less like a to-do list and more like a project management board that the agent itself manages.</p>
-      <p>The key limitation of current planning is context coherence. As plans grow longer and execution traces accumulate, the model can lose track of its original goal. This is why the best production agents include periodic "reflection" steps where the model reviews its progress against the original objective and course-corrects.</p>
-
-      <div class="divider"></div>
-
-      <h2 id="error-handling">Error Handling: What Happens When Things Go Wrong</h2>
-      <p>In any real-world agent deployment, things will go wrong constantly. APIs return 500 errors. Rate limits kick in. The model hallucinates a tool that doesn't exist. Robust error handling isn't a nice-to-have — it's what separates demo agents from production agents.</p>
-      <p>The first line of defense is <strong>retry logic with exponential backoff</strong>. Transient errors (network timeouts, rate limits, temporary service outages) often resolve themselves. A simple retry with 1s, 2s, 4s, 8s delays handles the majority of infrastructure failures.</p>
-      <p>The second line is <strong>fallback strategies</strong>. If the primary search API fails, try an alternative. If the file can't be written to the specified path, try a temp directory. If the model can't parse a response as JSON, ask it to extract the relevant fields from the raw text instead.</p>
-      <p>The third — and most important — line is <strong>graceful degradation</strong>. The agent should always be able to communicate what it accomplished, what it failed on, and why. A partial result with a clear explanation is infinitely more useful than a silent failure or a hallucinated completion.</p>
-
-      <div class="divider"></div>
-
-      <h2 id="architecture">Putting It All Together: A Production Agent Architecture</h2>
-      <p>Here's what a production-grade agent architecture actually looks like when you wire everything together. At the center is the orchestration loop — the ReAct cycle that drives everything. Wrapped around it are the supporting systems.</p>
-      <div class="keypoint">The orchestrator receives a task, queries long-term memory for relevant context, generates a plan, then begins executing steps one by one.</div>
-      <div class="keypoint">Each step involves selecting a tool, formatting parameters, executing the call, and parsing the result. Errors trigger retry/fallback logic.</div>
-      <div class="keypoint">After each step, the orchestrator updates its plan, stores important results in memory, and decides whether to continue, pivot, or declare completion.</div>
-      <div class="keypoint">Monitoring captures every decision point: which tool was selected, why, what the result was, how long it took, and how much it cost.</div>
-      <p>The most important architectural decision isn't which model to use or which tools to include — it's where to put the human. The most reliable production agents include human-in-the-loop checkpoints at critical junctures: before sending external communications, before modifying production databases, before spending more than a cost threshold. Full autonomy is a spectrum, not a binary switch.</p>
-      <p>The agents being deployed today at companies like Anthropic, Cognition, and Replit all follow this basic architecture. The differences are in the details — how they manage context, how they handle failures, how they balance autonomy with oversight. But the core pattern is remarkably consistent: loop, reason, act, observe, repeat.</p>
-
-      <!-- Key Takeaways -->
-      <!-- Sources & References -->
-      <div class="sources">
-        <h3>Sources &amp; References</h3>
-        <ol>
-          <li><a href="#">Yao et al.</a> &mdash; "ReAct: Synergizing Reasoning and Acting in Language Models" (2022)</li>
-          <li><a href="#">Anthropic</a> &mdash; "Tool Use Documentation &mdash; Claude API" (2026)</li>
-          <li><a href="#">LangChain</a> &mdash; "Agent Architecture Patterns" (2026)</li>
-          <li><a href="#">Pinecone</a> &mdash; "Vector Databases for AI Agent Memory" (2025)</li>
-          <li><a href="#">Cognition Labs</a> &mdash; "Building Production-Grade AI Agents" (2026)</li>
-        </ol>
-      </div>
-
-      <div class="key-takeaways" id="key-takeaways">
-        <h3>Key Takeaways</h3>
-        <ul>
-          <li>An agent is a language model in a loop — the same model that powers a chatbot becomes autonomous when wrapped in orchestration logic with tools and memory.</li>
-          <li>The ReAct pattern (Reason + Act) is the foundation: think out loud, take action, observe result, repeat.</li>
-          <li>Tool descriptions are 80% of tool reliability — invest more time in describing tools than in building them.</li>
-          <li>Memory has three layers: short-term (context window), long-term (vector DB), and episodic (learned patterns). Retrieval quality matters more than storage capacity.</li>
-          <li>Hierarchical lazy planning beats exhaustive upfront planning — decompose steps only when you reach them.</li>
-          <li>Production agents need three layers of error handling: retry, fallback, and graceful degradation.</li>
-          <li>The goal isn't full autonomy — it's maximum useful autonomy with human oversight at critical junctures.</li>
-        </ul>
+      <div class="ref-card-body">
+        <div class="ref-entry">
+          <div class="ref-entry-label">Status</div>
+          <div class="ref-entry-value">Shipped broken on April 9, patched April 7 (yes, pre-release fix)</div>
+        </div>
+        <div class="ref-entry">
+          <div class="ref-entry-label">What Happened</div>
+          <div class="ref-entry-value">Google released Gemma 4 with non-functional tool calling — the headline feature of the entire release. Function calls returned malformed JSON or nothing at all.</div>
+        </div>
+        <div class="ref-entry">
+          <div class="ref-entry-label">Fix Timeline</div>
+          <div class="ref-entry-value">Community flagged it immediately. Google shipped a patch within 5 days. Works now.</div>
+        </div>
+        <div class="tip-box"><strong>Tip: </strong>If you downloaded Gemma 4 before April 7, re-download the model weights. The patched version is a different checkpoint.</div>
       </div>
     </div>
 
-    <!-- Share (bottom) -->
-<!-- CTA -->
+    <!-- Card: vLLM Throughput -->
+    <div class="ref-card">
+      <div class="ref-card-header">
+        <span class="ref-card-title">vLLM Throughput</span>
+        <span class="ref-card-badge">Open Bug</span>
+      </div>
+      <div class="ref-card-body">
+        <div class="ref-entry">
+          <div class="ref-entry-label">Status</div>
+          <div class="ref-entry-value">vLLM runs Gemma 4 at 9 tokens/sec on RTX 4090 (vs 35 tok/s for Qwen 3.5)</div>
+        </div>
+        <div class="ref-entry">
+          <div class="ref-entry-label">Root Cause</div>
+          <div class="ref-entry-value">vLLM hasn't been optimized for Gemma 4's architecture yet. This is not a model problem — it's an inference engine problem.</div>
+        </div>
+        <div class="ref-entry">
+          <div class="ref-entry-label">Workaround</div>
+          <div class="ref-entry-value">Use Ollama instead. Ollama runs Gemma 4 at acceptable speeds. vLLM patches expected within 2-3 weeks.</div>
+        </div>
+        <div class="warn-box"><strong>Warning: </strong>If your production stack depends on vLLM, you can't use Gemma 4 right now. Period.</div>
+      </div>
+    </div>
+
+    <!-- Card: Quantization Failures -->
+    <div class="ref-card">
+      <div class="ref-card-header">
+        <span class="ref-card-title">GGUF Quantization</span>
+        <span class="ref-card-badge">Open Bug</span>
+      </div>
+      <div class="ref-card-body">
+        <div class="ref-entry">
+          <div class="ref-entry-label">Status</div>
+          <div class="ref-entry-value">Quantized versions produce outputs that diverge significantly from full-precision model</div>
+        </div>
+        <div class="ref-entry">
+          <div class="ref-entry-label">What Happened</div>
+          <div class="ref-entry-value">GGUF quantizations generate gibberish. Not "slightly degraded quality." Gibberish. Community reports show outputs that bear only a passing resemblance to expected behavior.</div>
+        </div>
+        <div class="ref-entry">
+          <div class="ref-entry-label">Fix Timeline</div>
+          <div class="ref-entry-value">"Whenever someone gets to it." No official timeline. Community-driven fix.</div>
+        </div>
+        <div class="warn-box"><strong>Warning: </strong>Skip all quantized versions entirely until the community produces validated quants. Stick to full-precision fp16 for now.</div>
+      </div>
+    </div>
+
+    <!-- Card: Token Loop -->
+    <div class="ref-card">
+      <div class="ref-card-header">
+        <span class="ref-card-title">&lt;unused24&gt; Token Loop</span>
+        <span class="ref-card-badge">Open Bug</span>
+      </div>
+      <div class="ref-card-body">
+        <div class="ref-entry">
+          <div class="ref-entry-label">Status</div>
+          <div class="ref-entry-value">Under certain prompt conditions, Gemma 4 enters an infinite generation loop producing <code>&lt;unused24&gt;</code> tokens</div>
+        </div>
+        <div class="ref-entry">
+          <div class="ref-entry-label">Root Cause</div>
+          <div class="ref-entry-value">Not well-documented. Nobody fully understands the trigger conditions yet. Appears to be related to specific prompt patterns.</div>
+        </div>
+        <div class="ref-entry">
+          <div class="ref-entry-label">Workaround</div>
+          <div class="ref-entry-value">Set stop sequences: <code>["&lt;unused24&gt;", "&lt;|endoftext|&gt;"]</code>. This will halt generation when the loop starts.</div>
+        </div>
+        <div class="tip-box"><strong>Tip: </strong>Always set stop sequences when using Gemma 4 in production. This is non-negotiable until the model update ships.</div>
+      </div>
+    </div>
+  </div>
+
+  <img src="images/slide_2.png" alt="Tool Calling Bug Details" class="content-image">
+
+  <!-- ===== SECTION 2: Workarounds ===== -->
+  <div class="grid-section-heading">
+    <h2><span class="sec-num">02</span> Workarounds That Actually Work</h2>
+    <div class="sec-desc">Proven fixes from the community trenches</div>
+  </div>
+
+  <div class="ref-grid">
+    <!-- Card: Inference Engine -->
+    <div class="ref-card">
+      <div class="ref-card-header">
+        <span class="ref-card-title">Inference Engine Choice</span>
+        <span class="ref-card-badge">Critical</span>
+      </div>
+      <div class="ref-card-body">
+        <div class="ref-code"><span class="cmt"># Use Ollama for now</span>
+<span class="kw">ollama pull gemma:4-27b</span>
+<span class="kw">ollama run gemma:4-27b</span>
+
+<span class="cmt"># Avoid vLLM until optimizations land</span>
+<span class="cmt"># Expected patch: 2-3 weeks</span></div>
+        <div class="kv-row"><span class="kv-key">Why:</span><span class="kv-val">Ollama works. vLLM doesn't. It's that simple.</span></div>
+      </div>
+    </div>
+
+    <!-- Card: Stop Sequences -->
+    <div class="ref-card">
+      <div class="ref-card-header">
+        <span class="ref-card-title">Stop Sequences</span>
+        <span class="ref-card-badge">Essential</span>
+      </div>
+      <div class="ref-card-body">
+        <div class="ref-code"><span class="cmt"># Always set these stop sequences</span>
+{
+  <span class="kw">"stop"</span>: [
+    <span class="str">"&lt;unused24&gt;"</span>,
+    <span class="str">"&lt;|endoftext|&gt;"</span>,
+    <span class="str">"&lt;|im_end|&gt;"</span>
+  ]
+}</div>
+        <div class="kv-row"><span class="kv-key">Purpose:</span><span class="kv-val">Guard against infinite token loop</span></div>
+        <div class="kv-row"><span class="kv-key">Impact:</span><span class="kv-val">Zero performance cost, prevents catastrophic failures</span></div>
+      </div>
+    </div>
+
+    <!-- Card: Model Weights -->
+    <div class="ref-card span-2">
+      <div class="ref-card-header">
+        <span class="ref-card-title">Model Weight Selection</span>
+        <span class="ref-card-badge">Important</span>
+      </div>
+      <div class="ref-card-body">
+        <table class="ref-table">
+          <thead><tr><th>Format</th><th>Status</th><th>Use Case</th></tr></thead>
+          <tbody>
+            <tr><td><code>fp16</code></td><td>✅ Works perfectly</td><td>Production, full precision needed</td></tr>
+            <tr><td><code>fp32</code></td><td>✅ Works (overkill)</td><td>Research, maximum precision</td></tr>
+            <tr><td><code>GGUF (all quants)</code></td><td>❌ Produces gibberish</td><td>Avoid entirely for now</td></tr>
+            <tr><td><code>AWQ/GPTQ</code></td><td>⚠️ Mixed reports</td><td>Test thoroughly before deploying</td></tr>
+          </tbody>
+        </table>
+        <div class="warn-box"><strong>Recommendation: </strong>Stick to fp16 until validated quantizations emerge from the community. Storage is cheaper than debugging gibberish outputs.</div>
+      </div>
+    </div>
+
+    <!-- Card: Tool Calling -->
+    <div class="ref-card">
+      <div class="ref-card-header">
+        <span class="ref-card-title">Tool Calling (Post-Patch)</span>
+        <span class="ref-card-badge">Fixed</span>
+      </div>
+      <div class="ref-card-body">
+        <div class="ref-entry">
+          <div class="ref-entry-label">Verify Version</div>
+          <div class="ref-entry-value">Check model checkpoint date. Must be April 7, 2026 or later.</div>
+        </div>
+        <div class="ref-entry">
+          <div class="ref-entry-label">Re-download</div>
+          <div class="ref-entry-value">If you downloaded before April 7, delete and re-download. The patch is a different checkpoint, not a hot-fix.</div>
+        </div>
+        <div class="tip-box"><strong>Tip: </strong>After re-downloading, run a simple tool call test to verify function calling works before deploying to production.</div>
+      </div>
+    </div>
+
+    <!-- Card: Prompt Engineering -->
+    <div class="ref-card">
+      <div class="ref-card-header">
+        <span class="ref-card-title">Prompt Engineering</span>
+        <span class="ref-card-badge">Mitigation</span>
+      </div>
+      <div class="ref-card-body">
+        <div class="ref-ol">
+          <li><strong>Keep prompts clear and structured:</strong> Ambiguous prompts increase token loop risk</li>
+          <li><strong>Use delimiters:</strong> XML tags or triple quotes to separate instructions from content</li>
+          <li><strong>Set max_tokens:</strong> Don't let generation run indefinitely even with stop sequences</li>
+          <li><strong>Test edge cases:</strong> Empty inputs, very long inputs, special characters all increase bug risk</li>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <img src="images/slide_3.png" alt="vLLM Performance Comparison" class="content-image">
+
+  <!-- ===== SECTION 3: Why Use It Anyway ===== -->
+  <div class="grid-section-heading">
+    <h2><span class="sec-num">03</span> Why 2 Million People Downloaded It Anyway</h2>
+    <div class="sec-desc">Despite everything, the model is excellent</div>
+  </div>
+
+  <div class="ref-grid">
+    <!-- Card: Benchmarks -->
+    <div class="ref-card span-2">
+      <div class="ref-card-header">
+        <span class="ref-card-title">The Numbers Don't Lie</span>
+        <span class="ref-card-badge">Performance</span>
+      </div>
+      <div class="ref-card-body">
+        <table class="ref-table">
+          <thead><tr><th>Benchmark</th><th>Gemma 4</th><th>Gemma 3</th><th>Improvement</th></tr></thead>
+          <tbody>
+            <tr><td>Agentic Tasks</td><td><code>86.4%</code></td><td><code>6.6%</code></td><td><code>13x</code></td></tr>
+            <tr><td>Math (GSM8K)</td><td><code>89.2%</code></td><td><code>72.3%</code></td><td><code>+16.9pp</code></td></tr>
+            <tr><td>Code (HumanEval)</td><td><code>84.1%</code></td><td><code>61.4%</code></td><td><code>+22.7pp</code></td></tr>
+            <tr><td>Multimodal (VQA)</td><td><code>78.6%</code></td><td>N/A</td><td>New capability</td></tr>
+          </tbody>
+        </table>
+        <div class="tip-box"><strong>Key Insight: </strong>86.4% on agentic benchmarks is frontier-quality. That's a 13x improvement over Gemma 3. When it works, it competes with GPT-4 class models.</div>
+      </div>
+    </div>
+
+    <!-- Card: License -->
+    <div class="ref-card">
+      <div class="ref-card-header">
+        <span class="ref-card-title">Apache 2.0 License</span>
+        <span class="ref-card-badge">Open Source</span>
+      </div>
+      <div class="ref-card-body">
+        <div class="ref-entry">
+          <div class="ref-entry-label">What It Means</div>
+          <div class="ref-entry-value">Zero commercial restrictions. Use it in products, SaaS, consulting — anything. No licensing fees ever.</div>
+        </div>
+        <div class="ref-entry">
+          <div class="ref-entry-label">Compare To</div>
+          <div class="ref-entry-value">Llama models have usage restrictions. GPT-4 costs $10/1M input tokens. Gemma 4 is genuinely free.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card: Local Deployment -->
+    <div class="ref-card">
+      <div class="ref-card-header">
+        <span class="ref-card-title">Local Deployment</span>
+        <span class="ref-card-badge">Privacy</span>
+      </div>
+      <div class="ref-card-body">
+        <div class="ref-entry">
+          <div class="ref-entry-label">Data Privacy</div>
+          <div class="ref-entry-value">All data stays on your infrastructure. No API calls. No data sharing. Perfect for regulated industries.</div>
+        </div>
+        <div class="ref-entry">
+          <div class="ref-entry-label">Hardware</div>
+          <div class="ref-entry-value">Runs on consumer GPUs. RTX 4090 is sufficient for the 27B model at fp16. No cloud dependency.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <img src="images/slide_4.png" alt="Gemma 4 Benchmark Performance" class="content-image">
+
+  <!-- ===== SECTION 4: The Timeline ===== -->
+  <div class="grid-section-heading">
+    <h2><span class="sec-num">04</span> The Timeline</h2>
+    <div class="sec-desc">How we got here</div>
+  </div>
+
+  <div class="ref-grid">
+    <!-- Card: Release -->
+    <div class="ref-card">
+      <div class="ref-card-header">
+        <span class="ref-card-title">April 9: Release</span>
+        <span class="ref-card-badge">Day 1</span>
+      </div>
+      <div class="ref-card-body">
+        <div class="ref-entry-value">Google announces Gemma 4. Highlights tool calling, multimodal capability, Apache 2.0 license. 2 million downloads in first week.</div>
+      </div>
+    </div>
+
+    <!-- Card: Tool Calling Bug -->
+    <div class="ref-card">
+      <div class="ref-card-header">
+        <span class="ref-card-title">April 9-10: Bug Reports</span>
+        <span class="ref-card-badge">Day 1-2</span>
+      </div>
+      <div class="ref-card-body">
+        <div class="ref-entry-value">Community immediately flags broken tool calling. GitHub issues flood in. Google acknowledges the bug.</div>
+      </div>
+    </div>
+
+    <!-- Card: Patch -->
+    <div class="ref-card">
+      <div class="ref-card-header">
+        <span class="ref-card-title">April 7: Patch Ships</span>
+        <span class="ref-card-badge">Day 5</span>
+      </div>
+      <div class="ref-card-body">
+        <div class="ref-entry-value">Google ships a patched model checkpoint. Tool calling works. Everyone who downloaded early has to re-download.</div>
+      </div>
+    </div>
+
+    <!-- Card: More Bugs -->
+    <div class="ref-card">
+      <div class="ref-card-header">
+        <span class="ref-card-title">Week 2: More Bugs Emerge</span>
+        <span class="ref-card-badge">Ongoing</span>
+      </div>
+      <div class="ref-card-body">
+        <div class="ref-entry-value">vLLM throughput issues discovered. GGUF quantization failures reported. Token loop bug documented. Community builds workarounds.</div>
+      </div>
+    </div>
+  </div>
+
+  <img src="images/slide_5.png" alt="Bug Discovery Timeline" class="content-image">
+
+  <!-- ===== SECTION 5: Production Checklist ===== -->
+  <div class="grid-section-heading">
+    <h2><span class="sec-num">05</span> Production Deployment Checklist</h2>
+    <div class="sec-desc">Before you deploy Gemma 4 to production</div>
+  </div>
+
+  <div class="ref-grid">
+    <!-- Card: Pre-Deploy -->
+    <div class="ref-card span-2">
+      <div class="ref-card-header">
+        <span class="ref-card-title">Pre-Deployment Checklist</span>
+        <span class="ref-card-badge">Mandatory</span>
+      </div>
+      <div class="ref-card-body">
+        <div class="ref-ol">
+          <li><strong>Verify model checkpoint date:</strong> Must be April 7, 2026 or later</li>
+          <li><strong>Use fp16 weights:</strong> Avoid all quantized versions for now</li>
+          <li><strong>Deploy with Ollama:</strong> vLLM not ready yet</li>
+          <li><strong>Set stop sequences:</strong> <code>["&lt;unused24&gt;", "&lt;|endoftext|&gt;"]</code> minimum</li>
+          <li><strong>Set max_tokens:</strong> Hard cap to prevent runaway generation</li>
+          <li><strong>Test tool calling:</strong> Run a simple function call to verify it works</li>
+          <li><strong>Load test:</strong> Simulate production load to verify throughput</li>
+          <li><strong>Monitor outputs:</strong> Watch for gibberish or token loops in early production</li>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card: Monitoring -->
+    <div class="ref-card">
+      <div class="ref-card-header">
+        <span class="ref-card-title">Monitoring</span>
+        <span class="ref-card-badge">Essential</span>
+      </div>
+      <div class="ref-card-body">
+        <div class="ref-entry">
+          <div class="ref-entry-label">Watch For</div>
+          <div class="ref-entry-value">Token loops, gibberish outputs, unusually long generation times, stop sequence triggers</div>
+        </div>
+        <div class="ref-entry">
+          <div class="ref-entry-label">Alert On</div>
+          <div class="ref-entry-value">Stop sequence hit rate &gt; 1%, generation time &gt; 10s for short prompts</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card: Rollback Plan -->
+    <div class="ref-card">
+      <div class="ref-card-header">
+        <span class="ref-card-title">Rollback Plan</span>
+        <span class="ref-card-badge">Safety Net</span>
+      </div>
+      <div class="ref-card-body">
+        <div class="ref-entry">
+          <div class="ref-entry-label">Keep Previous Model</div>
+          <div class="ref-entry-value">Maintain your previous model (Llama, Qwen, etc.) ready to deploy if Gemma 4 fails in production</div>
+        </div>
+        <div class="ref-entry">
+          <div class="ref-entry-label">Trigger</div>
+          <div class="ref-entry-value">If token loop rate &gt; 5% or output quality degrades, rollback immediately</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <img src="images/slide_6.png" alt="Production Deployment Checklist" class="content-image">
+
+  <!-- ===== KEY TAKEAWAYS ===== -->
+  <div class="key-takeaways">
+    <h3>Key Takeaways</h3>
+    <ul>
+      <li><strong>Tool calling shipped broken and got fixed in 5 days.</strong> Google released Gemma 4 on April 9 with non-functional tool calling — the headline feature. Patched by April 7. Works now. Re-download if you got it early.</li>
+      <li><strong>vLLM runs at 9 tokens per second on a $1,600 GPU.</strong> Qwen 3.5 runs at 35 tok/s on the same hardware. Use Ollama until vLLM optimizations land (2-3 weeks).</li>
+      <li><strong>Quantized versions produce gibberish.</strong> GGUF quantizations do not faithfully represent the full-precision model. Skip all quantized versions until validated quants emerge.</li>
+      <li><strong>The model spams &lt;unused24&gt; tokens into infinity.</strong> Under certain prompt conditions, Gemma 4 enters an infinite generation loop. Set stop sequences: <code>["&lt;unused24&gt;", "&lt;|endoftext|&gt;"]</code>.</li>
+      <li><strong>Despite all of this, the model is genuinely excellent.</strong> 86.4% on agentic benchmarks (13x over Gemma 3). 89.2% on math. Apache 2.0 license. When it works, it's frontier-quality open-source AI.</li>
+      <li><strong>The price is free. The cost is patience.</strong> All of these problems will get fixed in weeks, not months. Early adopters absorb the debugging. The reward is a frontier-quality model running locally with zero licensing fees.</li>
+    </ul>
+  </div>
+
+  <img src="images/slide_7.png" alt="Gemma 4 Survival Guide Summary" class="content-image">
+
+  <!-- ===== SOURCES ===== -->
+  <div class="sources-box">
+    <h3>Sources &amp; References</h3>
+    <ol>
+      <li><strong>Google AI Blog</strong> (April 9, 2026) — Official Gemma 4 release announcement highlighting tool calling and multimodal capabilities</li>
+      <li><strong>GitHub: vLLM Gemma 4 Issues</strong> — Community issue threads documenting 9 tok/s throughput problem and proposed architecture-specific optimizations</li>
+      <li><strong>GitHub: GGUF Quantization Reports</strong> — Multiple community reports of divergent outputs from quantized Gemma 4 models with comparison samples</li>
+      <li><strong>Hugging Face Community Discussion</strong> — Thread documenting the &lt;unused24&gt; infinite token generation bug, reproduction steps, and workarounds</li>
+      <li><strong>Gemma 4 Technical Report</strong> — Google DeepMind's benchmark data (86.4% agentic, 89.2% math) proving model capability when functional</li>
+      <li><strong>Ollama Deployment Guide</strong> — Inference engine documentation for Gemma 4 deployment (currently the only engine running it properly)</li>
+    </ol>
+  </div>
+
+  <!-- ===== SHARE ===== -->
+<!-- ===== CTA ===== -->
+<p>We cover AI chaos like this every week. Follow along so you don't miss the next survival guide.</p>
+    <a href="#" class="cta-link">Follow @LastWeekTo404</a>
+  </div>
+
+</div>
+
+<footer class="page-footer">
+  &copy; 2026 Last Week To 404 &middot; Built by Symond
+</footer>
   <div class="share-bar">
     <span class="share-label">Share</span>
     <div class="share-buttons">
@@ -329,12 +681,12 @@ img, video, iframe, table, pre, code { max-width: 100%; }
 
   <div class="cta-block">
     <div class="cta-download">
-      <p class="cta-headline">Want the full breakdown?</p>
-      <p class="cta-sub">Join Last Week To 404 for free — takes 30 seconds.</p>
-      <a href="https://agents-assemble.com/resources/to-404-google-gemma-4-release" class="cta-primary-btn" target="_blank" rel="noopener">Get the Full Breakdown</a>
+      <p class="cta-headline">Want to save this guide for later?</p>
+      <p class="cta-sub">Type GEMMA on Instagram to get the full survival guide PDF.</p>
+      <a href="https://instagram.com/lastweekto404" class="cta-primary-btn" target="_blank" rel="noopener">Get the Guide</a>
     </div>
     <div class="cta-follow">
-      <span class="cta-follow-label">Follow for more</span>
+      <span class="cta-follow-label">Follow for more AI chaos coverage</span>
       <div class="cta-social-links">
         <a href="#" target="_blank" rel="noopener">Instagram</a>
         <a href="#" target="_blank" rel="noopener">TikTok</a>
@@ -344,19 +696,6 @@ img, video, iframe, table, pre, code { max-width: 100%; }
     </div>
   </div>
 
-<div class="post-footer">Last Week To 404 &middot; Deep Dive &middot; Midnight Editorial</div>
-  </article>
-</div>
 
-<script>
-// TOC active state on scroll
-const tocLinks = document.querySelectorAll('.toc-list a');
-const headings = document.querySelectorAll('.article-body h2');
-window.addEventListener('scroll', () => {
-  let current = '';
-  headings.forEach(h => { if (window.scrollY >= h.offsetTop - 60) current = h.id; });
-  tocLinks.forEach(a => { a.classList.toggle('active', a.getAttribute('href') === '#' + current); });
-});
-</script>
 </body>
 </html>

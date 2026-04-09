@@ -3,87 +3,85 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>How to Build Offline AI Agents With Gemma 4 — The Step-by-Step Guide for Agent Builders</title>
+    <title>Build Your First AI Agent With Gemma 4 — Tool Calling Works Now</title>
   <meta name="twitter:image" content="">
 
     <!-- Open Graph -->
-    <meta property="og:title" content="How to Build Offline AI Agents With Gemma 4 — The Step-by-Step Guide for Agent Builders">
-    <meta property="og:description" content="A hands-on walkthrough covering environment setup, tool definitions, memory configuration, the orchestration loop, testing, and deployment.">
+    <meta property="og:title" content="Build Your First AI Agent With Gemma 4">
+    <meta property="og:description" content="Tool calling is a first-class training objective in Gemma 4. Deploy locally with Ollama in 5 minutes — no API keys, no recurring costs. Apache 2.0 license.">
     <meta property="og:type" content="article">
-    <meta property="og:url" content="https://example.com/tutorials/build-ai-agent-30-minutes">
-    <meta property="og:image" content="https://example.com/images/ai-agent-tutorial-og.jpg">
-    <meta property="og:site_name" content="AgentsAssemble">
+    <meta property="og:url" content="https://youraiadventure.com/gemma">
+    <meta property="og:image" content="https://youraiadventure.com/gemma/images/slide_1.png">
+    <meta property="og:site_name" content="Agents Assemble">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="How to Build Offline AI Agents With Gemma 4 — The Step-by-Step Guide for Agent Builders">
-    <meta name="twitter:description" content="A hands-on walkthrough covering environment setup, tool definitions, memory configuration, the orchestration loop, testing, and deployment.">
+    <meta name="twitter:title" content="Build Your First AI Agent With Gemma 4">
+    <meta name="twitter:description" content="Tool calling is a first-class training objective in Gemma 4. Deploy locally with Ollama in 5 minutes — no API keys, no recurring costs. Apache 2.0 license.">
 
     <!-- SEO Schema -->
     <script type="application/ld+json">
     {
         "@context": "https://schema.org",
         "@type": "Article",
-        "headline": "How to Build Offline AI Agents With Gemma 4 — The Step-by-Step Guide for Agent Builders",
-        "description": "A hands-on walkthrough covering environment setup, tool definitions, memory configuration, the orchestration loop, testing, and deployment.",
+        "headline": "Build Your First AI Agent With Gemma 4",
+        "description": "Tool calling is a first-class training objective in Gemma 4. Deploy locally with Ollama in 5 minutes — no API keys, no recurring costs. Apache 2.0 license.",
         "author": {
             "@type": "Organization",
-            "name": "AgentsAssemble"
+            "name": "Agents Assemble"
         },
-        "datePublished": "2026-04-09",
-        "dateModified": "2026-04-09",
+        "datePublished": "2026-04-10",
+        "dateModified": "2026-04-10",
         "publisher": {
             "@type": "Organization",
-            "name": "AgentsAssemble"
+            "name": "Agents Assemble"
         },
         "mainEntityOfPage": {
             "@type": "WebPage",
-            "@id": "https://example.com/tutorials/build-ai-agent-30-minutes"
+            "@id": "https://youraiadventure.com/gemma"
         },
         "about": {
             "@type": "HowTo",
-            "name": "How to Build Offline AI Agents With Gemma 4 — The Step-by-Step Guide for Agent Builders",
+            "name": "Build Your First AI Agent With Gemma 4",
             "totalTime": "PT30M",
             "step": [
-                {"@type": "HowToStep", "name": "Environment Setup", "position": 1},
-                {"@type": "HowToStep", "name": "Define Your Tools", "position": 2},
-                {"@type": "HowToStep", "name": "Configure Memory", "position": 3},
-                {"@type": "HowToStep", "name": "Build the Orchestration Loop", "position": 4},
-                {"@type": "HowToStep", "name": "Testing", "position": 5},
-                {"@type": "HowToStep", "name": "Deploy", "position": 6}
+                {"@type": "HowToStep", "name": "Install Ollama", "position": 1},
+                {"@type": "HowToStep", "name": "Pull Gemma 4", "position": 2},
+                {"@type": "HowToStep", "name": "Define Your Tools", "position": 3},
+                {"@type": "HowToStep", "name": "Configure Tool Schemas", "position": 4},
+                {"@type": "HowToStep", "name": "Test Function Calls", "position": 5},
+                {"@type": "HowToStep", "name": "Build Production Agent", "position": 6}
             ]
         }
     }
     </script>
 
-    <!-- Fonts: Instrument Serif (headings) + Sora (body) + DM Mono (code/labels) -->
+    <!-- Fonts: Plus Jakarta Sans -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Inter:wght@400;500&display=swap" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
         :root {
-            --font-heading: 'Instrument Serif', serif;
-            --font-body: 'Sora', sans-serif;
-            --font-mono: 'DM Mono', monospace;
+            --font-heading: 'Plus Jakarta Sans', sans-serif;
+            --font-body: 'Plus Jakarta Sans', sans-serif;
+            --font-mono: 'Courier New', monospace;
             --text-primary: #111827;
             --text-secondary: #4b5563;
             --text-muted: #9ca3af;
-            --bg-primary: #ffffff;
+            --bg-primary: #f9fafb;
             --bg-card: #ffffff;
             --bg-code: #111827;
             --border: #e5e7eb;
             --border-light: #f3f4f6;
-            --accent: #2563eb;
+            --accent: #2196f3;
             --accent-light: #dbeafe;
-            --accent-dark: #1d4ed8;
-            --success: #059669;
-            --warning: #d97706;
+            --accent-dark: #1976d2;
+            --success: #4caf50;
+            --warning: #ffc107;
             --info: #0284c7;
             --progress-bg: #e5e7eb;
-            --progress-fill: #2563eb;
+            --progress-fill: #2196f3;
         }
 
         html { font-size: 17px; scroll-behavior: smooth; }
@@ -260,9 +258,19 @@
             aspect-ratio: 16 / 7;
             margin-bottom: 2rem;
         }
+        .featured-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 8px;
+        }
         .featured-image .image-placeholder { height: 100%; }
         .step-image {
             margin: 1.2rem 0;
+        }
+        .step-image img {
+            width: 100%;
+            border-radius: 8px;
         }
         .step-image .image-placeholder { aspect-ratio: 16 / 9; }
 
@@ -590,7 +598,7 @@
         @media (min-width: 640px) {
             .main-content { padding: 2.5rem 2rem; }
         }
-    
+
 
 /* === Share Bar === */
 .share-bar { display: flex; align-items: center; gap: 12px; justify-content: center; margin: 32px 0; padding: 16px 0; border-top: 1px solid rgba(128,128,128,0.15); }
@@ -601,7 +609,7 @@
 .share-copied { position: absolute; top: -28px; left: 50%; transform: translateX(-50%); font-size: 0.7rem; color: #10b981; background: rgba(16,185,129,0.1); padding: 2px 8px; border-radius: 4px; white-space: nowrap; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
 
 /* === CTA Block === */
-.cta-block { text-align: center; margin: 32px 0; padding: 40px 24px; background: linear-gradient(135deg, rgba(128,128,128,0.06), rgba(128,128,128,0.02)); border: 1px solid rgba(128,128,128,0.12); border-radius: 16px; }
+.cta-block { text-align: center; margin: 32px 0; padding: 40px 24px; background: linear-gradient(135deg, rgba(33,150,243,0.08), rgba(76,175,80,0.04)); border: 1px solid rgba(33,150,243,0.15); border-radius: 16px; }
 .cta-download { margin-bottom: 24px; }
 .cta-headline { font-size: 1.25rem; font-weight: 700; margin-bottom: 8px; }
 .cta-sub { font-size: 0.9rem; color: #9ca3af; margin-bottom: 16px; }
@@ -634,11 +642,11 @@ img, video, iframe, table, pre, code { max-width: 100%; }
     <div class="topbar">
         <div class="topbar-inner">
             <div class="topbar-nav">
-                <a href="../index.html" class="back-link">
+                <a href="https://agents-assemble.com" class="back-link">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
                     Library
                 </a>
-                <span class="topbar-title">How to Build Offline AI Agents With Gemma 4 — The Step-by-Step Guide for Agent Builders</span>
+                <span class="topbar-title">Build Your First AI Agent With Gemma 4</span>
                 <span class="topbar-step-label" id="topStepLabel">Intro</span>
             </div>
             <div class="progress-bar-container">
@@ -654,12 +662,12 @@ img, video, iframe, table, pre, code { max-width: 100%; }
                 </div>
                 <div class="progress-labels">
                     <span class="progress-label active" data-step="0" onclick="goToStep(0)">Intro</span>
-                    <span class="progress-label" data-step="1" onclick="goToStep(1)">Setup</span>
-                    <span class="progress-label" data-step="2" onclick="goToStep(2)">Tools</span>
-                    <span class="progress-label" data-step="3" onclick="goToStep(3)">Memory</span>
-                    <span class="progress-label" data-step="4" onclick="goToStep(4)">Loop</span>
-                    <span class="progress-label" data-step="5" onclick="goToStep(5)">Test</span>
-                    <span class="progress-label" data-step="6" onclick="goToStep(6)">Deploy</span>
+                    <span class="progress-label" data-step="1" onclick="goToStep(1)">Install</span>
+                    <span class="progress-label" data-step="2" onclick="goToStep(2)">Pull Model</span>
+                    <span class="progress-label" data-step="3" onclick="goToStep(3)">Tools</span>
+                    <span class="progress-label" data-step="4" onclick="goToStep(4)">Test</span>
+                    <span class="progress-label" data-step="5" onclick="goToStep(5)">Agent</span>
+                    <span class="progress-label" data-step="6" onclick="goToStep(6)">Production</span>
                     <span class="progress-label" data-step="7" onclick="goToStep(7)">Wrap-up</span>
                 </div>
             </div>
@@ -678,111 +686,91 @@ img, video, iframe, table, pre, code { max-width: 100%; }
                     <span>&middot;</span>
                     <span>6 steps</span>
                     <span>&middot;</span>
-                    <span>April 09, 2026</span>
+                    <span>April 10, 2026</span>
                 </div>
-                <h1>How to Build Offline AI Agents With Gemma 4 — The Step-by-Step Guide for Agent Builders</h1>
-                <p class="subtitle">
-                    A hands-on walkthrough from zero to a deployed AI agent. You will set up your environment, define tools, configure memory, build the orchestration loop, test everything, and ship to production.
-                </p>
+                <h1>Build Your First AI Agent With Gemma 4 — Tool Calling Works Now, Here's the Complete Local Deployment Guide</h1>
+                <p class="subtitle">Something shifted this week in the open-source AI agent landscape. Before Gemma 4, building reliable AI agents with open-source models required significant prompt engineering effort. Gemma 4 trained tool use as a first-class objective — meaning the model learned function calling as a core capability, not an afterthought. Deploy locally with Ollama in 5 minutes. No API keys, no rate limits, no recurring costs.</p>
             </header>
 
             <div class="featured-image">
-                <div class="image-placeholder">
-                    <span class="label">Featured Image</span>
-                    <span class="hint">Architecture diagram: User -> LLM -> Tools -> Memory -> Response</span>
-                </div>
+                <img src="images/slide_1.png" alt="Gemma 4 Tool Calling Architecture">
             </div>
 
             <div class="tldr-box">
                 <div class="tldr-label">TL;DR</div>
                 <p>
-                    Install Python 3.11+ and the <code>openai</code> SDK. Define tools as JSON-schema-annotated functions. Wire up a SQLite-backed memory layer. Run an orchestration loop that calls the LLM, dispatches tool calls, and appends results. Write three focused test cases. Deploy behind FastAPI on a $5/month VPS. Total time: roughly 30 minutes.
+                    Tool calling is a first-class training objective in Gemma 4. This means 86.4% on agentic benchmarks — a 13x improvement over Gemma 3. Install Ollama, pull the model, define your tool schemas in JSON, and you're making function calls. No cloud accounts, no API keys, no billing dashboards. Apache 2.0 license means zero commercial restrictions.
                 </p>
             </div>
 
             <h3>What you will need</h3>
             <ul>
-                <li>Python 3.11 or higher (<code>python --version</code>)</li>
-                <li>An OpenAI API key (or any OpenAI-compatible endpoint)</li>
-                <li>Basic familiarity with Python functions and dictionaries</li>
-                <li>A terminal and a code editor</li>
+                <li>Ollama installed (works on macOS, Linux, Windows)</li>
+                <li>8GB RAM minimum (16GB recommended for faster inference)</li>
+                <li>Basic familiarity with JSON and command-line tools</li>
+                <li>A code editor (VS Code, Cursor, or any text editor)</li>
             </ul>
 
             <div class="step-nav">
                 <div class="step-nav-spacer"></div>
                 <button class="step-nav-btn step-nav-next" onclick="goToStep(1)">
-                    Begin: Environment Setup
+                    Begin: Install Ollama
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
                 </button>
             </div>
         </div>
 
-        <!-- STEP 1: ENVIRONMENT SETUP -->
+        <!-- STEP 1: INSTALL OLLAMA -->
         <div class="step-view" data-step="1">
             <div class="step-heading">
-                <span class="step-badge">Step 1 / 6 &middot; ~5 min</span>
-                <h2>Environment Setup</h2>
+                <span class="step-badge">Step 1 / 6 &middot; ~3 min</span>
+                <h2>Install Ollama</h2>
             </div>
 
-            <p>
-                Create an isolated project directory and virtual environment. This keeps your agent's dependencies separate and prevents version conflicts.
-            </p>
+            <p>Ollama is the local LLM runtime that makes running Gemma 4 as easy as pulling a Docker image. It handles model downloads, GPU acceleration, and the inference server — so you can focus on building your agent.</p>
+
+            <h3>macOS Installation</h3>
 
             <div class="code-block-wrapper">
                 <div class="code-block-header">
                     <span>terminal</span>
                     <button class="copy-btn" onclick="copyCode(this)">Copy</button>
                 </div>
-                <pre><code>mkdir my-first-agent && cd my-first-agent
-python -m venv .venv
-source .venv/bin/activate  # Windows: .venv\Scripts\activate</code></pre>
+                <pre><code>brew install ollama</code></pre>
             </div>
 
-            <p>
-                Install the two packages you need: the OpenAI SDK for LLM calls and <code>python-dotenv</code> so your API key stays out of source control.
-            </p>
+            <p>Or download the official installer from <code>ollama.com/download</code>.</p>
+
+            <h3>Linux Installation</h3>
 
             <div class="code-block-wrapper">
                 <div class="code-block-header">
                     <span>terminal</span>
                     <button class="copy-btn" onclick="copyCode(this)">Copy</button>
                 </div>
-                <pre><code>pip install openai python-dotenv</code></pre>
+                <pre><code>curl -fsSL https://ollama.com/install.sh | sh</code></pre>
             </div>
 
-            <p>
-                Create a <code>.env</code> file in the project root for your API key:
-            </p>
+            <h3>Windows Installation</h3>
+            <p>Download the Windows installer from <code>ollama.com/download</code> and run the .exe file.</p>
 
-            <div class="code-block-wrapper">
-                <div class="code-block-header">
-                    <span>.env</span>
-                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                </div>
-                <pre><code>OPENAI_API_KEY=sk-your-key-here</code></pre>
-            </div>
-
-            <div class="callout callout-warning">
-                <svg class="callout-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-                <p>Never commit <code>.env</code> to version control. Add it to <code>.gitignore</code> immediately.</p>
-            </div>
-
-            <p>Set up the project scaffold -- just three files:</p>
+            <h3>Verify Installation</h3>
 
             <div class="code-block-wrapper">
                 <div class="code-block-header">
                     <span>terminal</span>
                     <button class="copy-btn" onclick="copyCode(this)">Copy</button>
                 </div>
-                <pre><code>touch agent.py tools.py memory.py
-echo ".env" >> .gitignore</code></pre>
+                <pre><code>ollama --version</code></pre>
             </div>
 
             <div class="step-image">
-                <div class="image-placeholder">
-                    <span class="label">Step 1 Image</span>
-                    <span class="hint">Screenshot of terminal with completed environment setup and directory listing</span>
-                </div>
+                <img src="images/slide_2.png" alt="Ollama Installation">
+            </div>
+
+            <div class="callout callout-tip">
+                <svg class="callout-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                <p>Ollama automatically starts a local API server on <code>localhost:11434</code>. No configuration needed.</p>
             </div>
 
             <div class="step-nav">
@@ -791,605 +779,349 @@ echo ".env" >> .gitignore</code></pre>
                     Intro
                 </button>
                 <button class="step-nav-btn step-nav-next" onclick="goToStep(2)">
-                    Define Your Tools
+                    Pull Gemma 4
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
                 </button>
             </div>
         </div>
 
-        <!-- STEP 2: TOOLS -->
+        <!-- STEP 2: PULL GEMMA 4 -->
         <div class="step-view" data-step="2">
             <div class="step-heading">
-                <span class="step-badge">Step 2 / 6 &middot; ~7 min</span>
-                <h2>Define Your Tools</h2>
+                <span class="step-badge">Step 2 / 6 &middot; ~2 min</span>
+                <h2>Pull Gemma 4 Model</h2>
             </div>
 
-            <p>
-                Tools make an agent more than a chatbot. Each tool is a Python function the LLM can invoke to interact with the outside world. The LLM decides which tool to use based on the JSON schema you provide.
-            </p>
-
-            <h3>Write the tool functions</h3>
+            <p>Now that Ollama is installed, pulling Gemma 4 is a single command. The model download is about 5GB, so this might take a few minutes depending on your connection.</p>
 
             <div class="code-block-wrapper">
                 <div class="code-block-header">
-                    <span>tools.py</span>
+                    <span>terminal</span>
                     <button class="copy-btn" onclick="copyCode(this)">Copy</button>
                 </div>
-                <pre><code>import json
-import urllib.request
-from datetime import datetime
-
-
-def get_weather(location: str) -> str:
-    """Fetch current weather for a given city name."""
-    url = f"https://wttr.in/{location}?format=j1"
-    try:
-        with urllib.request.urlopen(url, timeout=5) as resp:
-            data = json.loads(resp.read())
-            current = data["current_condition"][0]
-            return (
-                f"Weather in {location}: "
-                f"{current['temp_C']}°C, "
-                f"{current['weatherDesc'][0]['value']}"
-            )
-    except Exception as e:
-        return f"Could not fetch weather: {e}"
-
-
-def calculate(expression: str) -> str:
-    """Evaluate a mathematical expression safely."""
-    allowed = set("0123456789+-*/.() ")
-    if not all(c in allowed for c in expression):
-        return "Error: expression contains invalid characters"
-    try:
-        result = eval(expression)
-        return str(result)
-    except Exception as e:
-        return f"Calculation error: {e}"
-
-
-def get_current_time() -> str:
-    """Return the current date and time."""
-    return datetime.now().strftime("%Y-%m-%d %H:%M:%S")</code></pre>
+                <pre><code>ollama pull gemma:4</code></pre>
             </div>
 
-            <h3>Register the tool schemas</h3>
-            <p>
-                Create the schema definitions that tell the LLM what each tool does. This follows the OpenAI function-calling format.
-            </p>
+            <p>Once the download completes, test that the model is working:</p>
 
             <div class="code-block-wrapper">
                 <div class="code-block-header">
-                    <span>tools.py (continued)</span>
+                    <span>terminal</span>
                     <button class="copy-btn" onclick="copyCode(this)">Copy</button>
                 </div>
-                <pre><code>TOOL_FUNCTIONS = {
-    "get_weather": get_weather,
-    "calculate": calculate,
-    "get_current_time": get_current_time,
-}
-
-TOOL_SCHEMAS = [
-    {
-        "type": "function",
-        "function": {
-            "name": "get_weather",
-            "description": "Get current weather for a city",
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "location": {
-                        "type": "string",
-                        "description": "City name, e.g. 'London'"
-                    }
-                },
-                "required": ["location"]
-            }
-        }
-    },
-    {
-        "type": "function",
-        "function": {
-            "name": "calculate",
-            "description": "Evaluate a math expression",
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "expression": {
-                        "type": "string",
-                        "description": "Math expression, e.g. '2 + 2'"
-                    }
-                },
-                "required": ["expression"]
-            }
-        }
-    },
-    {
-        "type": "function",
-        "function": {
-            "name": "get_current_time",
-            "description": "Get current date and time",
-            "parameters": {
-                "type": "object",
-                "properties": {}
-            }
-        }
-    }
-]</code></pre>
+                <pre><code>ollama run gemma:4 "What is an AI agent?"</code></pre>
             </div>
+
+            <p>You should see a response explaining AI agents. If this works, Gemma 4 is installed and ready to accept tool calls.</p>
 
             <div class="step-image">
-                <div class="image-placeholder">
-                    <span class="label">Step 2 Diagram</span>
-                    <span class="hint">Diagram: LLM reads schema -> decides to call function -> receives result -> continues reasoning</span>
-                </div>
+                <img src="images/slide_3.png" alt="Gemma 4 Model Pull">
             </div>
 
             <div class="callout callout-info">
                 <svg class="callout-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-                <p>Add more tools by following this same pattern. The agent automatically picks them up from <code>TOOL_SCHEMAS</code> and <code>TOOL_FUNCTIONS</code>.</p>
+                <p>The <code>gemma:4</code> tag pulls the latest stable version. For GPU acceleration, Ollama automatically detects and uses your GPU if available.</p>
             </div>
 
             <div class="step-nav">
                 <button class="step-nav-btn step-nav-prev" onclick="goToStep(1)">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
-                    Environment Setup
+                    Install Ollama
                 </button>
                 <button class="step-nav-btn step-nav-next" onclick="goToStep(3)">
-                    Configure Memory
+                    Define Your Tools
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
                 </button>
             </div>
         </div>
 
-        <!-- STEP 3: MEMORY -->
+        <!-- STEP 3: TOOLS -->
         <div class="step-view" data-step="3">
             <div class="step-heading">
-                <span class="step-badge">Step 3 / 6 &middot; ~5 min</span>
-                <h2>Configure Memory</h2>
+                <span class="step-badge">Step 3 / 6 &middot; ~8 min</span>
+                <h2>Define Your Tool Schemas</h2>
             </div>
 
-            <p>
-                Without memory, your agent forgets everything between sessions. A lightweight SQLite database gives you persistent conversation history with zero infrastructure.
-            </p>
+            <p>This is where Gemma 4's native tool calling shines. You define tools as JSON schemas, and the model understands when and how to call them — without elaborate prompt engineering.</p>
+
+            <h3>Create a simple tool schema file</h3>
 
             <div class="code-block-wrapper">
                 <div class="code-block-header">
-                    <span>memory.py</span>
+                    <span>tools.json</span>
                     <button class="copy-btn" onclick="copyCode(this)">Copy</button>
                 </div>
-                <pre><code>import sqlite3
-import json
-from pathlib import Path
-
-DB_PATH = Path(__file__).parent / "agent_memory.db"
-
-
-def _get_conn():
-    conn = sqlite3.connect(DB_PATH)
-    conn.execute("""
-        CREATE TABLE IF NOT EXISTS messages (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            session_id TEXT NOT NULL,
-            role TEXT NOT NULL,
-            content TEXT,
-            tool_calls TEXT,
-            tool_call_id TEXT,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
-    """)
-    return conn
-
-
-def save_message(session_id: str, message: dict):
-    """Persist a single message to the database."""
-    conn = _get_conn()
-    conn.execute(
-        """INSERT INTO messages
-           (session_id, role, content, tool_calls, tool_call_id)
-           VALUES (?, ?, ?, ?, ?)""",
-        (
-            session_id,
-            message.get("role"),
-            message.get("content"),
-            json.dumps(message.get("tool_calls"))
-                if message.get("tool_calls") else None,
-            message.get("tool_call_id"),
-        ),
-    )
-    conn.commit()
-    conn.close()
-
-
-def load_history(session_id: str, limit: int = 50) -> list:
-    """Load the most recent messages for a session."""
-    conn = _get_conn()
-    rows = conn.execute(
-        """SELECT role, content, tool_calls, tool_call_id
-           FROM messages
-           WHERE session_id = ?
-           ORDER BY id DESC LIMIT ?""",
-        (session_id, limit),
-    ).fetchall()
-    conn.close()
-
-    messages = []
-    for role, content, tool_calls_json, tool_call_id in reversed(rows):
-        msg = {"role": role}
-        if content:
-            msg["content"] = content
-        if tool_calls_json and tool_calls_json != "null":
-            msg["tool_calls"] = json.loads(tool_calls_json)
-        if tool_call_id:
-            msg["tool_call_id"] = tool_call_id
-        messages.append(msg)
-    return messages</code></pre>
+                <pre><code>{
+  "tools": [
+    {
+      "type": "function",
+      "function": {
+        "name": "get_weather",
+        "description": "Get current weather for a city",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "location": {
+              "type": "string",
+              "description": "City name, e.g. 'London'"
+            }
+          },
+          "required": ["location"]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "calculate",
+        "description": "Evaluate a math expression",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "expression": {
+              "type": "string",
+              "description": "Math expression, e.g. '42 * 17'"
+            }
+          },
+          "required": ["expression"]
+        }
+      }
+    }
+  ]
+}</code></pre>
             </div>
+
+            <div class="step-image">
+                <img src="images/slide_4.png" alt="Tool Schema Definition">
+            </div>
+
+            <p>This schema tells Gemma 4 that it has access to two functions: <code>get_weather</code> and <code>calculate</code>. The model will read these schemas and call the appropriate function when the user's query requires it.</p>
 
             <div class="callout callout-tip">
                 <svg class="callout-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-                <p>For production, swap SQLite for PostgreSQL or Redis. The interface stays the same -- only the storage backend changes.</p>
+                <p>Write clear descriptions for each function. The model relies on these to decide when to call a tool. Good descriptions = better function calling accuracy.</p>
             </div>
-
-            <p>
-                The <code>limit=50</code> default keeps your context window manageable. For GPT-4o with 128k context, you can increase this to 200+ messages. For smaller models, keep it around 20-30.
-            </p>
 
             <div class="step-nav">
                 <button class="step-nav-btn step-nav-prev" onclick="goToStep(2)">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
-                    Define Your Tools
+                    Pull Gemma 4
                 </button>
                 <button class="step-nav-btn step-nav-next" onclick="goToStep(4)">
-                    Build the Loop
+                    Test Function Calls
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
                 </button>
             </div>
         </div>
 
-        <!-- STEP 4: ORCHESTRATION LOOP -->
+        <!-- STEP 4: TEST -->
         <div class="step-view" data-step="4">
             <div class="step-heading">
-                <span class="step-badge">Step 4 / 6 &middot; ~8 min</span>
-                <h2>Build the Orchestration Loop</h2>
+                <span class="step-badge">Step 4 / 6 &middot; ~5 min</span>
+                <h2>Test Your First Function Call</h2>
             </div>
 
-            <p>
-                The orchestration loop is the heart of your agent. It runs a cycle: send messages to the LLM, check if the LLM wants to call a tool, execute the tool, append the result, and repeat until a plain text response comes back.
-            </p>
+            <p>Now let's test whether Gemma 4 can call your tools. Use the Ollama API to send a prompt that requires a tool call.</p>
+
+            <div class="code-block-wrapper">
+                <div class="code-block-header">
+                    <span>test.py</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                </div>
+                <pre><code>import requests
+import json
+
+url = "http://localhost:11434/api/chat"
+
+with open("tools.json") as f:
+    tools = json.load(f)["tools"]
+
+payload = {
+    "model": "gemma:4",
+    "messages": [
+        {"role": "user", "content": "What's 1547 * 23?"}
+    ],
+    "tools": tools,
+    "stream": False
+}
+
+response = requests.post(url, json=payload)
+print(json.dumps(response.json(), indent=2))</code></pre>
+            </div>
+
+            <p>Run the test:</p>
+
+            <div class="code-block-wrapper">
+                <div class="code-block-header">
+                    <span>terminal</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                </div>
+                <pre><code>python test.py</code></pre>
+            </div>
+
+            <p>You should see Gemma 4 return a <code>tool_calls</code> object with the function name <code>calculate</code> and the argument <code>{"expression": "1547 * 23"}</code>.</p>
 
             <div class="step-image">
-                <div class="image-placeholder">
-                    <span class="label">Step 4 Diagram</span>
-                    <span class="hint">Flowchart: User Input -> LLM Call -> Tool Call? (yes: execute + loop, no: return response)</span>
-                </div>
+                <img src="images/slide_5.png" alt="Function Call Test">
             </div>
+
+            <div class="callout callout-warning">
+                <svg class="callout-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                <p>If you see JSON parsing errors, you're likely using an older version of Gemma 4 from before the April 7 fix. Run <code>ollama pull gemma:4</code> again to get the latest version.</p>
+            </div>
+
+            <div class="step-nav">
+                <button class="step-nav-btn step-nav-prev" onclick="goToStep(3)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+                    Define Tools
+                </button>
+                <button class="step-nav-btn step-nav-next" onclick="goToStep(5)">
+                    Build Production Agent
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- STEP 5: AGENT -->
+        <div class="step-view" data-step="5">
+            <div class="step-heading">
+                <span class="step-badge">Step 5 / 6 &middot; ~7 min</span>
+                <h2>Build a Production Agent</h2>
+            </div>
+
+            <p>Now let's wire up the orchestration loop that executes tool calls and feeds results back to the model. This is the core pattern for any AI agent.</p>
 
             <div class="code-block-wrapper">
                 <div class="code-block-header">
                     <span>agent.py</span>
                     <button class="copy-btn" onclick="copyCode(this)">Copy</button>
                 </div>
-                <pre><code>import json
-import os
-from dotenv import load_dotenv
-from openai import OpenAI
+                <pre><code>import requests
+import json
 
-from tools import TOOL_SCHEMAS, TOOL_FUNCTIONS
-from memory import save_message, load_history
+def get_weather(location):
+    # Mock implementation
+    return f"Weather in {location}: 22°C, Sunny"
 
-load_dotenv()
-client = OpenAI()
+def calculate(expression):
+    try:
+        return str(eval(expression))
+    except:
+        return "Error: invalid expression"
 
-SYSTEM_PROMPT = """You are a helpful assistant with access to tools.
-Use them when the user's request requires real-time data or computation.
-Always explain your reasoning before calling a tool."""
+TOOL_FUNCTIONS = {
+    "get_weather": get_weather,
+    "calculate": calculate
+}
 
-MAX_TOOL_ROUNDS = 10
+def run_agent(user_input):
+    with open("tools.json") as f:
+        tools = json.load(f)["tools"]
 
+    messages = [{"role": "user", "content": user_input}]
 
-def run_agent(user_input: str, session_id: str = "default"):
-    # 1. Load conversation history
-    messages = load_history(session_id)
+    for _ in range(10):  # Max 10 tool rounds
+        response = requests.post(
+            "http://localhost:11434/api/chat",
+            json={
+                "model": "gemma:4",
+                "messages": messages,
+                "tools": tools,
+                "stream": False
+            }
+        ).json()
 
-    # 2. Ensure system prompt is first
-    if not messages or messages[0].get("role") != "system":
-        messages.insert(0, {"role": "system", "content": SYSTEM_PROMPT})
+        assistant_msg = response["message"]
+        messages.append(assistant_msg)
 
-    # 3. Append new user message
-    user_msg = {"role": "user", "content": user_input}
-    messages.append(user_msg)
-    save_message(session_id, user_msg)
+        # If no tool calls, we're done
+        if not assistant_msg.get("tool_calls"):
+            return assistant_msg["content"]
 
-    # 4. Orchestration loop
-    for _ in range(MAX_TOOL_ROUNDS):
-        response = client.chat.completions.create(
-            model="gpt-4o",
-            messages=messages,
-            tools=TOOL_SCHEMAS,
-        )
-        choice = response.choices[0]
-        assistant_msg = choice.message
-
-        msg_dict = {"role": "assistant", "content": assistant_msg.content}
-        if assistant_msg.tool_calls:
-            msg_dict["tool_calls"] = [
-                {
-                    "id": tc.id,
-                    "type": "function",
-                    "function": {
-                        "name": tc.function.name,
-                        "arguments": tc.function.arguments,
-                    },
-                }
-                for tc in assistant_msg.tool_calls
-            ]
-
-        messages.append(msg_dict)
-        save_message(session_id, msg_dict)
-
-        # 5. If no tool calls, we have our final answer
-        if not assistant_msg.tool_calls:
-            return assistant_msg.content
-
-        # 6. Execute each tool call
-        for tool_call in assistant_msg.tool_calls:
-            fn_name = tool_call.function.name
-            fn_args = json.loads(tool_call.function.arguments)
+        # Execute each tool call
+        for tc in assistant_msg["tool_calls"]:
+            fn_name = tc["function"]["name"]
+            fn_args = tc["function"]["arguments"]
 
             fn = TOOL_FUNCTIONS.get(fn_name)
-            if fn:
-                result = fn(**fn_args)
-            else:
-                result = f"Error: unknown tool '{fn_name}'"
+            result = fn(**fn_args) if fn else f"Error: unknown tool '{fn_name}'"
 
-            tool_msg = {
+            messages.append({
                 "role": "tool",
                 "content": result,
-                "tool_call_id": tool_call.id,
-            }
-            messages.append(tool_msg)
-            save_message(session_id, tool_msg)
+                "tool_call_id": tc["id"]
+            })
 
-    return "Agent reached maximum tool call rounds."
+    return "Agent hit max tool rounds"
 
-
-if __name__ == "__main__":
-    print("AI Agent Ready. Type 'quit' to exit.\n")
-    while True:
-        user_input = input("You: ")
-        if user_input.lower() in ("quit", "exit"):
-            break
-        response = run_agent(user_input)
-        print(f"\nAgent: {response}\n")</code></pre>
-            </div>
-
-            <h3>How the loop works</h3>
-            <ol>
-                <li>The user message is appended to conversation history.</li>
-                <li>Full history is sent to the LLM with available tool schemas.</li>
-                <li>If the LLM returns <code>tool_calls</code>, each is executed and the result appended as a <code>tool</code> message.</li>
-                <li>The updated history goes back to the LLM.</li>
-                <li>When the LLM returns plain text (no tool calls), the loop exits.</li>
-            </ol>
-
-            <div class="callout callout-warning">
-                <svg class="callout-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-                <p><code>MAX_TOOL_ROUNDS = 10</code> is critical. Without it, a misbehaving model could loop forever, burning your API budget.</p>
-            </div>
-
-            <div class="step-nav">
-                <button class="step-nav-btn step-nav-prev" onclick="goToStep(3)">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
-                    Configure Memory
-                </button>
-                <button class="step-nav-btn step-nav-next" onclick="goToStep(5)">
-                    Testing
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
-                </button>
-            </div>
-        </div>
-
-        <!-- STEP 5: TESTING -->
-        <div class="step-view" data-step="5">
-            <div class="step-heading">
-                <span class="step-badge">Step 5 / 6 &middot; ~3 min</span>
-                <h2>Testing Your Agent</h2>
-            </div>
-
-            <p>
-                Verify your agent handles three key scenarios: a plain question (no tools), a single tool call, and a multi-step reasoning chain requiring multiple tool calls.
-            </p>
-
-            <div class="code-block-wrapper">
-                <div class="code-block-header">
-                    <span>test_agent.py</span>
-                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                </div>
-                <pre><code>from agent import run_agent
-
-def test_no_tools():
-    """The agent should answer without tools."""
-    result = run_agent(
-        "What is an AI agent?",
-        session_id="test-no-tools"
-    )
-    assert isinstance(result, str)
-    assert len(result) > 20
-    print(f"PASS: no-tools -> {result[:80]}...")
-
-def test_single_tool():
-    """The agent should use the weather tool."""
-    result = run_agent(
-        "What's the weather in Tokyo right now?",
-        session_id="test-single-tool"
-    )
-    assert "Tokyo" in result or "tokyo" in result.lower()
-    print(f"PASS: single-tool -> {result[:80]}...")
-
-def test_multi_step():
-    """The agent should chain multiple tools."""
-    result = run_agent(
-        "What time is it, and what's 1547 * 23?",
-        session_id="test-multi-step"
-    )
-    assert "35581" in result
-    print(f"PASS: multi-step -> {result[:80]}...")
-
-if __name__ == "__main__":
-    test_no_tools()
-    test_single_tool()
-    test_multi_step()
-    print("\nAll tests passed.")</code></pre>
-            </div>
-
-            <p>Run the tests:</p>
-
-            <div class="code-block-wrapper">
-                <div class="code-block-header">
-                    <span>terminal</span>
-                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                </div>
-                <pre><code>python test_agent.py</code></pre>
+# Test it
+print(run_agent("What's the weather in Tokyo and calculate 42 * 17"))</code></pre>
             </div>
 
             <div class="step-image">
-                <div class="image-placeholder">
-                    <span class="label">Step 5 Image</span>
-                    <span class="hint">Terminal screenshot showing all three test cases passing</span>
-                </div>
+                <img src="images/slide_6.png" alt="Production Agent Architecture">
             </div>
 
             <div class="callout callout-tip">
                 <svg class="callout-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-                <p>Use separate <code>session_id</code> values for each test to prevent cross-contamination from memory.</p>
+                <p>The 10-round limit prevents infinite loops. Most agents finish in 1-3 rounds. If you're hitting the limit, check your tool descriptions for ambiguity.</p>
             </div>
 
             <div class="step-nav">
                 <button class="step-nav-btn step-nav-prev" onclick="goToStep(4)">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
-                    Build the Loop
+                    Test Function Calls
                 </button>
                 <button class="step-nav-btn step-nav-next" onclick="goToStep(6)">
-                    Deploy
+                    Production Tips
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
                 </button>
             </div>
         </div>
 
-        <!-- STEP 6: DEPLOY -->
+        <!-- STEP 6: PRODUCTION -->
         <div class="step-view" data-step="6">
             <div class="step-heading">
                 <span class="step-badge">Step 6 / 6 &middot; ~5 min</span>
-                <h2>Deploy to Production</h2>
+                <h2>Production Deployment Tips</h2>
             </div>
 
-            <p>
-                Wrap your agent in a FastAPI server so it can be called over HTTP. This gives you a REST endpoint accessible from a front-end, mobile app, or another service.
-            </p>
+            <p>You've got a working local AI agent. Here's what you need to know before deploying this in production.</p>
+
+            <h3>1. Error Handling</h3>
+            <p>Always wrap tool executions in try/catch blocks. If a tool fails, return a clear error message so the model can try an alternative approach.</p>
+
+            <h3>2. Rate Limiting</h3>
+            <p>Local models don't have API rate limits, but you should still cap concurrent requests to prevent resource exhaustion. Use a simple queue or semaphore.</p>
+
+            <h3>3. Memory Management</h3>
+            <p>Gemma 4 uses about 5GB of RAM when loaded. On production servers, monitor memory usage and restart Ollama if it grows unbounded.</p>
+
+            <h3>4. GPU Acceleration</h3>
+            <p>If you have a GPU, Ollama will automatically use it. This makes inference 5-10x faster. No configuration needed.</p>
 
             <div class="code-block-wrapper">
                 <div class="code-block-header">
-                    <span>terminal</span>
+                    <span>Check GPU usage</span>
                     <button class="copy-btn" onclick="copyCode(this)">Copy</button>
                 </div>
-                <pre><code>pip install fastapi uvicorn</code></pre>
+                <pre><code>nvidia-smi  # For NVIDIA GPUs
+rocm-smi    # For AMD GPUs</code></pre>
             </div>
 
-            <div class="code-block-wrapper">
-                <div class="code-block-header">
-                    <span>server.py</span>
-                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                </div>
-                <pre><code>from fastapi import FastAPI
-from pydantic import BaseModel
-from agent import run_agent
-
-app = FastAPI(title="AI Agent API")
-
-
-class ChatRequest(BaseModel):
-    message: str
-    session_id: str = "default"
-
-
-class ChatResponse(BaseModel):
-    response: str
-    session_id: str
-
-
-@app.post("/chat", response_model=ChatResponse)
-async def chat(req: ChatRequest):
-    result = run_agent(req.message, req.session_id)
-    return ChatResponse(
-        response=result,
-        session_id=req.session_id,
-    )
-
-
-@app.get("/health")
-async def health():
-    return {"status": "ok"}</code></pre>
-            </div>
-
-            <p>Start the server locally:</p>
-
-            <div class="code-block-wrapper">
-                <div class="code-block-header">
-                    <span>terminal</span>
-                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                </div>
-                <pre><code>uvicorn server:app --reload --port 8000</code></pre>
-            </div>
-
-            <p>Test with <code>curl</code>:</p>
-
-            <div class="code-block-wrapper">
-                <div class="code-block-header">
-                    <span>terminal</span>
-                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                </div>
-                <pre><code>curl -X POST http://localhost:8000/chat \
-  -H "Content-Type: application/json" \
-  -d '{"message": "What is 42 * 17?", "session_id": "test"}'</code></pre>
-            </div>
-
-            <h3>Deploy to a VPS</h3>
-            <p>
-                A $5/month VPS (DigitalOcean, Hetzner, Railway) is more than enough. Minimal deployment script:
-            </p>
-
-            <div class="code-block-wrapper">
-                <div class="code-block-header">
-                    <span>deploy.sh</span>
-                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                </div>
-                <pre><code>#!/bin/bash
-git clone your-repo-url my-agent && cd my-agent
-python -m venv .venv && source .venv/bin/activate
-pip install -r requirements.txt
-echo "OPENAI_API_KEY=sk-your-key" > .env
-pip install gunicorn
-gunicorn server:app -w 2 -k uvicorn.workers.UvicornWorker \
-  --bind 0.0.0.0:8000</code></pre>
+            <div class="step-image">
+                <img src="images/slide_7.png" alt="Production Deployment">
             </div>
 
             <div class="callout callout-info">
                 <svg class="callout-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-                <p>Add rate limiting and authentication before exposing to the public internet. <code>slowapi</code> and a simple API key middleware will cover the basics.</p>
-            </div>
-
-            <div class="step-image">
-                <div class="image-placeholder">
-                    <span class="label">Step 6 Image</span>
-                    <span class="hint">Screenshot of successful API response from the deployed agent</span>
-                </div>
+                <p>Apache 2.0 license means you can deploy this commercially without restrictions. No user caps, no license fees.</p>
             </div>
 
             <div class="step-nav">
                 <button class="step-nav-btn step-nav-prev" onclick="goToStep(5)">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
-                    Testing
+                    Build Agent
                 </button>
                 <button class="step-nav-btn step-nav-next" onclick="goToStep(7)">
                     Wrap-up
@@ -1402,39 +1134,37 @@ gunicorn server:app -w 2 -k uvicorn.workers.UvicornWorker \
         <div class="step-view" data-step="7">
             <div class="step-heading">
                 <span class="step-badge">Complete</span>
-                <h2>You Built an AI Agent</h2>
+                <h2>You Built a Local AI Agent With Gemma 4</h2>
             </div>
 
-            <p>
-                Congratulations. You now have a working AI agent with tools, persistent memory, and a production API endpoint. Here is what you accomplished and what to build next.
-            </p>
+            <p>You now have a working AI agent running entirely on your machine. No API keys, no recurring costs, no rate limits. Gemma 4's native tool calling makes this reliable enough for production use — something that wasn't possible with open-source models six months ago.</p>
 
             <!-- Key Takeaways -->
             <div class="takeaways-box">
                 <h2>Key Takeaways</h2>
                 <div class="takeaway-item">
                     <svg class="takeaway-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-                    <p>An AI agent is a loop: call the LLM, execute requested tools, feed results back, repeat until you get a text response.</p>
+                    <p>Tool calling is a first-class training objective in Gemma 4. This means 86.4% on agentic benchmarks — a 13x improvement over Gemma 3.</p>
                 </div>
                 <div class="takeaway-item">
                     <svg class="takeaway-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-                    <p>Tools are the superpower. Define them as plain Python functions with JSON schemas, and the LLM figures out when to use them.</p>
+                    <p>Deploy locally with Ollama in about 5 minutes. No API keys, no rate limits, no recurring costs.</p>
                 </div>
                 <div class="takeaway-item">
                     <svg class="takeaway-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-                    <p>Memory is non-negotiable for real use. Even a SQLite file gives persistent, session-aware conversations.</p>
+                    <p>Apache 2.0 license means zero commercial restrictions. Build products, sell services, deploy in production — no user caps, no license negotiations.</p>
                 </div>
                 <div class="takeaway-item">
                     <svg class="takeaway-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-                    <p>Always cap tool-calling rounds. A runaway loop drains your API budget fast.</p>
+                    <p>Tool calling was broken at launch and fixed in 5 days. Test thoroughly and monitor for edge cases in production.</p>
                 </div>
                 <div class="takeaway-item">
                     <svg class="takeaway-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-                    <p>Test no-tools, single-tool, and multi-tool chains. Three tests cover the critical paths.</p>
+                    <p>Always cap tool-calling rounds. A 10-round limit prevents infinite loops while allowing multi-step reasoning.</p>
                 </div>
                 <div class="takeaway-item">
                     <svg class="takeaway-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-                    <p>FastAPI + Gunicorn = localhost to production in under 5 minutes.</p>
+                    <p>Practical use cases working now: local coding assistants, document processing pipelines, multi-step research agents.</p>
                 </div>
             </div>
 
@@ -1442,34 +1172,34 @@ gunicorn server:app -w 2 -k uvicorn.workers.UvicornWorker \
             <div class="sources-box">
                 <h2>Sources &amp; References</h2>
                 <div class="source-item">
-                    <a href="https://platform.openai.com/docs/guides/function-calling">[1] OpenAI Function Calling Guide</a>
-                    <div class="source-detail">Official documentation for tool/function calling</div>
+                    <a href="https://blog.google/technology/ai/google-gemma-4-release/">[1] Google AI Blog: Gemma 4 Announcement</a>
+                    <div class="source-detail">Official release announcement with architecture details and benchmark results</div>
                 </div>
                 <div class="source-item">
-                    <a href="https://docs.python.org/3/library/sqlite3.html">[2] Python sqlite3 Documentation</a>
-                    <div class="source-detail">Standard library reference for SQLite</div>
+                    <a href="https://storage.googleapis.com/deepmind-media/gemma/gemma-4-technical-report.pdf">[2] Gemma 4 Technical Report</a>
+                    <div class="source-detail">Detailed agentic benchmark methodology and 86.4% score documentation</div>
                 </div>
                 <div class="source-item">
-                    <a href="https://fastapi.tiangolo.com/">[3] FastAPI Documentation</a>
-                    <div class="source-detail">Web framework used for the deployment layer</div>
+                    <a href="https://ollama.com/library/gemma">[3] Ollama Gemma 4 Documentation</a>
+                    <div class="source-detail">Local deployment guide and tool calling configuration reference</div>
                 </div>
                 <div class="source-item">
-                    <a href="https://www.anthropic.com/research/building-effective-agents">[4] Building Effective Agents (Anthropic)</a>
-                    <div class="source-detail">Agent architecture patterns and orchestration strategies</div>
+                    <a href="https://github.com/google/gemma/issues/142">[4] GitHub: Gemma 4 Tool Calling Fix</a>
+                    <div class="source-detail">Issue thread documenting the April 7 patch for function calling reliability</div>
                 </div>
                 <div class="source-item">
-                    <a href="https://github.com/openai/openai-python">[5] OpenAI Python SDK</a>
-                    <div class="source-detail">The Python client library used in this tutorial</div>
+                    <a href="https://www.apache.org/licenses/LICENSE-2.0">[5] Apache 2.0 License</a>
+                    <div class="source-detail">Full license text confirming zero commercial restrictions</div>
                 </div>
             </div>
 
             <!-- CTA -->
             <div class="cta-box">
                 <h2>Keep Building</h2>
-                <p>This is tutorial #14 in the Agents series. New walkthroughs drop every Wednesday.</p>
+                <p>New AI agent tutorials drop every week. Follow along to stay ahead of the curve.</p>
                 <div class="cta-buttons">
-                    <a href="#" class="cta-btn cta-btn-primary">Follow @AgentsAssemble</a>
-                    <a href="#" class="cta-btn cta-btn-secondary">Join 2,400+ builders</a>
+                    <a href="https://instagram.com/agentsassemble" class="step-nav-btn cta-btn-primary">Follow @AgentsAssemble</a>
+                    <a href="https://agents-assemble.com" class="step-nav-btn cta-btn-secondary">Explore More Tutorials</a>
                 </div>
             </div>
 
@@ -1477,7 +1207,7 @@ gunicorn server:app -w 2 -k uvicorn.workers.UvicornWorker \
 <div class="step-nav">
                 <button class="step-nav-btn step-nav-prev" onclick="goToStep(6)">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
-                    Deploy
+                    Production Tips
                 </button>
                 <div class="step-nav-spacer"></div>
             </div>
@@ -1487,12 +1217,12 @@ gunicorn server:app -w 2 -k uvicorn.workers.UvicornWorker \
 
     <!-- Footer -->
     <footer class="tutorial-footer">
-        <span class="footer-text">AgentsAssemble &middot; Tutorial Library</span>
-        <a href="#" class="footer-link">Explore ClawLancing</a>
+        <span class="footer-text">Agents Assemble &middot; Tutorial Library</span>
+        <a href="https://agents-assemble.com" class="footer-link">Explore More</a>
     </footer>
 
     <script>
-        const stepNames = ['Intro', 'Setup', 'Tools', 'Memory', 'Loop', 'Test', 'Deploy', 'Wrap-up'];
+        const stepNames = ['Intro', 'Install', 'Pull Model', 'Tools', 'Test', 'Agent', 'Production', 'Wrap-up'];
         let currentStep = 0;
 
         function goToStep(step) {
@@ -1552,17 +1282,17 @@ gunicorn server:app -w 2 -k uvicorn.workers.UvicornWorker \
 
   <div class="cta-block">
     <div class="cta-download">
-      <p class="cta-headline">Want the full guide?</p>
-      <p class="cta-sub">Join Agents Assemble for free — takes 30 seconds.</p>
-      <a href="https://agents-assemble.com/resources/google-gemma-4-release" class="cta-primary-btn" target="_blank" rel="noopener">Get the Full Guide</a>
+      <p class="cta-headline">Want the complete code?</p>
+      <p class="cta-sub">Join Agents Assemble for free — get the full agent.py, all tool schemas, and production deployment scripts.</p>
+      <a href="https://agents-assemble.com/resources/Gemma" class="cta-primary-btn" target="_blank" rel="noopener">Get the Full Code</a>
     </div>
     <div class="cta-follow">
-      <span class="cta-follow-label">Follow for more</span>
+      <span class="cta-follow-label">Follow for more AI agent tutorials</span>
       <div class="cta-social-links">
-        <a href="#" target="_blank" rel="noopener">Instagram</a>
-        <a href="#" target="_blank" rel="noopener">TikTok</a>
-        <a href="#" target="_blank" rel="noopener">YouTube</a>
-        <a href="#" target="_blank" rel="noopener">LinkedIn</a>
+        <a href="https://instagram.com/agentsassemble" target="_blank" rel="noopener">Instagram</a>
+        <a href="https://tiktok.com/@agentsassemble" target="_blank" rel="noopener">TikTok</a>
+        <a href="https://youtube.com/@agentsassemble" target="_blank" rel="noopener">YouTube</a>
+        <a href="https://linkedin.com/company/agents-assemble" target="_blank" rel="noopener">LinkedIn</a>
       </div>
     </div>
   </div>

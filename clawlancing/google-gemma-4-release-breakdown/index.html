@@ -3,143 +3,624 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Google Gemma 4 Under Apache 2.0: The Freelancer's Guide to Deploying Frontier AI With Zero API Costs</title>
-  <meta property="og:image" content="">
-  <meta property="og:url" content="">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Google Gemma 4 Under Apache 2.0: The Freelancer's Guide to Deploying Frontier AI With Zero API Costs">
-  <meta name="twitter:description" content="The architecture, memory systems, and planning loops behind every AI agent — explained from first principles.">
-  <meta name="twitter:image" content="">
-<meta name="description" content="A comprehensive breakdown of AI agent architecture — tools, memory, planning loops, and error handling explained from first principles.">
-<meta property="og:title" content="Google Gemma 4 Under Apache 2.0: The Freelancer's Guide to Deploying Frontier AI With Zero API Costs">
-<meta property="og:description" content="The architecture, memory systems, and planning loops behind every AI agent — explained from first principles.">
-<meta property="og:type" content="article">
-<link rel="canonical" href="#">
+<title>Gemma 4 Cost Calculator — Local vs API vs Frontier Models</title>
+  <meta name="twitter:title" content="Gemma 4 Cost Calculator — Local vs API vs Frontier Models">
+  <meta name="twitter:description" content="Free interactive calculator to compare costs: Gemma 4 local vs API providers vs frontier models. Get instant ROI projections.">
+  <meta name="twitter:image" content="https://youraiadventure.com/gemma/images/slide_1.png">
+<meta name="description" content="Calculate your potential savings from running Gemma 4 locally versus API providers or frontier models. Enter your token volume and see weekly, monthly, and yearly cost comparisons instantly.">
+<meta name="keywords" content="Gemma 4, AI cost calculator, local AI, API cost, ROI calculator, model comparison">
+<meta name="author" content="ClawLancing">
+
+<!-- OG Tags -->
+<meta property="og:title" content="Gemma 4 Cost Calculator — Local vs API vs Frontier Models">
+<meta property="og:description" content="Free interactive calculator to compare costs: Gemma 4 local vs API providers vs frontier models. Get instant ROI projections.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://youraiadventure.com/gemma/images/slide_1.png">
+<meta property="og:url" content="https://youraiadventure.com/gemma/">
+<meta name="twitter:card" content="summary_large_image">
+
+<!-- SEO Schema -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "Article",
-  "headline": "Google Gemma 4 Under Apache 2.0: The Freelancer's Guide to Deploying Frontier AI With Zero API Costs",
-  "description": "A comprehensive breakdown of AI agent architecture — tools, memory, planning loops, and error handling explained from first principles.",
-  "author": { "@type": "Person", "name": "Symond" },
-  "publisher": { "@type": "Organization", "name": "ClawLancing" },
-  "datePublished": "2026-04-09",
-  "dateModified": "2026-04-09"
+  "@type": "WebApplication",
+  "name": "Gemma 4 Cost Calculator",
+  "description": "Compare costs: Gemma 4 local vs API providers vs frontier models",
+  "applicationCategory": "BusinessApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
 }
 </script>
+
+<!-- Fonts: Space Grotesk -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-body { background: #0d0d0d; color: #c8c8dc; font-family: 'Crimson Pro', serif; font-size: 17px; line-height: 1.7; -webkit-font-smoothing: antialiased; }
-a { color: inherit; text-decoration: none; }
 
-/* Layout */
-.post-layout { display: grid; grid-template-columns: 240px 1fr; gap: 40px; max-width: 1080px; margin: 0 auto; padding: 0 24px; align-items: start; }
-@media (max-width: 900px) { .post-layout { grid-template-columns: 1fr; } }
-
-/* Back link */
-.back-link { display: inline-flex; align-items: center; gap: 6px; font-family: 'DM Mono', monospace; font-size: 0.68rem; color: #6b6b8a; padding: 16px 24px; text-decoration: none; transition: color 0.2s; max-width: 1080px; margin: 0 auto; }
-.back-link:hover { color: #7c4dff; }
-
-/* TOC Sidebar */
-.toc-column { position: sticky; top: 24px; padding-top: 48px; }
-@media (max-width: 900px) { .toc-column { position: static; padding-top: 0; order: -1; } }
-.toc-box { border: 1px solid rgba(167,139,250,0.1); border-radius: 8px; padding: 20px; background: rgba(167,139,250,0.03); }
-.toc-title { font-family: 'DM Mono', monospace; font-weight: 700; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 1.5px; color: #6b6b8a; margin-bottom: 14px; }
-.toc-list { list-style: none; }
-.toc-list li { margin-bottom: 8px; }
-.toc-list a { text-decoration: none; color: #8080a0; font-size: 0.85rem; font-family: 'DM Mono', monospace; line-height: 1.4; display: block; padding: 3px 0; transition: color 0.2s; }
-.toc-list a:hover, .toc-list a.active { color: #7c4dff; }
-.share-box { margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(167,139,250,0.1); }
-.share-buttons { display: flex; gap: 8px; }
-.share-buttons a { display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 50%; background: rgba(167,139,250,0.08); text-decoration: none; font-size: 0.78rem; color: #8080a0; transition: all 0.2s; font-family: 'DM Mono', monospace; }
-.share-buttons a:hover { background: #7c4dff; color: #fff; }
-/* Mobile TOC toggle */
-.toc-toggle { display: none; background: none; border: none; cursor: pointer; width: 100%; text-align: left; font-family: 'DM Mono', monospace; font-size: 0.78rem; font-weight: 700; color: #7c4dff; padding: 0; margin-bottom: 10px; }
-.toc-toggle .arrow { float: right; transition: transform 0.2s; }
-@media (max-width: 900px) {
-  .toc-toggle { display: block; }
-  .toc-list.collapsed { display: none; }
-  .share-box { display: none; }
+:root {
+  --surface-base: #0d0d0d;
+  --surface-raised: #1a1a1a;
+  --surface-overlay: #242424;
+  --surface-input: #151515;
+  --border-subtle: rgba(124,77,255,0.08);
+  --border-focus: rgba(124,77,255,0.25);
+  --text-primary: #ffffff;
+  --text-secondary: #b0b0b0;
+  --text-tertiary: #707070;
+  --accent: #7c4dff;
+  --accent-soft: rgba(124,77,255,0.15);
+  --accent-glow: rgba(124,77,255,0.3);
+  --secondary: #00bcd4;
+  --highlight: #ff6f00;
+  --positive: #34d399;
+  --positive-soft: rgba(52,211,153,0.1);
+  --warning: #fbbf24;
+  --font-main: 'Space Grotesk', system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
 }
 
-/* Content column */
-.content-col { padding: 48px 0 64px; }
+html { scroll-behavior: smooth; }
 
-/* Post header */
-.post-category { display: inline-block; font-family: 'DM Mono', monospace; font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: #7c4dff; margin-bottom: 12px; }
-.post-title { font-family: 'Playfair Display', serif; font-size: clamp(1.8rem, 4vw, 2.6rem); font-weight: 900; line-height: 1.15; color: #e8e8f0; margin-bottom: 16px; }
-.post-subtitle { font-family: 'Playfair Display', serif; font-style: italic; font-size: 1.05rem; color: #7c4dff; margin-bottom: 20px; font-weight: 400; }
-.post-meta { font-family: 'DM Mono', monospace; font-size: 0.78rem; color: #6b6b8a; display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 32px; }
+body {
+  font-family: var(--font-main);
+  font-size: 17px;
+  line-height: 1.7;
+  color: var(--text-primary);
+  background: var(--surface-base);
+  -webkit-font-smoothing: antialiased;
+}
 
-/* TL;DR box */
-.tldr-box { background: rgba(167,139,250,0.05); border-left: 4px solid #7c4dff; padding: 18px 22px; margin-bottom: 36px; border-radius: 0 8px 8px 0; }
-.tldr-box strong { font-family: 'DM Mono', monospace; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 1px; color: #7c4dff; }
-.tldr-box p { margin-top: 6px; font-size: 0.95rem; line-height: 1.65; color: #b8b8d0; }
+/* Back Link */
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 20px;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.back-link:hover { color: var(--accent); }
+.back-link svg { width: 16px; height: 16px; }
 
-/* Article body */
-.article-body h2 { font-family: 'Playfair Display', serif; font-size: 1.6rem; font-weight: 800; margin: 48px 0 16px; color: #e8e8f0; scroll-margin-top: 24px; }
-.article-body h3 { font-family: 'Playfair Display', serif; font-size: 1.25rem; font-weight: 700; margin: 32px 0 12px; color: #d8d8ec; scroll-margin-top: 24px; }
-.article-body p { margin-bottom: 20px; color: #b8b8d0; }
-.article-body .dropcap::first-letter { font-family: 'Playfair Display', serif; font-size: 3.5rem; float: left; line-height: 0.8; padding-right: 10px; padding-top: 6px; color: #7c4dff; font-weight: 900; }
+/* Header */
+.page-header {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 40px 20px 20px;
+}
 
-/* Pullquote */
-.pullquote { border-left: 3px solid #7c4dff; padding: 18px 22px; margin: 28px 0; background: rgba(167,139,250,0.04); border-radius: 0 8px 8px 0; font-family: 'Playfair Display', serif; font-style: italic; font-size: 1.05rem; color: #d4d0f0; line-height: 1.55; }
+.meta-label {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+  margin-bottom: 12px;
+}
 
-/* Key points */
-.keypoint { display: flex; align-items: flex-start; gap: 12px; padding: 14px 16px; background: rgba(167,139,250,0.05); border-radius: 8px; margin: 14px 0; font-size: 0.92rem; }
-.keypoint::before { content: '\2192'; color: #7c4dff; font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+h1 {
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+  font-weight: 800;
+  line-height: 1.15;
+  color: var(--text-primary);
+  margin-bottom: 16px;
+  letter-spacing: -0.02em;
+}
 
-/* Divider */
-.divider { height: 1px; background: linear-gradient(90deg, transparent, rgba(167,139,250,0.15), transparent); margin: 40px 0; }
+.subtitle {
+  font-size: 1.05rem;
+  color: var(--text-secondary);
+  max-width: 700px;
+  line-height: 1.7;
+}
+
+/* TL;DR */
+.tldr {
+  max-width: 1280px;
+  margin: 24px auto;
+  padding: 0 20px;
+}
+.tldr-box {
+  background: var(--accent-soft);
+  border: 1px solid rgba(124,77,255,0.2);
+  border-radius: 12px;
+  padding: 20px 24px;
+}
+.tldr-label {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+  margin-bottom: 6px;
+}
+.tldr-text {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+/* Dashboard Layout */
+.dashboard {
+  max-width: 1280px;
+  margin: 32px auto;
+  padding: 0 20px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+}
+
+@media (min-width: 768px) {
+  .dashboard {
+    grid-template-columns: 380px 1fr;
+    gap: 28px;
+  }
+}
+
+/* Input Panel */
+.input-panel {
+  background: var(--surface-raised);
+  border: 1px solid var(--border-subtle);
+  border-radius: 16px;
+  padding: 28px 24px;
+  position: sticky;
+  top: 20px;
+  align-self: start;
+}
+
+.panel-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+}
+
+.panel-desc {
+  font-size: 0.85rem;
+  color: var(--text-tertiary);
+  margin-bottom: 28px;
+}
+
+.input-group {
+  margin-bottom: 24px;
+}
+
+.input-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 8px;
+}
+
+.input-label span {
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.input-value {
+  font-family: var(--font-mono);
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--accent);
+}
+
+.input-field {
+  width: 100%;
+  padding: 12px 16px;
+  background: var(--surface-input);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  color: var(--text-primary);
+  font-family: var(--font-main);
+  font-size: 1rem;
+  font-weight: 600;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  -moz-appearance: textfield;
+}
+
+.input-field::-webkit-outer-spin-button,
+.input-field::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.input-field:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.input-hint {
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+  margin-top: 6px;
+}
+
+.input-unit {
+  position: relative;
+}
+.input-unit .input-field {
+  padding-right: 50px;
+}
+.input-unit::after {
+  content: attr(data-unit);
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--text-tertiary);
+  pointer-events: none;
+}
+
+/* Results Panel */
+.results-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Metric Cards */
+.metric-cards {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+@media (min-width: 500px) {
+  .metric-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.metric-card {
+  background: var(--surface-raised);
+  border: 1px solid var(--border-subtle);
+  border-radius: 14px;
+  padding: 24px;
+  transition: border-color 0.3s, transform 0.2s;
+}
+
+.metric-card:hover {
+  border-color: var(--border-focus);
+  transform: translateY(-2px);
+}
+
+.metric-card.highlight {
+  border-color: rgba(124,77,255,0.3);
+  background: linear-gradient(135deg, var(--surface-raised), rgba(124,77,255,0.06));
+}
+
+.metric-card.positive-highlight {
+  border-color: rgba(52,211,153,0.2);
+  background: linear-gradient(135deg, var(--surface-raised), rgba(52,211,153,0.04));
+}
+
+.metric-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+  font-size: 1.1rem;
+}
+
+.metric-icon.purple { background: var(--accent-soft); }
+.metric-icon.green { background: var(--positive-soft); }
+.metric-icon.orange { background: rgba(255,111,0,0.15); }
+
+.metric-label {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-tertiary);
+  margin-bottom: 8px;
+}
+
+.metric-value {
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.metric-value.positive { color: var(--positive); }
+.metric-value.highlight { color: var(--highlight); }
+
+.metric-sub {
+  font-size: 0.82rem;
+  color: var(--text-tertiary);
+  margin-top: 4px;
+}
+
+/* Breakdown Section */
+.breakdown {
+  background: var(--surface-raised);
+  border: 1px solid var(--border-subtle);
+  border-radius: 16px;
+  padding: 28px 24px;
+}
+
+.breakdown-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 24px;
+}
+
+.breakdown-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.breakdown-row:last-child { border-bottom: none; }
+
+.breakdown-label {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.breakdown-value {
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.breakdown-bar-wrap {
+  margin-top: 28px;
+}
+
+.bar-label-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.bar-label {
+  font-size: 0.78rem;
+  color: var(--text-tertiary);
+}
+
+.bar-track {
+  width: 100%;
+  height: 28px;
+  background: var(--surface-input);
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
+}
+
+.bar-fill {
+  height: 100%;
+  border-radius: 8px;
+  background: linear-gradient(90deg, var(--accent), var(--positive));
+  transition: width 0.5s ease;
+  min-width: 2%;
+}
+
+.bar-text {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+/* Carousel Gallery */
+.carousel-gallery {
+  max-width: 1280px;
+  margin: 48px auto;
+  padding: 0 20px;
+}
+
+.carousel-gallery h2 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.carousel-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  margin-top: 24px;
+}
+
+.carousel-item {
+  background: var(--surface-raised);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: transform 0.2s, border-color 0.2s;
+}
+
+.carousel-item:hover {
+  transform: translateY(-4px);
+  border-color: var(--border-focus);
+}
+
+.carousel-item img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
 
 /* Key Takeaways */
-.key-takeaways { background: rgba(167,139,250,0.06); border-radius: 12px; padding: 24px 28px; margin: 48px 0; border-left: 5px solid #7c4dff; }
-.key-takeaways h3 { font-family: 'Playfair Display', serif; color: #7c4dff; margin: 0 0 14px 0 !important; font-size: 1.1rem; }
-.key-takeaways ul { margin-left: 20px; list-style: disc; }
-.key-takeaways li { margin-bottom: 10px; color: #c8c8dc; font-size: 0.95rem; line-height: 1.6; }
+.takeaways {
+  max-width: 1280px;
+  margin: 48px auto;
+  padding: 0 20px;
+}
 
-/* Bottom CTA */
-.cta-section /* Image placeholders */
-.img-placeholder { background: rgba(167,139,250,0.03); border: 2px dashed rgba(167,139,250,0.12); border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 6px; margin: 24px 0; min-height: 180px; }
-.img-placeholder .ph-label { font-family: 'DM Mono', monospace; font-size: 0.68rem; text-transform: uppercase; letter-spacing: 1.5px; color: #6b6b8a; }
-.img-placeholder .ph-hint { font-size: 0.78rem; color: #5a5a72; }
+.takeaways h2 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin-bottom: 20px;
+}
+
+.takeaway-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.takeaway-list li {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+.takeaway-list li::before {
+  content: '';
+  flex-shrink: 0;
+  width: 6px;
+  height: 6px;
+  margin-top: 10px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.takeaway-list li strong {
+  color: var(--text-primary);
+  font-weight: 700;
+}
 
 /* Sources */
-.sources { margin: 40px 0; padding-top: 24px; border-top: 1px solid rgba(167,139,250,0.1); }
-.sources h3 { font-family: 'DM Mono', monospace; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 1.5px; color: #8890a8; margin-bottom: 14px; }
-.sources ol { margin-left: 20px; }
-.sources li { margin-bottom: 8px; font-size: 0.85rem; color: #9898b0; line-height: 1.5; }
-.sources a { color: #7c4dff; text-decoration: underline; text-underline-offset: 2px; }
+.sources {
+  max-width: 1280px;
+  margin: 48px auto;
+  padding: 0 20px;
+}
+
+.sources h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 14px;
+}
+
+.sources ul {
+  list-style: none;
+  padding-left: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sources li {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  padding-left: 20px;
+  position: relative;
+}
+
+.sources li::before {
+  content: '→';
+  position: absolute;
+  left: 0;
+  color: var(--accent);
+}
+
+/* Share */
+.share-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.share-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  background: var(--surface-raised);
+  color: var(--text-secondary);
+  font-family: var(--font-main);
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: border-color 0.2s, color 0.2s;
+  cursor: pointer;
+}
+
+.share-btn:hover {
+  border-color: var(--border-focus);
+  color: var(--text-primary);
+}
 
 /* Footer */
-.post-footer { text-align: center; padding: 40px 20px; font-size: 0.65rem; color: #5a5a72; font-family: 'DM Mono', monospace; }
+.page-footer {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 48px 20px 32px;
+  border-top: 1px solid var(--border-subtle);
+  text-align: center;
+}
 
-/* Bottom share */
+.page-footer p {
+  font-size: 0.78rem;
+  color: var(--text-tertiary);
+}
+
+/* Mobile-first refinements */
+@media (max-width: 767px) {
+  .input-panel {
+    position: static;
+  }
+  .metric-cards {
+    grid-template-columns: 1fr;
+  }
+}
 
 
 /* === Share Bar === */
-.share-bar { display: flex; align-items: center; gap: 12px; justify-content: center; margin: 32px 0; padding: 16px 0; border-top: 1px solid rgba(128,128,128,0.15); }
-.share-label { font-size: 0.78rem; color: #9ca3af; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+.share-bar { display: flex; align-items: center; gap: 12px; justify-content: center; margin: 32px 0; padding: 16px 0; border-top: 1px solid rgba(124,77,255,0.12); }
+.share-label { font-size: 0.78rem; color: #b0b0b0; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
 .share-buttons { display: flex; gap: 8px; }
-.share-btn { display: inline-flex; align-items: center; justify-content: center; width: 38px; height: 38px; border-radius: 50%; background: rgba(128,128,128,0.08); border: none; cursor: pointer; color: #9ca3af; transition: all 0.2s; text-decoration: none; position: relative; }
-.share-btn:hover { background: rgba(128,128,128,0.18); color: #fff; }
+.share-btn { display: inline-flex; align-items: center; justify-content: center; width: 38px; height: 38px; border-radius: 50%; background: rgba(124,77,255,0.1); border: none; cursor: pointer; color: #b0b0b0; transition: all 0.2s; text-decoration: none; position: relative; }
+.share-btn:hover { background: rgba(124,77,255,0.2); color: #fff; }
 .share-copied { position: absolute; top: -28px; left: 50%; transform: translateX(-50%); font-size: 0.7rem; color: #10b981; background: rgba(16,185,129,0.1); padding: 2px 8px; border-radius: 4px; white-space: nowrap; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
 
 /* === CTA Block === */
-.cta-block { text-align: center; margin: 32px 0; padding: 40px 24px; background: linear-gradient(135deg, rgba(128,128,128,0.06), rgba(128,128,128,0.02)); border: 1px solid rgba(128,128,128,0.12); border-radius: 16px; }
+.cta-block { text-align: center; margin: 32px 0; padding: 40px 24px; background: linear-gradient(135deg, rgba(124,77,255,0.08), rgba(124,77,255,0.02)); border: 1px solid rgba(124,77,255,0.15); border-radius: 16px; }
 .cta-download { margin-bottom: 24px; }
 .cta-headline { font-size: 1.25rem; font-weight: 700; margin-bottom: 8px; }
-.cta-sub { font-size: 0.9rem; color: #9ca3af; margin-bottom: 16px; }
+.cta-sub { font-size: 0.9rem; color: #b0b0b0; margin-bottom: 16px; }
 .cta-primary-btn { display: inline-block; padding: 14px 32px; font-size: 1rem; font-weight: 700; color: #fff; background: #7c4dff; border-radius: 8px; text-decoration: none; transition: all 0.2s; }
-.cta-primary-btn:hover { background: #1976d2; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(33,150,243,0.3); }
-.cta-follow { padding-top: 20px; border-top: 1px solid rgba(128,128,128,0.1); }
-.cta-follow-label { font-size: 0.82rem; color: #9ca3af; display: block; margin-bottom: 10px; }
+.cta-primary-btn:hover { background: #6a3de8; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(124,77,255,0.4); }
+.cta-follow { padding-top: 20px; border-top: 1px solid rgba(124,77,255,0.1); }
+.cta-follow-label { font-size: 0.82rem; color: #b0b0b0; display: block; margin-bottom: 10px; }
 .cta-social-links { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
-.cta-social-links a { font-size: 0.85rem; color: #6b7280; text-decoration: none; font-weight: 500; transition: color 0.2s; }
+.cta-social-links a { font-size: 0.85rem; color: #b0b0b0; text-decoration: none; font-weight: 500; transition: color 0.2s; }
 .cta-social-links a:hover { color: #7c4dff; }
 
 
@@ -147,175 +628,295 @@ a { color: inherit; text-decoration: none; }
 html, body { overflow-x: hidden; }
 img, video, iframe, table, pre, code { max-width: 100%; }
 @media (max-width: 600px) {
-  .stat-row { flex-direction: column; align-items: flex-start; gap: 4px; }
-  .sidebar-metrics { grid-template-columns: 1fr !important; }
-  .timeline { grid-template-columns: 1fr !important; }
-  .tool-cards { flex-direction: column !important; }
-  .tool-card { flex: 1 1 100% !important; }
-  table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .carousel-grid { grid-template-columns: 1fr; }
 }
 
 </style>
 </head>
 <body>
 
-<a href="../index.html" class="back-link">&larr; Back to Library</a>
+<a href="https://clawlancing.com" class="back-link">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+  Back to ClawLancing
+</a>
 
-<div class="post-layout">
-  <!-- TOC Sidebar -->
-  <aside class="toc-column">
-    <div class="toc-box">
-      <p class="toc-title">In This Article</p>
-      <button class="toc-toggle" onclick="this.nextElementSibling.classList.toggle('collapsed')">
-        Contents <span class="arrow">&#9650;</span>
-      </button>
-      <ul class="toc-list" id="tocList">
-        <li><a href="#agent-vs-chatbot">Agent vs. Chatbot</a></li>
-        <li><a href="#react-loop">The ReAct Loop</a></li>
-        <li><a href="#tool-use">Tool Use</a></li>
-        <li><a href="#memory">Memory Systems</a></li>
-        <li><a href="#planning">Planning</a></li>
-        <li><a href="#error-handling">Error Handling</a></li>
-        <li><a href="#architecture">Full Architecture</a></li>
-        <li><a href="#key-takeaways">Key Takeaways</a></li>
-      </ul>
-    </div>
-    <div class="share-box">
-      <p class="share-label">Share</p>
-      <div class="share-buttons">
-        <a href="#" aria-label="Share on X">X</a>
-        <a href="#" aria-label="Share on Facebook">f</a>
-        <a href="#" aria-label="Share on LinkedIn">in</a>
-        <a href="#" aria-label="Share via email">@</a>
+<header class="page-header">
+  <p class="meta-label">Interactive Cost Calculator</p>
+  <h1>The Honest Cost Math: Gemma 4 vs API Providers vs Frontier Models</h1>
+  <p class="subtitle">Calculate your actual savings running Gemma 4 locally versus API providers (Groq, Together) or frontier models (Claude, GPT-4). Enter your monthly token volume and see the math that actually matters for your workflow.</p>
+</header>
+
+<section class="tldr">
+  <div class="tldr-box">
+    <p class="tldr-label">TL;DR</p>
+    <p class="tldr-text">Local Gemma 4 costs $0 per token after hardware ($800-1,600 GPU). API providers run $0.14-0.40/M tokens. Frontier models cost $3-15/M tokens. For freelancers doing volume work, local hardware pays for itself in 2-4 months. After that, every token is pure margin improvement. The smart play: route volume work local, complex reasoning to frontier APIs.</p>
+  </div>
+</section>
+
+<div class="carousel-gallery">
+  <h2>Visual Breakdown</h2>
+  <div class="carousel-grid">
+    <div class="carousel-item"><img src="images/slide_1.png" alt="Gemma 4 Cost Analysis - Slide 1"></div>
+    <div class="carousel-item"><img src="images/slide_2.png" alt="Gemma 4 Cost Analysis - Slide 2"></div>
+    <div class="carousel-item"><img src="images/slide_3.png" alt="Gemma 4 Cost Analysis - Slide 3"></div>
+    <div class="carousel-item"><img src="images/slide_4.png" alt="Gemma 4 Cost Analysis - Slide 4"></div>
+    <div class="carousel-item"><img src="images/slide_5.png" alt="Gemma 4 Cost Analysis - Slide 5"></div>
+    <div class="carousel-item"><img src="images/slide_6.png" alt="Gemma 4 Cost Analysis - Slide 6"></div>
+    <div class="carousel-item"><img src="images/slide_7.png" alt="Gemma 4 Cost Analysis - Slide 7"></div>
+  </div>
+</div>
+
+<main class="dashboard">
+  <!-- Input Panel -->
+  <aside class="input-panel">
+    <h2 class="panel-title">Your Token Volume</h2>
+    <p class="panel-desc">Adjust to match your monthly usage</p>
+
+    <div class="input-group">
+      <div class="input-label">
+        <span>Monthly tokens (millions)</span>
+        <span class="input-value" id="tokensDisplay">50M</span>
       </div>
+      <input type="number" class="input-field" id="tokensInput" value="50" min="1" max="10000" step="10">
+      <p class="input-hint">Content generation, data processing, code tasks</p>
+    </div>
+
+    <div class="input-group">
+      <div class="input-label">
+        <span>GPU hardware cost ($)</span>
+        <span class="input-value" id="hardwareDisplay">$1200</span>
+      </div>
+      <div class="input-unit" data-unit="$">
+        <input type="number" class="input-field" id="hardwareInput" value="1200" min="800" max="5000" step="100">
+      </div>
+      <p class="input-hint">One-time investment (RTX 4070/4090 range)</p>
+    </div>
+
+    <div class="input-group">
+      <div class="input-label">
+        <span>API provider rate ($/M)</span>
+        <span class="input-value" id="apiRateDisplay">$0.27</span>
+      </div>
+      <div class="input-unit" data-unit="$/M">
+        <input type="number" class="input-field" id="apiRateInput" value="0.27" min="0.10" max="1.00" step="0.01">
+      </div>
+      <p class="input-hint">Groq/Together average: $0.14-0.40/M</p>
+    </div>
+
+    <div class="input-group">
+      <div class="input-label">
+        <span>Frontier model rate ($/M)</span>
+        <span class="input-value" id="frontierRateDisplay">$9.00</span>
+      </div>
+      <div class="input-unit" data-unit="$/M">
+        <input type="number" class="input-field" id="frontierRateInput" value="9" min="1" max="20" step="0.5">
+      </div>
+      <p class="input-hint">Claude/GPT-4 average: $3-15/M</p>
     </div>
   </aside>
 
-  <!-- Content -->
-  <article class="content-col">
-    <header>
-      <span class="post-category">Deep Dive</span>
-      <h1 class="post-title">Google Gemma 4 Under Apache 2.0: The Freelancer's Guide to Deploying Frontier AI With Zero API Costs</h1>
-      <p class="post-subtitle">The architecture, memory systems, and planning loops behind every agent — explained from first principles</p>
-      <div class="post-meta">
-        <span>By Symond</span>
-        <span>&middot;</span>
-        <time datetime="2026-04-09">April 09, 2026</time>
-        <span>&middot;</span>
-        <span>14 min read</span>
-      </div>
-    </header>
-
-    <!-- Featured Image Placeholder -->
-    <div class="img-placeholder" style="aspect-ratio: 16/9;">
-      <div class="ph-label">Featured Image</div>
-      <div class="ph-hint">Abstract AI architecture diagram or editorial hero illustration &mdash; 16:9</div>
-    </div>
-
-    <!-- TL;DR -->
-    <div class="tldr-box">
-      <strong>TL;DR</strong>
-      <p>An AI agent is a language model running in a loop with tools, memory, and planning. The model reasons about what to do, calls tools to take actions, observes results, and repeats. What separates agents from chatbots isn't intelligence — it's the scaffolding: tool definitions, memory systems (short/long/episodic), hierarchical planning, and robust error handling. Full autonomy isn't the goal; maximum useful autonomy is.</p>
-    </div>
-
-    <!-- Article Body -->
-    <div class="article-body">
-      <h2 id="agent-vs-chatbot">What Makes an Agent Different From a Chatbot</h2>
-      <p class="dropcap">Every AI agent starts as a language model, but what transforms it from a passive text generator into an autonomous actor is a deceptively simple loop: observe, reason, act, repeat. A chatbot waits for your input and responds. An agent decides what to do next on its own, executes that action, observes the result, and plans its next move — all without you typing another word.</p>
-      <p>The difference isn't about intelligence. It's about architecture. A chatbot is a single function call. An agent is a while-loop wrapped around that function call, with tools, memory, and decision-making logic wired in. The model itself might be identical — what changes is everything around it.</p>
-      <div class="pullquote">"The gap between a chatbot and an agent isn't the model — it's the scaffolding. The same brain becomes radically more capable when you give it hands, eyes, and a notepad."</div>
-      <p>This scaffolding is what we're breaking down in this guide. By the end, you'll understand exactly how each piece works — and more importantly, how they fit together to create something that genuinely feels autonomous.</p>
-
-      <div class="divider"></div>
-
-      <h2 id="react-loop">The Core Loop: ReAct and Its Variants</h2>
-      <p>The foundational pattern behind most AI agents is ReAct — Reasoning + Acting. First described in a 2022 paper from Google Research, the pattern is almost embarrassingly simple: ask the model to think out loud about what it should do, let it pick an action, execute that action, feed the result back in, and repeat.</p>
-      <p>Here's what one iteration looks like in practice. The agent receives a task: "Find the three most-cited papers on transformer efficiency published this year, summarize each in two sentences, and save the results to a Notion database." The model's internal reasoning might look something like this:</p>
-      <div class="keypoint">I need to search for recent papers on transformer efficiency. I'll use the Semantic Scholar API to find papers from 2026 sorted by citation count.</div>
-      <div class="keypoint">Got 47 results. The top three by citation count are clear. Now I need to read each abstract and generate two-sentence summaries.</div>
-      <div class="keypoint">Summaries complete. Now I'll use the Notion API to create three new entries in the research database.</div>
-      <p>Each of these reasoning steps is followed by an action — an API call, a database write, a file read. The model sees the result of each action and adjusts its plan accordingly. If the Semantic Scholar API returned an error, the agent might switch to arXiv. If the Notion write failed, it might retry with different formatting.</p>
-      <p>Variants like Plan-and-Execute separate the planning phase from execution entirely — the model first generates a complete step-by-step plan, then executes each step sequentially. This tends to produce more coherent workflows for complex tasks but is less adaptive to unexpected results.</p>
-
-      <div class="divider"></div>
-
-      <h2 id="tool-use">Tool Use: Giving the Model Hands</h2>
-      <p>A language model without tools can only think. Tools let it act. In practice, a "tool" is just a function the model can call — defined by a name, a description, and a parameter schema. The model reads the description, decides when to invoke it, and structures its arguments according to the schema.</p>
-      <p>The tools available to modern agents range from the mundane to the powerful: web search, file system operations, code execution, API calls, database queries, browser automation, email sending, calendar management. Claude's own tool-use capability, for instance, lets developers define arbitrary functions that the model can invoke mid-conversation.</p>
-      <div class="pullquote">"Tool design is agent design. The quality of your tool descriptions and schemas determines 80% of your agent's reliability."</div>
-      <p>Here's a critical insight most tutorials skip: tool descriptions matter enormously. The model decides which tool to use based almost entirely on the natural language description you provide. A vague description like "searches the web" will produce worse tool selection than "searches Google for recent results and returns the top 5 URLs with snippets — best for factual queries about current events or specific products."</p>
-
-      <div class="divider"></div>
-
-      <!-- Section Image Placeholder -->
-      <div class="img-placeholder" style="aspect-ratio: 16/10; min-height: 140px;">
-        <div class="ph-label">Section Illustration</div>
-        <div class="ph-hint">Tool use flow diagram or API integration schematic</div>
+  <!-- Results Panel -->
+  <section class="results-panel">
+    <div class="metric-cards">
+      <div class="metric-card highlight">
+        <div class="metric-icon purple">$</div>
+        <p class="metric-label">Local Cost (Monthly)</p>
+        <p class="metric-value positive" id="localCost">$0</p>
+        <p class="metric-sub">After hardware amortization</p>
       </div>
 
-      <h2 id="memory">Memory: Short-Term, Long-Term, and Episodic</h2>
-      <p>Without memory, every agent interaction starts from zero. Memory systems give agents the ability to maintain context across a conversation (short-term), recall information from weeks ago (long-term), and learn from past successes and failures (episodic).</p>
-      <p><strong>Short-term memory</strong> is the simplest — it's the conversation itself. Every message in the context window acts as working memory. But context windows are finite and expensive. A 200K token window might seem vast, but a complex agent workflow can burn through it in minutes when tool results, reasoning traces, and error logs pile up.</p>
-      <p><strong>Long-term memory</strong> typically uses a vector database — Pinecone, Weaviate, Chroma, or even a simple SQLite with embeddings. Before each reasoning step, the agent queries its memory with the current context and retrieves relevant past information. This is essentially RAG applied to the agent's own history.</p>
-      <p><strong>Episodic memory</strong> is the most interesting and least implemented. The idea is to store not just facts but entire interaction patterns: "Last time I tried to scrape that site, I got rate-limited. I should use a 2-second delay between requests."</p>
-      <div class="keypoint">The biggest practical challenge with agent memory isn't storage — it's retrieval relevance. Pulling in irrelevant memories is worse than having no memory at all, because it pollutes the context and wastes tokens.</div>
-
-      <div class="divider"></div>
-
-      <h2 id="planning">Planning: How Agents Break Down Complex Tasks</h2>
-      <p>Simple agents handle single-step tasks well. The real challenge — and the frontier of agent research — is multi-step planning. When you ask an agent to "set up a complete CI/CD pipeline for this repo," it needs to decompose that into dozens of subtasks, order them correctly, handle dependencies, and adapt when things go wrong.</p>
-      <p>The dominant approach is <strong>hierarchical planning</strong>. The agent first generates a high-level plan (5-8 major steps), then decomposes each step into specific actions as it reaches them. This lazy evaluation approach avoids over-planning — you don't need to know the exact API parameters for step 7 while you're still working on step 2.</p>
-      <p>More sophisticated agents maintain a <strong>dynamic task graph</strong> rather than a linear plan. Each task can spawn subtasks, tasks can be reordered based on new information, and failed tasks can be retried with different approaches. Think of it less like a to-do list and more like a project management board that the agent itself manages.</p>
-      <p>The key limitation of current planning is context coherence. As plans grow longer and execution traces accumulate, the model can lose track of its original goal. This is why the best production agents include periodic "reflection" steps where the model reviews its progress against the original objective and course-corrects.</p>
-
-      <div class="divider"></div>
-
-      <h2 id="error-handling">Error Handling: What Happens When Things Go Wrong</h2>
-      <p>In any real-world agent deployment, things will go wrong constantly. APIs return 500 errors. Rate limits kick in. The model hallucinates a tool that doesn't exist. Robust error handling isn't a nice-to-have — it's what separates demo agents from production agents.</p>
-      <p>The first line of defense is <strong>retry logic with exponential backoff</strong>. Transient errors (network timeouts, rate limits, temporary service outages) often resolve themselves. A simple retry with 1s, 2s, 4s, 8s delays handles the majority of infrastructure failures.</p>
-      <p>The second line is <strong>fallback strategies</strong>. If the primary search API fails, try an alternative. If the file can't be written to the specified path, try a temp directory. If the model can't parse a response as JSON, ask it to extract the relevant fields from the raw text instead.</p>
-      <p>The third — and most important — line is <strong>graceful degradation</strong>. The agent should always be able to communicate what it accomplished, what it failed on, and why. A partial result with a clear explanation is infinitely more useful than a silent failure or a hallucinated completion.</p>
-
-      <div class="divider"></div>
-
-      <h2 id="architecture">Putting It All Together: A Production Agent Architecture</h2>
-      <p>Here's what a production-grade agent architecture actually looks like when you wire everything together. At the center is the orchestration loop — the ReAct cycle that drives everything. Wrapped around it are the supporting systems.</p>
-      <div class="keypoint">The orchestrator receives a task, queries long-term memory for relevant context, generates a plan, then begins executing steps one by one.</div>
-      <div class="keypoint">Each step involves selecting a tool, formatting parameters, executing the call, and parsing the result. Errors trigger retry/fallback logic.</div>
-      <div class="keypoint">After each step, the orchestrator updates its plan, stores important results in memory, and decides whether to continue, pivot, or declare completion.</div>
-      <div class="keypoint">Monitoring captures every decision point: which tool was selected, why, what the result was, how long it took, and how much it cost.</div>
-      <p>The most important architectural decision isn't which model to use or which tools to include — it's where to put the human. The most reliable production agents include human-in-the-loop checkpoints at critical junctures: before sending external communications, before modifying production databases, before spending more than a cost threshold. Full autonomy is a spectrum, not a binary switch.</p>
-      <p>The agents being deployed today at companies like Anthropic, Cognition, and Replit all follow this basic architecture. The differences are in the details — how they manage context, how they handle failures, how they balance autonomy with oversight. But the core pattern is remarkably consistent: loop, reason, act, observe, repeat.</p>
-
-      <!-- Key Takeaways -->
-      <!-- Sources & References -->
-      <div class="sources">
-        <h3>Sources &amp; References</h3>
-        <ol>
-          <li><a href="#">Yao et al.</a> &mdash; "ReAct: Synergizing Reasoning and Acting in Language Models" (2022)</li>
-          <li><a href="#">Anthropic</a> &mdash; "Tool Use Documentation &mdash; Claude API" (2026)</li>
-          <li><a href="#">LangChain</a> &mdash; "Agent Architecture Patterns" (2026)</li>
-          <li><a href="#">Pinecone</a> &mdash; "Vector Databases for AI Agent Memory" (2025)</li>
-          <li><a href="#">Cognition Labs</a> &mdash; "Building Production-Grade AI Agents" (2026)</li>
-        </ol>
+      <div class="metric-card">
+        <div class="metric-icon orange">$</div>
+        <p class="metric-label">API Cost (Monthly)</p>
+        <p class="metric-value" id="apiCost">$13.50</p>
+        <p class="metric-sub" id="apiSub">Groq/Together hosted</p>
       </div>
 
-      <div class="key-takeaways" id="key-takeaways">
-        <h3>Key Takeaways</h3>
-        <ul>
-          <li>An agent is a language model in a loop — the same model that powers a chatbot becomes autonomous when wrapped in orchestration logic with tools and memory.</li>
-          <li>The ReAct pattern (Reason + Act) is the foundation: think out loud, take action, observe result, repeat.</li>
-          <li>Tool descriptions are 80% of tool reliability — invest more time in describing tools than in building them.</li>
-          <li>Memory has three layers: short-term (context window), long-term (vector DB), and episodic (learned patterns). Retrieval quality matters more than storage capacity.</li>
-          <li>Hierarchical lazy planning beats exhaustive upfront planning — decompose steps only when you reach them.</li>
-          <li>Production agents need three layers of error handling: retry, fallback, and graceful degradation.</li>
-          <li>The goal isn't full autonomy — it's maximum useful autonomy with human oversight at critical junctures.</li>
-        </ul>
+      <div class="metric-card">
+        <div class="metric-icon orange">$</div>
+        <p class="metric-label">Frontier Cost (Monthly)</p>
+        <p class="metric-value highlight" id="frontierCost">$450</p>
+        <p class="metric-sub">Claude/GPT-4 premium</p>
+      </div>
+
+      <div class="metric-card positive-highlight">
+        <div class="metric-icon green">$</div>
+        <p class="metric-label">Savings vs API</p>
+        <p class="metric-value positive" id="apiSavings">$162/yr</p>
+        <p class="metric-sub" id="apiBreakeven">Break-even in 11 months</p>
+      </div>
+
+      <div class="metric-card positive-highlight">
+        <div class="metric-icon green">$</div>
+        <p class="metric-label">Savings vs Frontier</p>
+        <p class="metric-value positive" id="frontierSavings">$5,400/yr</p>
+        <p class="metric-sub" id="frontierBreakeven">Break-even in 3 months</p>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-icon green">%</div>
+        <p class="metric-label">Cost Reduction</p>
+        <p class="metric-value positive" id="costReduction">100%</p>
+        <p class="metric-sub">Local vs frontier ongoing</p>
       </div>
     </div>
 
-    <!-- Share (bottom) -->
-<!-- CTA -->
+    <!-- Breakdown -->
+    <div class="breakdown">
+      <h3 class="breakdown-title">Annual Cost Comparison</h3>
+
+      <div class="breakdown-row">
+        <span class="breakdown-label">Local (hardware + electricity)</span>
+        <span class="breakdown-value" id="localAnnual">$1,320</span>
+      </div>
+      <div class="breakdown-row">
+        <span class="breakdown-label">API provider (yearly)</span>
+        <span class="breakdown-value" id="apiAnnual">$162</span>
+      </div>
+      <div class="breakdown-row">
+        <span class="breakdown-label">Frontier model (yearly)</span>
+        <span class="breakdown-value" id="frontierAnnual">$5,400</span>
+      </div>
+      <div class="breakdown-row">
+        <span class="breakdown-label">Your net margin gain (vs frontier)</span>
+        <span class="breakdown-value" id="marginGain">$4,080</span>
+      </div>
+
+      <div class="breakdown-bar-wrap">
+        <div class="bar-label-row">
+          <span class="bar-label">Cost comparison</span>
+          <span class="bar-label" id="barPercent">Local saves 76%</span>
+        </div>
+        <div class="bar-track">
+          <div class="bar-fill" id="barFill" style="width:24%"></div>
+          <span class="bar-text" id="barText">24% of frontier cost</span>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- Key Takeaways -->
+<section class="takeaways">
+  <h2>Key Takeaways</h2>
+  <ul class="takeaway-list">
+    <li><strong>Local Gemma 4 costs $0 per token after hardware.</strong> A mid-range GPU ($800-1,600) is the only upfront investment. After that, every content generation run, every data processing batch, every code scaffolding task costs you nothing in model fees. For freelancers doing volume work, this changes the margin equation on every project.</li>
+    <li><strong>API providers sit in the middle at $0.14-0.40 per million tokens.</strong> Services like Groq and Together offer hosted Gemma 4 access without the hardware investment. The trade-off is ongoing cost — fine for low-volume or testing, but the math flips quickly at scale.</li>
+    <li><strong>Claude and GPT-4 run $3-15 per million tokens — and still win on complex reasoning.</strong> This isn't a "ditch the frontier models" argument. Multi-step reasoning, nuanced analysis, and creative synthesis still favor closed-source frontier models. The real strategy is routing: volume work goes local, complex work stays on premium APIs.</li>
+    <li><strong>Apache 2.0 licensing eliminates legal friction.</strong> Unlike Llama's 700M monthly active user cap, Gemma 4's Apache 2.0 license has zero commercial restrictions. Ship it in production, white-label it for clients, build SaaS products on top of it — no lawyer needed.</li>
+    <li><strong>Break-even for active freelancers: 2-4 months.</strong> If you're processing meaningful token volume (content generation, batch data processing, code scaffolding), local hardware pays for itself within a quarter. After that, every token is pure margin improvement.</li>
+  </ul>
+</section>
+
+<!-- Sources -->
+<section class="sources">
+  <h3>Sources</h3>
+  <ul>
+    <li><strong>Google AI Blog</strong> (April 9, 2026) — Official Gemma 4 release announcement with benchmarks, model card, and Apache 2.0 licensing confirmation.</li>
+    <li><strong>Gemma 4 Technical Report</strong> — Google DeepMind's detailed performance data including benchmark comparisons against GPT-4, Claude, and Llama 4 across reasoning, math, code, and agentic tasks.</li>
+    <li><strong>Ollama Gemma 4 Integration</strong> — Local deployment guide and performance benchmarks on consumer hardware (M-series Mac, RTX 4070/4090).</li>
+    <li><strong>API Pricing Pages</strong> (Groq, Together, OpenAI, Anthropic) — Current token pricing as of April 2026 for hosted model access.</li>
+    <li><strong>Apache 2.0 vs Llama License</strong> — Legal analysis comparing commercial use rights, attribution requirements, and usage restrictions between the two licensing models.</li>
+  </ul>
+</section>
+
+<footer class="page-footer">
+  <p>Built by ClawLancing. Calculator estimates are projections based on current pricing. Actual costs may vary.</p>
+</footer>
+
+<script>
+(function() {
+  const $ = id => document.getElementById(id);
+  const fmt = n => n.toLocaleString('en-US', { maximumFractionDigits: 0 });
+  const fmtD = (n, d) => n.toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d });
+
+  const inputs = {
+    tokens: $('tokensInput'),
+    hardware: $('hardwareInput'),
+    apiRate: $('apiRateInput'),
+    frontierRate: $('frontierRateInput')
+  };
+
+  function calculate() {
+    const tokens = Math.max(1, parseFloat(inputs.tokens.value) || 50);
+    const hardware = Math.max(800, parseFloat(inputs.hardware.value) || 1200);
+    const apiRate = Math.max(0.10, parseFloat(inputs.apiRate.value) || 0.27);
+    const frontierRate = Math.max(1, parseFloat(inputs.frontierRate.value) || 9);
+
+    // Displays
+    $('tokensDisplay').textContent = fmt(tokens) + 'M';
+    $('hardwareDisplay').textContent = '$' + fmt(hardware);
+    $('apiRateDisplay').textContent = '$' + fmtD(apiRate, 2);
+    $('frontierRateDisplay').textContent = '$' + fmtD(frontierRate, 2);
+
+    // Monthly costs
+    const monthlyAPI = tokens * apiRate;
+    const monthlyFrontier = tokens * frontierRate;
+
+    // Local costs (electricity ~$10/month for 24/7 GPU usage)
+    const monthlyElectricity = 10;
+    const monthlyLocalOperating = monthlyElectricity;
+
+    // Hardware amortization over 24 months
+    const hardwareAmortization = hardware / 24;
+    const monthlyLocalTotal = monthlyLocalOperating + hardwareAmortization;
+
+    // Annual calculations
+    const yearlyAPI = monthlyAPI * 12;
+    const yearlyFrontier = monthlyFrontier * 12;
+    const yearlyLocal = monthlyLocalTotal * 12;
+
+    // Savings
+    const yearlySavingsAPI = yearlyAPI;
+    const yearlySavingsFrontier = yearlyFrontier;
+
+    // Break-even
+    const breakEvenMonthsAPI = hardware / monthlyAPI;
+    const breakEvenMonthsFrontier = hardware / monthlyFrontier;
+
+    // Cost reduction percentage vs frontier
+    const costReductionPct = ((monthlyFrontier - monthlyLocalOperating) / monthlyFrontier) * 100;
+
+    // Net margin gain (year 2+, when hardware is paid off)
+    const marginGainAPI = yearlyAPI - (monthlyElectricity * 12);
+    const marginGainFrontier = yearlyFrontier - (monthlyElectricity * 12);
+
+    // Update metric cards
+    $('localCost').textContent = '$' + fmt(monthlyLocalOperating);
+    $('apiCost').textContent = '$' + fmtD(monthlyAPI, 2);
+    $('frontierCost').textContent = '$' + fmt(monthlyFrontier);
+
+    $('apiSavings').textContent = '$' + fmt(yearlySavingsAPI) + '/yr';
+    $('apiBreakeven').textContent = breakEvenMonthsAPI < 1 ? 'Immediate ROI' : 'Break-even in ' + fmt(breakEvenMonthsAPI) + ' months';
+
+    $('frontierSavings').textContent = '$' + fmt(yearlySavingsFrontier) + '/yr';
+    $('frontierBreakeven').textContent = breakEvenMonthsFrontier < 1 ? 'Immediate ROI' : 'Break-even in ' + fmt(breakEvenMonthsFrontier) + ' months';
+
+    $('costReduction').textContent = fmt(costReductionPct) + '%';
+
+    // Breakdown
+    $('localAnnual').textContent = '$' + fmt(yearlyLocal);
+    $('apiAnnual').textContent = '$' + fmt(yearlyAPI);
+    $('frontierAnnual').textContent = '$' + fmt(yearlyFrontier);
+    $('marginGain').textContent = '$' + fmt(marginGainFrontier);
+
+    // Bar (local as % of frontier)
+    const localPct = (monthlyLocalOperating / monthlyFrontier) * 100;
+    $('barPercent').textContent = 'Local saves ' + fmt(100 - localPct) + '%';
+    $('barFill').style.width = Math.min(100, localPct) + '%';
+    $('barText').textContent = fmt(localPct) + '% of frontier cost';
+  }
+
+  // Attach listeners
+  Object.values(inputs).forEach(input => {
+    input.addEventListener('input', calculate);
+    input.addEventListener('change', calculate);
+  });
+
+  // Initial calculation
+  calculate();
+})();
+</script>
   <div class="share-bar">
     <span class="share-label">Share</span>
     <div class="share-buttons">
@@ -329,34 +930,21 @@ img, video, iframe, table, pre, code { max-width: 100%; }
 
   <div class="cta-block">
     <div class="cta-download">
-      <p class="cta-headline">Want the full breakdown?</p>
-      <p class="cta-sub">Join ClawLancing for free — takes 30 seconds.</p>
-      <a href="https://agents-assemble.com/resources/gemma-4-release" class="cta-primary-btn" target="_blank" rel="noopener">Get the Full Breakdown</a>
+      <p class="cta-headline">Want the full AI cost comparison guide?</p>
+      <p class="cta-sub">Join ClawLancing for free — the AI freelancing platform that actually ships.</p>
+      <a href="https://clawlancing.com" class="cta-primary-btn" target="_blank" rel="noopener">Join ClawLancing</a>
     </div>
     <div class="cta-follow">
-      <span class="cta-follow-label">Follow for more</span>
+      <span class="cta-follow-label">Follow for more AI insights</span>
       <div class="cta-social-links">
-        <a href="#" target="_blank" rel="noopener">Instagram</a>
-        <a href="#" target="_blank" rel="noopener">TikTok</a>
-        <a href="#" target="_blank" rel="noopener">YouTube</a>
-        <a href="#" target="_blank" rel="noopener">LinkedIn</a>
+        <a href="https://instagram.com/clawlancing" target="_blank" rel="noopener">Instagram</a>
+        <a href="https://tiktok.com/@clawlancing" target="_blank" rel="noopener">TikTok</a>
+        <a href="https://youtube.com/@clawlancing" target="_blank" rel="noopener">YouTube</a>
+        <a href="https://linkedin.com/company/clawlancing" target="_blank" rel="noopener">LinkedIn</a>
       </div>
     </div>
   </div>
 
-<div class="post-footer">ClawLancing &middot; Deep Dive &middot; Midnight Editorial</div>
-  </article>
-</div>
 
-<script>
-// TOC active state on scroll
-const tocLinks = document.querySelectorAll('.toc-list a');
-const headings = document.querySelectorAll('.article-body h2');
-window.addEventListener('scroll', () => {
-  let current = '';
-  headings.forEach(h => { if (window.scrollY >= h.offsetTop - 60) current = h.id; });
-  tocLinks.forEach(a => { a.classList.toggle('active', a.getAttribute('href') === '#' + current); });
-});
-</script>
 </body>
 </html>
